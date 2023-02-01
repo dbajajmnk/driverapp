@@ -118,6 +118,13 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
     implementation (Libs.EASY_PERMISIONS)
+    implementation ("com.google.android.gms:play-services-mlkit-face-detection:17.1.0")
+
+    implementation ("androidx.camera:camera-core:1.1.0-beta02")
+    implementation ("androidx.camera:camera-camera2:1.1.0-beta02")
+    implementation ("androidx.camera:camera-view:1.1.0-beta02")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0-beta02")
+
 
 
 
