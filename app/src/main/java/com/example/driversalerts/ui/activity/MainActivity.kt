@@ -1,7 +1,8 @@
-package com.example.driversalerts
+package com.example.driversalerts.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.driversalerts.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

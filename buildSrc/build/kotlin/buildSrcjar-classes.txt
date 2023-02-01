@@ -1,1 +1,1 @@
-/Users/bharatkumar/AndroidStudioProjects/DriversAlerts/buildSrc/build/classes/kotlin/main/Libs.class:/Users/bharatkumar/AndroidStudioProjects/DriversAlerts/buildSrc/build/classes/kotlin/main/Versions.class
+D:\driverapp\buildSrc\build\classes\kotlin\main\Libs.class;D:\driverapp\buildSrc\build\classes\kotlin\main\Versions.class
