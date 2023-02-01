@@ -47,10 +47,4 @@ object Libs
    const val VIEW_PAGER_DOTS = "me.relex:circleindicator:${Versions.VIEW_PAGER_DOTS}"
 
    const val IMAGE_PICKER_LIBRARY = "com.github.dhaval2404:imagepicker:2.1"
-
-
-
-
-
-
 }
