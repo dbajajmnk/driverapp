@@ -4,21 +4,10 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.net.Uri
-import android.os.Bundle
 import android.util.Log
 import android.util.Size
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -30,33 +19,27 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.driversalerts.R
 import com.example.driversalerts.data.local.persistance.PrefManager
 import com.example.driversalerts.databinding.FragmentCameraBinding
 import com.example.driversalerts.ui.base.BaseFragment
-import com.example.driversalerts.ui.fragment.dialogs.dialogDosinessAlert
+import com.example.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutionException
 
 @AndroidEntryPoint
 class CameraFragment : BaseFragment<FragmentCameraBinding>(),
     ActivityCompat.OnRequestPermissionsResultCallback {
-    private lateinit var dialog: AlertDialog
     private var previewUseCase: Preview? = null
     private var analysisUseCase: ImageAnalysis? = null
     private var cameraSelector: CameraSelector? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private lateinit var faceDetector: FaceDetector
-    private lateinit var mediaPlayer: MediaPlayer
-    private var isDialogShowing = false
     private var drowsyTime = 0L
     private val permissionRequestCode = 1001
     private lateinit var prefManager: PrefManager
@@ -66,8 +49,9 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(),
     var alarmTriggered = false
     private val tag = "DriverAlert"
     val viewModel: CameraViewModel by viewModels()
-    lateinit var dosinessAlertDialog :Dialog
+    lateinit var drowsinessAlertDialog :Dialog
     private val TAG = "CameraXViewModel"
+    private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
     private var cameraProviderLiveData: MutableLiveData<ProcessCameraProvider>? = null
 
     private val REQUIRED_PERMISSIONS =
@@ -78,9 +62,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(),
 
     override fun initView() {
         super.initView()
-        dosinessAlertDialog = dialogDosinessAlert()
+        drowsinessAlertDialog = dialogDrowsinessAlert()
         prefManager = PrefManager(requireContext())
-        initResources()
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
         } else initViews()
@@ -96,34 +79,37 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(),
         }
         if (alarmTriggered) {
            // playSound()
-            dosinessAlertDialog.show()
+            drowsinessAlertDialog.show()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        Log.v(tag, "onPause alarmTriggered $alarmTriggered")
         if (alarmTriggered) {
-            stopSound()
+            drowsinessAlertDialog.dismiss()
         }
     }
 
     private fun initViews() {
-        val lensFacing = if (cameraSelected == 0) CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
-        cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-        getProcessCameraProvider()?.observe(
-            this,
-            Observer { provider: ProcessCameraProvider? ->
-                cameraProvider = provider
-                bindAllCameraUseCases()
-            }
-        )
+
     }
+
+    // ==== OLD INIT CODE ======
+/*    val lensFacing =  CameraSelector.LENS_FACING_FRONT
+    //else CameraSelector.LENS_FACING_BACK
+    cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+    getProcessCameraProvider()?.observe(
+    this,
+    Observer { provider: ProcessCameraProvider? ->
+        cameraProvider = provider
+        bindAllCameraUseCases()
+    }
+    )*/
 
     private fun bindAllCameraUseCases() {
         if (cameraProvider != null) {
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
-            cameraProvider!!.unbindAll()
+            cameraProvider?.unbindAll()
             bindPreviewUseCase()
             bindAnalysisUseCase()
         }
@@ -143,7 +129,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(),
         builder.setTargetResolution(targetResolution)
         previewUseCase = builder.build()
         previewUseCase!!.setSurfaceProvider(binding.previewView.surfaceProvider)
-        cameraProvider!!.bindToLifecycle(/* lifecycleOwner= */ this,
+        cameraProvider!!.bindToLifecycle( viewLifecycleOwner,
             cameraSelector!!,
             previewUseCase
         )
@@ -216,78 +202,18 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(),
                     } else {
                         drowsinessDetected = false
                        // dismissAlarm()
-                        dosinessAlertDialog.dismiss()
+                        drowsinessAlertDialog.dismiss()
                     }
 
                       if(drowsinessDetected && (System.currentTimeMillis() - drowsyTime > drowsyThreshold)){
                          // triggerAlarm()
-                          dosinessAlertDialog.show()
+                          drowsinessAlertDialog.show()
                       }
                 }
                 imageProxy.close()
             }.addOnFailureListener {
                 return@addOnFailureListener
             }
-    }
-
-    private fun initResources() {
-        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.alarm)
-
-        val dialogBuilder = AlertDialog.Builder(requireContext())
-        dialogBuilder.setTitle("Drowsy Alert !!!")
-        dialogBuilder.setMessage("Tracker suspects that the driver is experiencing Drowsiness, Touch OK to Stop the Alarm")
-        dialogBuilder.setPositiveButton("OK") { dialogInterface: DialogInterface, _: Int ->
-            stopSound()
-            isDialogShowing = false
-            dialogInterface.dismiss()
-        }
-        dialog = dialogBuilder.create()
-    }
-
-    private fun triggerAlarm() {
-        alarmTriggered = true
-        if (!dialog.isShowing) {
-            dialog.show()
-            playSound()
-        }
-    }
-
-    private fun dismissAlarm() {
-        alarmTriggered = false
-        if (dialog.isShowing) {
-            dialog.dismiss()
-            stopSound()
-        }
-    }
-
-    private fun playSound() {
-        val uri: Uri? = prefManager.getAudioUri()
-        mediaPlayer = if (uri == null) {
-            MediaPlayer.create(requireContext(), R.raw.alarm)
-        } else {
-            try {
-                MediaPlayer().apply {
-                    setAudioAttributes(
-                        AudioAttributes.Builder()
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                            .build()
-                    )
-                    setDataSource(requireContext(), uri)
-                    prepare()
-                }
-            } catch (e: Exception) {
-                MediaPlayer.create(requireContext(), R.raw.alarm)
-            }
-        }
-        mediaPlayer.start()
-    }
-
-    private fun stopSound() {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
-            mediaPlayer.release()
-        }
     }
 
     private fun allRuntimePermissionsGranted(): Boolean {

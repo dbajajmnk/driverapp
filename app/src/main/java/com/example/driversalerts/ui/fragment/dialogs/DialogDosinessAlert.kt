@@ -1,21 +1,16 @@
 package com.example.driversalerts.ui.fragment.dialogs
 
 import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.view.LayoutInflater
-import android.view.View
 import android.view.Window
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.example.driversalerts.R
 import com.example.driversalerts.databinding.DialogAlertBinding
 import com.example.driversalerts.utils.setHeightWidthPercent
 
-fun Fragment.dialogDosinessAlert(
+fun Fragment.dialogDrowsinessAlert(
 
 ): Dialog {
     val dialog = Dialog(requireContext())
