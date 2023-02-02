@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("kotlin-kapt")
-    id("com.google.gms.google-services")
+    //id("com.google.gms.google-services")
     //id("com.google.firebase.crashlytics")
     id ("dagger.hilt.android.plugin")
     id ("androidx.navigation.safeargs.kotlin")
@@ -80,13 +80,11 @@ dependencies {
     // alternately - if using Java8, use the following instead of lifecycle-compiler
     implementation(Libs.LIFECYCELE_JAVA_SUPPORT)
     //Koin -- Dependency  Injection
-    // Koin Core features
-    implementation (Libs.KOIN_CORE)
-    implementation(Libs.KOIN_ANDROID)
+
     implementation(Libs.COROUTINE_LIB)
     //Firebase
-    implementation( platform(Libs.FIREBASE_BOM))
-    implementation(Libs.FIREBASE_CRASHLYTICS)
+   /* implementation( platform(Libs.FIREBASE_BOM))
+    implementation(Libs.FIREBASE_CRASHLYTICS)*/
     //Logging
     implementation(Libs.TIMBER_LIB)
     //Memory Leak

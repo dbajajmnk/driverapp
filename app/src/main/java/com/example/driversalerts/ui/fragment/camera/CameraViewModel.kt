@@ -1,51 +1,50 @@
 package com.example.driversalerts.ui.fragment.camera
 
-import android.app.Application
-import android.content.Context
-import android.os.Build
-import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutionException
+import javax.inject.Inject
 
 @HiltViewModel
-class CameraViewModel constructor(
+class CameraViewModel @Inject constructor(
 
 ) : ViewModel(){
 
-    private val TAG = "CameraXViewModel"
-    private var cameraProviderLiveData: MutableLiveData<ProcessCameraProvider>? = null
+    private val _cameraEvents = MutableSharedFlow<CameraStates>()
+    val cameraEvents:SharedFlow<CameraStates> = _cameraEvents
 
-    fun getProcessCameraProvider(): LiveData<ProcessCameraProvider>? {
-        if (cameraProviderLiveData == null) {
-            cameraProviderLiveData = MutableLiveData()
-            val cameraProviderFuture =
-                ProcessCameraProvider.getInstance(getApplication())
-            cameraProviderFuture.addListener(
-                {
-                    try {
-                        cameraProviderLiveData!!.setValue(cameraProviderFuture.get())
-                    } catch (e: ExecutionException) {
-                        // Handle any errors (including cancellation) here.
-                        Log.e(TAG, "Unhandled exception", e)
-                    } catch (e: InterruptedException) {
-                        Log.e(TAG, "Unhandled exception", e)
-                    }
-                },
-                ContextCompat.getMainExecutor(getApplication())
-            )
+
+
+    fun drowsinessDetected()
+    {
+        viewModelScope.launch {
+            _cameraEvents.emit(CameraStates.DrowsinessDetectedState)
         }
-        return cameraProviderLiveData
     }
 
+    fun drowsinessGone()
+    {
+        viewModelScope.launch {
+            _cameraEvents.emit(CameraStates.DrowsinessGoneState)
+        }
+    }
+
+
+
+}
+
+sealed class CameraStates()
+{
+    object DrowsinessDetectedState : CameraStates()
+    object DrowsinessGoneState :CameraStates()
 }

@@ -2,6 +2,7 @@ package com.example.driversalerts.ui.fragment.camera
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -25,20 +26,29 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.driversalerts.R
 import com.example.driversalerts.data.local.persistance.PrefManager
 import com.example.driversalerts.databinding.FragmentCameraBinding
 import com.example.driversalerts.ui.base.BaseFragment
+import com.example.driversalerts.ui.fragment.dialogs.dialogDosinessAlert
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.concurrent.ExecutionException
 
-
-class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnRequestPermissionsResultCallback {
+@AndroidEntryPoint
+class CameraFragment : BaseFragment<FragmentCameraBinding>(),
+    ActivityCompat.OnRequestPermissionsResultCallback {
     private lateinit var dialog: AlertDialog
     private var previewUseCase: Preview? = null
     private var analysisUseCase: ImageAnalysis? = null
@@ -49,24 +59,27 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnR
     private var isDialogShowing = false
     private var drowsyTime = 0L
     private val permissionRequestCode = 1001
-    private lateinit var prefManager : PrefManager
+    private lateinit var prefManager: PrefManager
     private var drowsyThreshold = 500
     private var cameraSelected = 0
     var drowsinessDetected = false
     var alarmTriggered = false
     private val tag = "DriverAlert"
-    val viewModel :CameraViewModel by viewModel()
+    val viewModel: CameraViewModel by viewModels()
+    lateinit var dosinessAlertDialog :Dialog
+    private val TAG = "CameraXViewModel"
+    private var cameraProviderLiveData: MutableLiveData<ProcessCameraProvider>? = null
+
     private val REQUIRED_PERMISSIONS =
         arrayOf(
             Manifest.permission.CAMERA,
-            Manifest.permission.RECEIVE_BOOT_COMPLETED,
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
     override fun initView() {
         super.initView()
+        dosinessAlertDialog = dialogDosinessAlert()
         prefManager = PrefManager(requireContext())
-
         initResources()
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
@@ -75,36 +88,36 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnR
 
     override fun onResume() {
         super.onResume()
-        Log.v(tag , "onResume alarmTriggered $alarmTriggered")
+        Log.v(tag, "onResume alarmTriggered $alarmTriggered")
         drowsyThreshold = prefManager.getDuration()
-        if(prefManager.getCameraSelected() != cameraSelected){
+        if (prefManager.getCameraSelected() != cameraSelected) {
             cameraSelected = prefManager.getCameraSelected()
             initViews()
         }
-        if(alarmTriggered){
-            playSound()
+        if (alarmTriggered) {
+           // playSound()
+            dosinessAlertDialog.show()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        Log.v(tag , "onPause alarmTriggered $alarmTriggered")
-        if(alarmTriggered) {
+        Log.v(tag, "onPause alarmTriggered $alarmTriggered")
+        if (alarmTriggered) {
             stopSound()
         }
     }
-    private fun initViews() {
-        val lensFacing = if(cameraSelected == 0) CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
-        cameraSelector =
-            CameraSelector.Builder().requireLensFacing(lensFacing).build()
-        viewModel.getProcessCameraProvider()?.observe(
-                this,
-                Observer { provider: ProcessCameraProvider? ->
-                    cameraProvider = provider
-                    bindAllCameraUseCases()
-                }
-            )
 
+    private fun initViews() {
+        val lensFacing = if (cameraSelected == 0) CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
+        cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        getProcessCameraProvider()?.observe(
+            this,
+            Observer { provider: ProcessCameraProvider? ->
+                cameraProvider = provider
+                bindAllCameraUseCases()
+            }
+        )
     }
 
     private fun bindAllCameraUseCases() {
@@ -180,7 +193,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnR
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun detectDrowsiness(imageProxy: ImageProxy) {
+    private fun detectDrowsiness(imageProxy: ImageProxy)  {
         val mediaImage = imageProxy.image ?: return
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
@@ -195,24 +208,25 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnR
                     if (face.leftEyeOpenProbability != null) {
                         leftEyeOpenProb = face.leftEyeOpenProbability!!
                     }
-                    Log.v(tag , "rightEyeOpenProb $rightEyeOpenProb leftEyeOpenProb $leftEyeOpenProb")
-                    if((rightEyeOpenProb <= 0.5 || leftEyeOpenProb <= 0.5)){
-                        if(!drowsinessDetected) {
+                    if ((rightEyeOpenProb <= 0.5 || leftEyeOpenProb <= 0.5)) {
+                        if (!drowsinessDetected) {
                             drowsinessDetected = true
                             drowsyTime = System.currentTimeMillis()
                         }
-                    }else {
+                    } else {
                         drowsinessDetected = false
-                        dismissAlarm()
+                       // dismissAlarm()
+                        dosinessAlertDialog.dismiss()
                     }
 
-                    if(drowsinessDetected && (System.currentTimeMillis() - drowsyTime > drowsyThreshold)){
-                        triggerAlarm()
-                    }
+                      if(drowsinessDetected && (System.currentTimeMillis() - drowsyTime > drowsyThreshold)){
+                         // triggerAlarm()
+                          dosinessAlertDialog.show()
+                      }
                 }
                 imageProxy.close()
-            }
-            .addOnFailureListener {
+            }.addOnFailureListener {
+                return@addOnFailureListener
             }
     }
 
@@ -247,10 +261,10 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnR
     }
 
     private fun playSound() {
-        val uri : Uri? = prefManager.getAudioUri()
-        mediaPlayer = if(uri == null) {
+        val uri: Uri? = prefManager.getAudioUri()
+        mediaPlayer = if (uri == null) {
             MediaPlayer.create(requireContext(), R.raw.alarm)
-        }else{
+        } else {
             try {
                 MediaPlayer().apply {
                     setAudioAttributes(
@@ -262,7 +276,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnR
                     setDataSource(requireContext(), uri)
                     prepare()
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 MediaPlayer.create(requireContext(), R.raw.alarm)
             }
         }
@@ -282,13 +296,13 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnR
                 return false
             }
         }
-       return true
+        return true
     }
 
     private fun getRuntimePermissions() {
         val permissionsToRequest = ArrayList<String>()
         for (permission in REQUIRED_PERMISSIONS) {
-            if(!prefManager.getAutoStartEnabled())
+            if (!prefManager.getAutoStartEnabled())
                 continue
             permission.let {
                 if (!isPermissionGranted(requireContext(), it)) {
@@ -337,18 +351,39 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), ActivityCompat.OnR
         }
     }
 
-/*    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu, menu)
-        return true
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.setting_menu){
-            val intent = Intent(this@CameraFragment, SettingsActivity::class.java)
-            startActivity(intent)
+    private fun getProcessCameraProvider(): LiveData<ProcessCameraProvider>? {
+        if (cameraProviderLiveData == null) {
+            cameraProviderLiveData = MutableLiveData()
+            val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+            cameraProviderFuture.addListener(
+                {
+                    try {
+                        cameraProviderLiveData!!.setValue(cameraProviderFuture.get())
+                    } catch (e: ExecutionException) {
+                        // Handle any errors (including cancellation) here.
+                        Log.e(TAG, "Unhandled exception", e)
+                    } catch (e: InterruptedException) {
+                        Log.e(TAG, "Unhandled exception", e)
+                    }
+                },
+                ContextCompat.getMainExecutor(requireContext())
+            )
         }
-        return super.onOptionsItemSelected(item)
-    }*/
+        return cameraProviderLiveData
+    }
+    /*    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+            val inflater = menuInflater
+            inflater.inflate(R.menu.menu, menu)
+            return true
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            if(item.itemId == R.id.setting_menu){
+                val intent = Intent(this@CameraFragment, SettingsActivity::class.java)
+                startActivity(intent)
+            }
+            return super.onOptionsItemSelected(item)
+        }*/
 }
 

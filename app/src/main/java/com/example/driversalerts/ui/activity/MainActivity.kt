@@ -5,7 +5,9 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.driversalerts.R
 import com.example.driversalerts.databinding.ActivityMainBinding
 import com.example.driversalerts.ui.base.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var navController: NavController
 
