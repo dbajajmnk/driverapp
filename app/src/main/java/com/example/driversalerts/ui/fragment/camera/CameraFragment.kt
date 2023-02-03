@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -24,6 +25,7 @@ import com.example.driversalerts.data.local.persistance.PrefManager
 import com.example.driversalerts.databinding.FragmentCameraBinding
 import com.example.driversalerts.ui.base.BaseFragment
 import com.example.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
+import com.example.driversalerts.utils.DrowsinessAnalyser
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
@@ -91,7 +93,34 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(),
     }
 
     private fun initViews() {
+        val preview = Preview.Builder().build()
+        val selector = CameraSelector.Builder()
+            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+            .build()
+        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+        imageAnalysis.setAnalyzer(
+            ContextCompat.getMainExecutor(requireContext()),
+            DrowsinessAnalyser({
+                drowsinessAlertDialog.show()
+            },{
+                drowsinessAlertDialog.dismiss()
+            })
+        )
 
+        try {
+            cameraProviderFuture.get().bindToLifecycle(
+                viewLifecycleOwner,
+                selector,
+                preview,
+                imageAnalysis
+            )
+        }catch (e:Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     // ==== OLD INIT CODE ======
