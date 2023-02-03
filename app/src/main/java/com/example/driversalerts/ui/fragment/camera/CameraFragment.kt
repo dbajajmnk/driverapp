@@ -14,6 +14,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -32,6 +33,7 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import dagger.hilt.android.AndroidEntryPoint
+import pub.devrel.easypermissions.EasyPermissions
 import java.util.concurrent.ExecutionException
 
 @AndroidEntryPoint
@@ -65,25 +67,48 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(),
     override fun initView() {
         super.initView()
         drowsinessAlertDialog = dialogDrowsinessAlert()
-        prefManager = PrefManager(requireContext())
-        if (!allRuntimePermissionsGranted()) {
+  /*      if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
-        } else initViews()
+        }else{
+
+
+        }*/
+
+
+        if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.CAMERA)) {
+            cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+            binding.previewView.scaleType = PreviewView.ScaleType.FILL_CENTER
+
+            cameraProviderFuture.addListener(Runnable {
+                 cameraProvider = cameraProviderFuture.get()
+                initViews()
+            }, ContextCompat.getMainExecutor(requireContext()))
+
+        }
+       /* prefManager = PrefManager(requireContext())
+       else*/
     }
 
+/*
     override fun onResume() {
         super.onResume()
-        Log.v(tag, "onResume alarmTriggered $alarmTriggered")
+        initViews()
+       */
+/* Log.v(tag, "onResume alarmTriggered $alarmTriggered")
         drowsyThreshold = prefManager.getDuration()
         if (prefManager.getCameraSelected() != cameraSelected) {
             cameraSelected = prefManager.getCameraSelected()
-            initViews()
-        }
-        if (alarmTriggered) {
+
+        }*//*
+
+       */
+/* if (alarmTriggered) {
            // playSound()
             drowsinessAlertDialog.show()
-        }
+        }*//*
+
     }
+*/
 
     override fun onPause() {
         super.onPause()
@@ -95,7 +120,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(),
     private fun initViews() {
         val preview = Preview.Builder().build()
         val selector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+            .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
             .build()
         preview.setSurfaceProvider(binding.previewView.surfaceProvider)
         val imageAnalysis = ImageAnalysis.Builder()

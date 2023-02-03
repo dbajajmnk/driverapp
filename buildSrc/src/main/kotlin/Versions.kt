@@ -16,7 +16,7 @@ object Versions {
     //Testing
     const val JUNIT = "4.13.2"
     const val JUNIT_TEXT_EXT = "1.1.3"
-    const val COMPILE_SDK = 31
+    const val COMPILE_SDK = 33
     const val MIN_Sdk = 23
     const val TARGET_SDK = 32
     const val VERSION_CODE = 1

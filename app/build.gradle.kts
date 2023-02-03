@@ -118,10 +118,10 @@ dependencies {
     implementation (Libs.EASY_PERMISIONS)
     implementation ("com.google.android.gms:play-services-mlkit-face-detection:17.1.0")
 
-    implementation ("androidx.camera:camera-core:1.1.0-beta02")
-    implementation ("androidx.camera:camera-camera2:1.1.0-beta02")
-    implementation ("androidx.camera:camera-view:1.1.0-beta02")
-    implementation ("androidx.camera:camera-lifecycle:1.1.0-beta02")
+    implementation ("androidx.camera:camera-core:1.3.0-alpha03")
+    implementation ("androidx.camera:camera-camera2:1.3.0-alpha03")
+    implementation ("androidx.camera:camera-view:1.3.0-alpha03")
+    implementation ("androidx.camera:camera-lifecycle:1.3.0-alpha03")
 
 
 

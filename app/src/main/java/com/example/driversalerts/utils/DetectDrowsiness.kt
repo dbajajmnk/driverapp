@@ -1,10 +1,14 @@
 package com.example.driversalerts.utils
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
+import com.google.mlkit.vision.face.FaceDetectorOptions
 
 class DrowsinessAnalyser(
     private val onDrowsinessDetected:()->Unit,
@@ -24,6 +28,19 @@ class DrowsinessAnalyser(
     fun detectDrowsiness(imageProxy: ImageProxy)  {
         val mediaImage = imageProxy.image ?: return
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+        try {
+            val options = FaceDetectorOptions.Builder()
+                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+                .setMinFaceSize(0.15f)
+                .enableTracking()
+                .build()
+            faceDetector = FaceDetection.getClient(options)
+        } catch (e: Exception) {
+            Log.d("TAG", "detectDrowsiness: "+e.localizedMessage)
+            return
+        }
         faceDetector.process(image)
             .addOnSuccessListener { faces ->
                 for (face in faces) {
