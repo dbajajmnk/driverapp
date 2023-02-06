@@ -8,4 +8,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-/buildSrc
+/buildSrc/.gradle/*
+/buildSrc/build/*
