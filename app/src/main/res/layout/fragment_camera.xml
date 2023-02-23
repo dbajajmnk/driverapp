@@ -7,6 +7,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
         android:layout_width="match_parent"

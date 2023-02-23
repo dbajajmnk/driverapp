@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
-import io.socket.emitter.Emitter
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.*
@@ -21,7 +20,7 @@ class LiveStreamingHelper {
     private var isStarted = false
     private val TAG = "LiveStreamingHelper"
     private lateinit var peerConnection: PeerConnection
-    private val rootEglBase: EglBase? = null
+    private var rootEglBase: EglBase? = null
     private var factory: PeerConnectionFactory
     private var videoTrackFromCamera: VideoTrack? = null
 
@@ -34,6 +33,8 @@ class LiveStreamingHelper {
     private val VIDEO_RESOLUTION_HEIGHT = 720
     private val FPS = 30
     private lateinit var context : Context
+
+    private lateinit var surfaceView: SurfaceViewRenderer
     init {
         //String URL = "http://68.178.160.179:5000/"
         val URL = "http://68.178.160.179:3030"
@@ -43,10 +44,12 @@ class LiveStreamingHelper {
         audioConstraints = MediaConstraints()
     }
 
-    fun start(context : Context){
+    fun start(context : Context, surfaceView : SurfaceViewRenderer){
         this.context = context
 
         connectToSignallingServer()
+
+        initializeSurfaceViews(surfaceView)
 
         initializePeerConnectionFactory()
 
@@ -55,6 +58,15 @@ class LiveStreamingHelper {
         initializePeerConnections()
 
         startStreamingVideo()
+    }
+
+
+    private fun initializeSurfaceViews(surfaceView : SurfaceViewRenderer) {
+        this.surfaceView = surfaceView
+        rootEglBase = EglBase.create()
+        this.surfaceView.init(rootEglBase?.eglBaseContext, null)
+        this.surfaceView.setEnableHardwareScaler(true)
+        this.surfaceView.setMirror(true)
     }
 
     private fun connectToSignallingServer() {
@@ -216,7 +228,7 @@ class LiveStreamingHelper {
         videoCapturer?.startCapture(VIDEO_RESOLUTION_WIDTH,VIDEO_RESOLUTION_HEIGHT,FPS)
         videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID,videoSource)
         videoTrackFromCamera?.setEnabled(true)
-        //videoTrackFromCamera?.addRenderer(VideoRenderer(binding.surfaceView))     TODO Add front facing camera
+        videoTrackFromCamera?.addRenderer(VideoRenderer(this.surfaceView))     //TODO Add front facing camera
 
         //create an AudioSource instance
         audioSource = factory.createAudioSource(audioConstraints)
