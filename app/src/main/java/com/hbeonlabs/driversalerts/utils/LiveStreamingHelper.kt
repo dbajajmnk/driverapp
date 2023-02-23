@@ -20,25 +20,29 @@ class LiveStreamingHelper {
     private var isChannelReady = false
     private var isStarted = false
     private val TAG = "LiveStreamingHelper"
-    private var peerConnection: PeerConnection? = null
+    private lateinit var peerConnection: PeerConnection
     private val rootEglBase: EglBase? = null
-    private var factory: PeerConnectionFactory? = null
+    private var factory: PeerConnectionFactory
     private var videoTrackFromCamera: VideoTrack? = null
 
-    var audioConstraints: MediaConstraints? = null
-    var audioSource: AudioSource? = null
-    var localAudioTrack: AudioTrack? = null
+    private var audioConstraints: MediaConstraints
+    private lateinit var audioSource: AudioSource
+    private lateinit var localAudioTrack: AudioTrack
 
-    val VIDEO_TRACK_ID = "ARDAMSv0"
-    val VIDEO_RESOLUTION_WIDTH = 1280
-    val VIDEO_RESOLUTION_HEIGHT = 720
-    val FPS = 30
-    lateinit var context : Context
+    private val VIDEO_TRACK_ID = "ARDAMSv0"
+    private val VIDEO_RESOLUTION_WIDTH = 1280
+    private val VIDEO_RESOLUTION_HEIGHT = 720
+    private val FPS = 30
+    private lateinit var context : Context
     init {
+        //String URL = "http://68.178.160.179:5000/"
         val URL = "http://68.178.160.179:3030"
         Log.e(TAG,"Live streaming url : $URL")
         socket = IO.socket(URL)
+        factory = PeerConnectionFactory(null)
+        audioConstraints = MediaConstraints()
     }
+
     fun start(context : Context){
         this.context = context
 
@@ -52,93 +56,90 @@ class LiveStreamingHelper {
 
         startStreamingVideo()
     }
+
     private fun connectToSignallingServer() {
         try {
-            // For me this was "http://192.168.1.220:3000";
-            // $ hostname -I
-            //String URL = "https://calm-badlands-59575.herokuapp.com/";
-            //String URL = "http://68.178.160.179:5000/";
-            val URL = "http://68.178.160.179:3030"
-            Log.e(TAG,"REPLACE ME: IO Socket:$URL")
-            socket = IO.socket(URL)
-            socket.on(Socket.EVENT_CONNECT, Emitter.Listener { args: Array<Any?>? ->
-                Log.d(TAG,"connectToSignallingServer: connect")
+            socket.on(Socket.EVENT_CONNECT) {
+                Log.d(TAG, "connectToSignallingServer: connect")
                 socket.emit("create or join", "foo")
-            }).on("ipaddr",
-                Emitter.Listener { args: Array<Any?>? ->
-                    Log.d(TAG,"connectToSignallingServer: ipaddr")
-                }).on("created",
-                Emitter.Listener { args: Array<Any?>? ->
-                    Log.d(TAG,"connectToSignallingServer: created")
-                    isInitiator = true
-                }).on("full",
-                Emitter.Listener { args: Array<Any?>? ->
-                    Log.d(TAG,"connectToSignallingServer: full")
-                }).on("join",
-                Emitter.Listener { args: Array<Any?>? ->
-                    Log.d( TAG,"connectToSignallingServer: join")
-                    Log.d(TAG,"connectToSignallingServer: Another peer made a request to join room")
-                    Log.d(TAG,"connectToSignallingServer: This peer is the initiator of room")
-                    isChannelReady = true
-                }).on("joined", Emitter.Listener { args: Array<Any?>? ->
-                Log.d(TAG,"connectToSignallingServer: joined")
+            }.on("ipaddr"
+            ) {
+                Log.d(TAG, "connectToSignallingServer: ipaddr")
+            }.on("created"
+            ) {
+                Log.d(TAG, "connectToSignallingServer: created")
+                isInitiator = true
+            }.on("full"
+            ) {
+                Log.d(TAG, "connectToSignallingServer: full")
+            }.on("join"
+            ) {
+                Log.d(TAG, "connectToSignallingServer: join")
+                Log.d(TAG, "connectToSignallingServer: Another peer made a request to join room")
+                Log.d(TAG, "connectToSignallingServer: This peer is the initiator of room")
                 isChannelReady = true
-            }).on("log",
-                Emitter.Listener { args: Array<Any> ->
-                    for (arg in args) {
-                        Log.d(TAG,"connectToSignallingServer: $arg")
-                    }
-                }).on("message",
-                Emitter.Listener { args: Array<Any?>? ->
-                    Log.d(TAG,"connectToSignallingServer: got a message")
-                }).on("message",
-                Emitter.Listener { args: Array<Any> ->
-                    try {
-                        if (args[0] is String) {
-                            val message = args[0] as String
-                            if (message == "got user media") {
-                                //maybeStart()
-                            }
-                        } else {
-                            val message = args[0] as JSONObject
-                            Log.d(TAG,"connectToSignallingServer: got message $message")
-                            if (message.getString("type") == "offer") {
-                                Log.d(TAG,"connectToSignallingServer: received an offer $isInitiator $isStarted")
-                                if (!isInitiator && !isStarted) {
-                                    maybeStart()
-                                }
-                                peerConnection?.setRemoteDescription(
-                                    SimpleSdpObserver(),
-                                    SessionDescription(OFFER, message.getString("sdp"))
-                                )
-                                doAnswer()
-                            } else if (message.getString("type") == "answer" && isStarted) {
-                                Log.d(TAG,"message type: answer")
-                                peerConnection?.setRemoteDescription(
-                                    SimpleSdpObserver(),
-                                    SessionDescription(ANSWER, message.getString("sdp"))
-                                )
-                            } else if (message.getString("type") == "candidate" && isStarted) {
-                                Log.d(TAG,"connectToSignallingServer: receiving candidates")
-                                val candidate = IceCandidate(
-                                    message.getString("id"),
-                                    message.getInt("label"),
-                                    message.getString("candidate")
-                                )
-                                peerConnection?.addIceCandidate(candidate)
-                            }
-                            /*else if (message === 'bye' && isStarted) {
-            handleRemoteHangup();
-        }*/
+            }.on("joined") {
+                Log.d(TAG, "connectToSignallingServer: joined")
+                isChannelReady = true
+            }.on("log"
+            ) { args: Array<Any> ->
+                for (arg in args) {
+                    Log.d(TAG, "connectToSignallingServer: $arg")
+                }
+            }.on("message"
+            ) {
+                Log.d(TAG, "connectToSignallingServer: got a message")
+            }.on("message"
+            ) { args: Array<Any> ->
+                try {
+                    if (args[0] is String) {
+                        val message = args[0] as String
+                        if (message == "got user media") {
+                            //maybeStart()
                         }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
+                    } else {
+                        val message = args[0] as JSONObject
+                        Log.d(TAG, "connectToSignallingServer: got message $message")
+                        if (message.getString("type") == "offer") {
+                            Log.d(
+                                TAG,
+                                "connectToSignallingServer: received an offer $isInitiator $isStarted"
+                            )
+                            if (!isInitiator && !isStarted) {
+                                maybeStart()
+                            }
+                            peerConnection.setRemoteDescription(
+                                SimpleSdpObserver(),
+                                SessionDescription(OFFER, message.getString("sdp"))
+                            )
+                            doAnswer()
+                        } else if (message.getString("type") == "answer" && isStarted) {
+                            Log.d(TAG, "message type: answer")
+                            peerConnection.setRemoteDescription(
+                                SimpleSdpObserver(),
+                                SessionDescription(ANSWER, message.getString("sdp"))
+                            )
+                        } else if (message.getString("type") == "candidate" && isStarted) {
+                            Log.d(TAG, "connectToSignallingServer: receiving candidates")
+                            val candidate = IceCandidate(
+                                message.getString("id"),
+                                message.getInt("label"),
+                                message.getString("candidate")
+                            )
+                            peerConnection.addIceCandidate(candidate)
+                        }
+                        /*else if (message === 'bye' && isStarted) {
+        handleRemoteHangup();
+    }*/
                     }
-                }).on(
-                Socket.EVENT_DISCONNECT,
-                Emitter.Listener { args: Array<Any?>? ->
-                    Log.d(TAG,"connectToSignallingServer: disconnect")
-                })
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }.on(
+                Socket.EVENT_DISCONNECT
+            ) {
+                Log.d(TAG, "connectToSignallingServer: disconnect")
+            }
             socket.connect()
         } catch (e: URISyntaxException) {
             e.printStackTrace()
@@ -146,9 +147,9 @@ class LiveStreamingHelper {
     }
 
     private fun doAnswer() {
-        peerConnection?.createAnswer(object : SimpleSdpObserver() {
+        peerConnection.createAnswer(object : SimpleSdpObserver() {
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                peerConnection?.setLocalDescription(SimpleSdpObserver(), sessionDescription)
+                peerConnection.setLocalDescription(SimpleSdpObserver(), sessionDescription)
                 val message = JSONObject()
                 try {
                     message.put("type", "answer")
@@ -179,10 +180,10 @@ class LiveStreamingHelper {
         sdpMediaConstraints.mandatory.add(
             MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true")
         )
-        peerConnection?.createOffer(object : SimpleSdpObserver() {
+        peerConnection.createOffer(object : SimpleSdpObserver() {
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
                 Log.d(TAG, "onCreateSuccess: ")
-                peerConnection?.setLocalDescription(SimpleSdpObserver(), sessionDescription)
+                peerConnection.setLocalDescription(SimpleSdpObserver(), sessionDescription)
                 val message = JSONObject()
                 try {
                     message.put("type", "offer")
@@ -202,36 +203,35 @@ class LiveStreamingHelper {
 
     private fun initializePeerConnectionFactory() {
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true)
-        factory = PeerConnectionFactory(null)
-        factory?.setVideoHwAccelerationOptions(
+        
+        factory.setVideoHwAccelerationOptions(
             rootEglBase?.getEglBaseContext(),
             rootEglBase?.getEglBaseContext()
         )
     }
 
     private fun createVideoTrackFromCameraAndShowIt() {
-        audioConstraints = MediaConstraints()
         val videoCapturer = createVideoCapturer()
-        val videoSource: VideoSource? = factory?.createVideoSource(videoCapturer)
+        val videoSource: VideoSource? = factory.createVideoSource(videoCapturer)
         videoCapturer?.startCapture(VIDEO_RESOLUTION_WIDTH,VIDEO_RESOLUTION_HEIGHT,FPS)
-        videoTrackFromCamera = factory?.createVideoTrack(VIDEO_TRACK_ID,videoSource)
+        videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID,videoSource)
         videoTrackFromCamera?.setEnabled(true)
         //videoTrackFromCamera?.addRenderer(VideoRenderer(binding.surfaceView))     TODO Add front facing camera
 
         //create an AudioSource instance
-        audioSource = factory?.createAudioSource(audioConstraints)
-        localAudioTrack = factory?.createAudioTrack("101", audioSource)
+        audioSource = factory.createAudioSource(audioConstraints)
+        localAudioTrack = factory.createAudioTrack("101", audioSource)
     }
 
     private fun initializePeerConnections() {
-        peerConnection = factory?.let { createPeerConnection(it) }
+        peerConnection = createPeerConnection(factory)
     }
 
     private fun startStreamingVideo() {
-        val mediaStream: MediaStream? = factory?.createLocalMediaStream("ARDAMS")
-        mediaStream?.addTrack(videoTrackFromCamera)
-        mediaStream?.addTrack(localAudioTrack)
-        peerConnection?.addStream(mediaStream)
+        val mediaStream: MediaStream = factory.createLocalMediaStream("ARDAMS")
+        mediaStream.addTrack(videoTrackFromCamera)
+        mediaStream.addTrack(localAudioTrack)
+        peerConnection.addStream(mediaStream)
         sendMessage("got user media")
     }
 
