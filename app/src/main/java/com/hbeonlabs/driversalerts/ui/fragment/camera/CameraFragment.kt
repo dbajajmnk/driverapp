@@ -91,7 +91,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
                 preview,
                 imageAnalysis
             )
-            liveStreamingHelper.start()
+            liveStreamingHelper.start(requireContext())
         } catch (e: Exception) {
             e.printStackTrace()
         }
