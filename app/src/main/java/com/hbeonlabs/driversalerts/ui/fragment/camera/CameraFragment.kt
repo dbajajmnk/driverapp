@@ -15,6 +15,7 @@ import com.hbeonlabs.driversalerts.databinding.FragmentCameraBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
 import com.hbeonlabs.driversalerts.utils.DrowsinessAnalyser
+import com.hbeonlabs.driversalerts.utils.LiveStreamingHelper
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.CAMERA_PERMISSION_REQ_CODE
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -27,6 +28,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     var alarmTriggered = false
     lateinit var drowsinessAlertDialog: Dialog
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+    val liveStreamingHelper = LiveStreamingHelper()
     override fun initView() {
         super.initView()
         drowsinessAlertDialog = dialogDrowsinessAlert()
@@ -89,6 +91,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
                 preview,
                 imageAnalysis
             )
+            liveStreamingHelper.start()
         } catch (e: Exception) {
             e.printStackTrace()
         }
