@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.cli.jvm.main
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -54,6 +56,7 @@ android {
     buildFeatures {
         dataBinding = true
     }
+
 }
 
 dependencies {
@@ -65,8 +68,7 @@ dependencies {
     implementation(Libs.ROOM_RUN_TIME)
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
-    implementation(files("libs/autobanh.jar"))
-    implementation(files("libs/base_java.jar"))
+
     implementation(files("libs/libjingle_peerconnection.jar"))
     kapt(Libs.ROOM_COMPILER)
     implementation(Libs.ROOM_KTX)

@@ -14,7 +14,11 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var navController: NavController
-
+    /*companion object {
+        init {
+            System.loadLibrary("jingle_peerconnection_so")
+        }
+    }*/
     override fun getLayoutResourceId(): Int {
         return R.layout.activity_main
     }

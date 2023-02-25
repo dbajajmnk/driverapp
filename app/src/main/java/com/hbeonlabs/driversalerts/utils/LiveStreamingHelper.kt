@@ -21,7 +21,7 @@ class LiveStreamingHelper {
     private val TAG = "LiveStreamingHelper"
     private lateinit var peerConnection: PeerConnection
     private var rootEglBase: EglBase? = null
-    private var factory: PeerConnectionFactory
+    private lateinit var factory: PeerConnectionFactory
     private var videoTrackFromCamera: VideoTrack? = null
 
     private var audioConstraints: MediaConstraints
@@ -34,23 +34,27 @@ class LiveStreamingHelper {
     private val FPS = 30
     private lateinit var context : Context
 
-    private lateinit var surfaceView: SurfaceViewRenderer
+    private lateinit var senderSurfaceView: SurfaceViewRenderer
+    private lateinit var receiverSurfaceView: SurfaceViewRenderer
+
     init {
         //String URL = "http://68.178.160.179:5000/"
         val URL = "http://68.178.160.179:3030"
         Log.e(TAG,"Live streaming url : $URL")
         socket = IO.socket(URL)
-        factory = PeerConnectionFactory(null)
         audioConstraints = MediaConstraints()
     }
 
-    fun start(context : Context, surfaceView : SurfaceViewRenderer){
+    fun start(context : Context, senderSurfaceView : SurfaceViewRenderer?, receiverSurfaceView : SurfaceViewRenderer?){
         this.context = context
 
         connectToSignallingServer()
 
-        initializeSurfaceViews(surfaceView)
-
+        if(senderSurfaceView != null) {
+            initializeSenderSurfaceView(senderSurfaceView)
+        }else if(receiverSurfaceView != null){
+            initializeReceiverSurfaceView(receiverSurfaceView)
+        }
         initializePeerConnectionFactory()
 
         createVideoTrackFromCameraAndShowIt()
@@ -61,12 +65,20 @@ class LiveStreamingHelper {
     }
 
 
-    private fun initializeSurfaceViews(surfaceView : SurfaceViewRenderer) {
-        this.surfaceView = surfaceView
+    private fun initializeSenderSurfaceView(surfaceView : SurfaceViewRenderer) {
+        this.senderSurfaceView = surfaceView
         rootEglBase = EglBase.create()
-        this.surfaceView.init(rootEglBase?.eglBaseContext, null)
-        this.surfaceView.setEnableHardwareScaler(true)
-        this.surfaceView.setMirror(true)
+        this.senderSurfaceView.init(rootEglBase?.eglBaseContext, null)
+        this.senderSurfaceView.setEnableHardwareScaler(true)
+        this.senderSurfaceView.setMirror(true)
+    }
+
+    private fun initializeReceiverSurfaceView(surfaceView : SurfaceViewRenderer) {
+        this.receiverSurfaceView = surfaceView
+        rootEglBase = EglBase.create()
+        this.receiverSurfaceView.init(rootEglBase?.eglBaseContext, null)
+        this.receiverSurfaceView.setEnableHardwareScaler(true)
+        this.receiverSurfaceView.setMirror(true)
     }
 
     private fun connectToSignallingServer() {
@@ -215,7 +227,7 @@ class LiveStreamingHelper {
 
     private fun initializePeerConnectionFactory() {
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true)
-        
+        factory = PeerConnectionFactory(null)
         factory.setVideoHwAccelerationOptions(
             rootEglBase?.getEglBaseContext(),
             rootEglBase?.getEglBaseContext()
@@ -228,7 +240,7 @@ class LiveStreamingHelper {
         videoCapturer?.startCapture(VIDEO_RESOLUTION_WIDTH,VIDEO_RESOLUTION_HEIGHT,FPS)
         videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID,videoSource)
         videoTrackFromCamera?.setEnabled(true)
-        videoTrackFromCamera?.addRenderer(VideoRenderer(this.surfaceView))     //TODO Add front facing camera
+        videoTrackFromCamera?.addRenderer(VideoRenderer(this.senderSurfaceView))     //TODO Add front facing camera
 
         //create an AudioSource instance
         audioSource = factory.createAudioSource(audioConstraints)
