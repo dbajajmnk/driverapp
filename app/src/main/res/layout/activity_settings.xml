@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/camera_tv"
+            style="@style/style_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Camera"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/camera_sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            app:layout_constraintLeft_toRightOf="@+id/camera_tv"
+            app:layout_constraintStart_toEndOf="@+id/camera_tv"
+            app:layout_constraintTop_toTopOf="@+id/camera_tv" />
+
+        <TextView
+            android:id="@+id/camera_info"
+            style="@style/style_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Select the camera you want to set to detect driver face"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/camera_tv" />
+
+        <TextView
+            android:id="@+id/duration_tv"
+            style="@style/style_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Duration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/camera_info" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/duration_sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toRightOf="@+id/duration_tv"
+            app:layout_constraintStart_toEndOf="@+id/duration_tv"
+            app:layout_constraintTop_toBottomOf="@+id/camera_info" />
+
+        <TextView
+            android:id="@+id/info1"
+            style="@style/style_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Select the duration you want to set to detect Drowsiness"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/duration_tv" />
+
+
+        <TextView
+            android:id="@+id/sound_tv"
+            style="@style/style_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Sound"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/info1" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/sound_sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            app:layout_constraintLeft_toRightOf="@+id/sound_tv"
+            app:layout_constraintStart_toEndOf="@+id/sound_tv"
+            app:layout_constraintTop_toTopOf="@+id/sound_tv" />
+
+        <TextView
+            android:id="@+id/info2"
+            style="@style/style_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Select the sound which you want to play in case of Drowsiness"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sound_tv" />
+
+
+        <TextView
+            android:id="@+id/reboot_tv"
+            style="@style/style_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Auto Start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/info2" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/reboot_sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            app:layout_constraintLeft_toRightOf="@+id/reboot_tv"
+            app:layout_constraintStart_toEndOf="@+id/reboot_tv"
+            app:layout_constraintTop_toTopOf="@+id/reboot_tv" />
+
+        <TextView
+            android:id="@+id/auto_start_info"
+            style="@style/style_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Enable on auto start to start app on phone reboot"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reboot_tv" />
+
+        <TextView
+            android:id="@+id/location_frequency_tv"
+            style="@style/style_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Location Frequecy"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/auto_start_info" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/location_frequency_sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            app:layout_constraintLeft_toRightOf="@+id/location_frequency_tv"
+            app:layout_constraintStart_toEndOf="@+id/location_frequency_tv"
+            app:layout_constraintTop_toTopOf="@+id/location_frequency_tv" />
+
+        <TextView
+            style="@style/style_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Set the frequency to send location data"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/location_frequency_tv" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

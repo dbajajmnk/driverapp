@@ -18,7 +18,7 @@ android {
     compileSdk = Versions.COMPILE_SDK
 
     defaultConfig {
-        applicationId ="com.example.driversalerts"
+        applicationId ="com.hbeonlabs.driversalerts"
         minSdk=Versions.MIN_Sdk
         targetSdk=Versions.TARGET_SDK
         versionCode =Versions.VERSION_CODE
