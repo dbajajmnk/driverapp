@@ -15,13 +15,16 @@
         app:layout_constraintHeight_percent="0.5"
        />
 
-    <com.example.driversalerts.utils.AutoFitTextureView
+    <io.getstream.webrtc.android.ui.VideoTextureViewRenderer
         android:id="@+id/preview_view_back"
         android:layout_width="match_parent"
         app:layout_constraintHeight_percent="0.5"
         android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/preview_view"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -124,9 +124,11 @@ dependencies {
     implementation ("androidx.camera:camera-lifecycle:1.3.0-alpha03")
 
 
+    implementation ("io.getstream:stream-webrtc-android:1.0.0")
+    implementation ("io.getstream:stream-webrtc-android-ui:1.0.0")
 
-
-
-
+    implementation("io.socket:socket.io-client:2.1.0") {
+        exclude("org.json", "json")
+    }
 
 }
