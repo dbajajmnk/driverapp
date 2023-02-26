@@ -1,4 +1,4 @@
-package com.example.driversalerts.utils;
+package com.hbeonlabs.driversalerts.utils;
 
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;

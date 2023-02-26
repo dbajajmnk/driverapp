@@ -1,7 +1,8 @@
-package com.example.driversalerts.utils
+package com.hbeonlabs.driversalerts.utils
 
 import android.content.Context
 import android.util.Log
+import com.hbeonlabs.driversalerts.utils.SimpleSdpObserver
 import io.getstream.webrtc.android.ui.VideoTextureViewRenderer
 import io.socket.client.IO
 import io.socket.client.Socket
