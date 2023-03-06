@@ -10,9 +10,7 @@ import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.DialogAlertBinding
 import com.hbeonlabs.driversalerts.utils.setHeightWidthPercent
 
-fun Fragment.dialogDrowsinessAlert(
-
-): Dialog {
+fun Fragment.dialogDrowsinessAlert(): Dialog {
     val dialog = Dialog(requireContext())
     var mediaPlayer: MediaPlayer = MediaPlayer.create(requireContext(), R.raw.alarm)
 

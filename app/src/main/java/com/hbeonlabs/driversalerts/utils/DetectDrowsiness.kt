@@ -1,7 +1,6 @@
 package com.hbeonlabs.driversalerts.utils
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.common.InputImage
@@ -9,37 +8,42 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 
-class DrowsinessAnalyser(
+class DrowsinessDetector(
     private val onDrowsinessDetected: () -> Unit,
     private val onDrowsinessGone: () -> Unit,
 ) : ImageAnalysis.Analyzer {
 
-    private lateinit var faceDetector: FaceDetector
+    private var faceDetector: FaceDetector
     private var drowsyTime = 0L
     private var drowsyThreshold = 1000
     var drowsinessDetected = false
+
+    init {
+        val options = FaceDetectorOptions.Builder()
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+            .setMinFaceSize(0.15f)
+            .enableTracking()
+            .build()
+        faceDetector = FaceDetection.getClient(options)
+    }
 
     override fun analyze(image: ImageProxy) {
         detectDrowsiness(image)
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    fun detectDrowsiness(imageProxy: ImageProxy) {
+    public fun detectDrowsiness(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image ?: return
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-        try {
-            val options = FaceDetectorOptions.Builder()
-                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-                .setMinFaceSize(0.15f)
-                .enableTracking()
-                .build()
-            faceDetector = FaceDetection.getClient(options)
-        } catch (e: Exception) {
-            Log.d("TAG", "detectDrowsiness: " + e.localizedMessage)
-            return
-        }
+        detectDrowsiness(image)
+        imageProxy.close()
+    }
+
+
+    @SuppressLint("UnsafeOptInUsageError")
+    public fun detectDrowsiness(image: InputImage) {
         faceDetector.process(image)
             .addOnSuccessListener { faces ->
                 for (face in faces) {
@@ -67,7 +71,6 @@ class DrowsinessAnalyser(
                         onDrowsinessDetected()
                     }
                 }
-                imageProxy.close()
             }.addOnFailureListener {
                 return@addOnFailureListener
             }

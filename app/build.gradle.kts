@@ -69,9 +69,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
-    implementation(files("libs/autobanh.jar"))
-    implementation(files("libs/base_java.jar"))
-    implementation(files("libs/libjingle_peerconnection.jar"))
+    implementation(files("libs/webrtcLib.aar"))
     kapt(Libs.ROOM_COMPILER)
     implementation(Libs.ROOM_KTX)
     testImplementation(Libs.JUNIT_LIB)
@@ -130,8 +128,5 @@ dependencies {
     implementation ("androidx.camera:camera-view:1.3.0-alpha03")
     implementation ("androidx.camera:camera-lifecycle:1.3.0-alpha03")
 
-    implementation("io.socket:socket.io-client:1.0.0") {
-        exclude("org.json", "json")
-    }
-
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
 }
