@@ -128,5 +128,8 @@ dependencies {
     implementation ("androidx.camera:camera-view:1.3.0-alpha03")
     implementation ("androidx.camera:camera-lifecycle:1.3.0-alpha03")
 
+    implementation("io.socket:socket.io-client:1.0.0") {
+        exclude("org.json", "json")
+    }
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
 }
