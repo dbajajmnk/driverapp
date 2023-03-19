@@ -9,7 +9,8 @@
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/sender_surfaceview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

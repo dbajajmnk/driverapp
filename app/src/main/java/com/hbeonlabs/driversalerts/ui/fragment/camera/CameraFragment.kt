@@ -2,17 +2,16 @@ package com.hbeonlabs.driversalerts.ui.fragment.camera
 
 import android.Manifest
 import android.app.Dialog
-import android.os.Looper
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.*
 import com.google.mlkit.vision.common.InputImage
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentCameraBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
+import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.DrowsinessDetector
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.CAMERA_PERMISSION_REQ_CODE
-import com.shivam.androidwebrtc.tutorial.WebRtcHelper
+import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.EglRenderer.FrameListener
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -23,13 +22,6 @@ import kotlin.concurrent.schedule
 @AndroidEntryPoint
 class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.PermissionCallbacks,
     ActivityCompat.OnRequestPermissionsResultCallback {
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var locationRequest= LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
-    private var locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            //TODO send this location in socket
-        }
-    }
 
     lateinit var drowsinessAlertDialog: Dialog
     private val webRtcHelper = WebRtcHelper()
@@ -41,11 +33,13 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     private val frameListener = FrameListener {
         it?.let { drowsinessDetector.detectDrowsiness(InputImage.fromBitmap(it,0)) }
     }
+    private lateinit var driverLocationProvider: DriverLocationProvider
+
     override fun initView() {
         super.initView()
         drowsinessAlertDialog = dialogDrowsinessAlert()
         askCameraPermission()
-        startLocationUpdate()
+        driverLocationProvider = DriverLocationProvider(requireActivity(),webRtcHelper)
     }
 
     private fun askCameraPermission() {
@@ -86,27 +80,10 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     }
 
 
-    /**
-     * Request location update
-     */
-    private fun startLocationUpdate() {
-        try {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-            fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback,Looper.getMainLooper())
-        } catch (e: SecurityException) {
-            // lacking permission to access location
-        }
-    }
-    /**
-     * Stop location updates
-     */
-    private fun stopLocationsUpdate() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        stopLocationsUpdate()
+        webRtcHelper.onDestroy()
+        driverLocationProvider.onDestroy()
     }
 }
 

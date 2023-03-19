@@ -3,7 +3,7 @@ package com.hbeonlabs.driversalerts.ui.fragment.watcher
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentWatcherBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
-import com.shivam.androidwebrtc.tutorial.WebRtcHelper
+import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 
 class WatcherFragment : BaseFragment<FragmentWatcherBinding>(){
 

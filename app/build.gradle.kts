@@ -56,7 +56,6 @@ android {
     buildFeatures {
         dataBinding = true
     }
-
 }
 
 dependencies {
@@ -69,7 +68,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
-    implementation(files("libs/webrtcLib.aar"))
+    implementation(files("libs/webRtcLib.aar"))
     kapt(Libs.ROOM_COMPILER)
     implementation(Libs.ROOM_KTX)
     testImplementation(Libs.JUNIT_LIB)
