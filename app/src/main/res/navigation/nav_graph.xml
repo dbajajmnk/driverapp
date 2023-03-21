@@ -2,12 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/cameraFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.hbeonlabs.driversalerts.ui.fragment.home.HomeFragment"
-        android:label="CameraFragment" />
+        android:id="@+id/notificationsFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationsFragment"
+        android:label="NotificationsFragment" />
 
     <fragment
         android:id="@+id/cameraFragment"
@@ -15,8 +15,12 @@
         android:label="CameraFragment" />
 
     <fragment
-        android:id="@+id/watcherFragment"
-        android:name="com.hbeonlabs.driversalerts.ui.fragment.watcher.WatcherFragment"
-        android:label="CameraFragment" />
+        android:id="@+id/settingsFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.settings.SettingsFragment"
+        android:label="SettingsFragment" />
 
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.history.HistoryFragment"
+        android:label="HistoryFragment" />
 </navigation>

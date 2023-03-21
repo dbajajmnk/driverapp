@@ -62,24 +62,33 @@ public class WebRtcHelper {
     SurfaceTextureHelper surfaceTextureHelper;
 
     VideoRenderer destVideoRenderer;
-    MediaStream mediaStream;
+    MediaStream frontCameraMediaStream, backCameraMediaStream;
     private PeerConnection peerConnection;
     private EglBase rootEglBase;
     private PeerConnectionFactory factory;
-    private VideoTrack videoTrackFromCamera;
+    private VideoTrack videoTrackFrontCamera;
+    private VideoTrack videoTrackBackCamera;
 
     private SurfaceViewRenderer senderSurfaceViewRenderer;
+    private SurfaceViewRenderer backCameraSVR;
     private SurfaceViewRenderer receiverSurfaceViewRenderer;
-
+    private static WebRtcHelper webRtcHelperInstance;
+    private WebRtcHelper(){}
+    public static WebRtcHelper getInstance(){
+        if(webRtcHelperInstance == null){
+            webRtcHelperInstance = new WebRtcHelper();
+        }
+        return webRtcHelperInstance;
+    }
     public void onDestroy() {
         if (socket != null) {
             sendMessage("bye");
-            stopStreamingVideo();
             socket.disconnect();
         }
+        stopStreamingVideo();
     }
 
-    public void start(Context context, SurfaceViewRenderer senderSurfaceViewRenderer, SurfaceViewRenderer receiverSurfaceViewRenderer) {
+    /*public void start(Context context, SurfaceViewRenderer senderSurfaceViewRenderer, SurfaceViewRenderer receiverSurfaceViewRenderer) {
         this.context = context;
         this.senderSurfaceViewRenderer = senderSurfaceViewRenderer;
         this.receiverSurfaceViewRenderer = receiverSurfaceViewRenderer;
@@ -91,15 +100,42 @@ public class WebRtcHelper {
         initializePeerConnectionFactory();
 
         if(senderSurfaceViewRenderer != null) {
-            createVideoTrackFromCameraAndShowIt();
+            showFrontCameraVideoTrack();
         }
 
         initializePeerConnections();
 
         if(senderSurfaceViewRenderer != null) {
-            startStreamingVideo();
+            startFrontStreamingVideo();
         }
+    }*/
+
+    public void init(Context context) {
+        this.context = context;
+        connectToSignallingServer();
+        initializePeerConnectionFactory();
+        initializePeerConnections();
     }
+
+    public void startFrontStreaming(SurfaceViewRenderer senderSurfaceViewRenderer) {
+        this.senderSurfaceViewRenderer = senderSurfaceViewRenderer;
+        initializeSurfaceViews(this.senderSurfaceViewRenderer);
+        showFrontCameraVideoTrack();
+        startFrontStreamingVideo();
+    }
+
+    public void startBackStreaming(SurfaceViewRenderer backSurfaceViewRenderer) {
+        this.backCameraSVR = backSurfaceViewRenderer;
+        initializeSurfaceViews(this.backCameraSVR);
+        showBackCameraVideoTrack();
+        startBackStreamingVideo();
+    }
+
+    public void startReceiverStreaming(SurfaceViewRenderer receiverSurfaceViewRenderer) {
+        this.receiverSurfaceViewRenderer = receiverSurfaceViewRenderer;
+        initializeSurfaceViews(this.receiverSurfaceViewRenderer);
+    }
+
 
     public void addFrameListener(EglRenderer.FrameListener listener){
         senderSurfaceViewRenderer.addFrameListener(listener,1.0f);
@@ -234,59 +270,71 @@ public class WebRtcHelper {
         socket.emit("message", message);
     }
 
-    private void initializeSurfaceViews() {
-        rootEglBase = EglBase.create();
-        if(senderSurfaceViewRenderer != null) {
-            senderSurfaceViewRenderer.init(rootEglBase.getEglBaseContext(), null);
-            senderSurfaceViewRenderer.setEnableHardwareScaler(true);
-            senderSurfaceViewRenderer.setMirror(true);
-        }
-        if(receiverSurfaceViewRenderer != null) {
-            receiverSurfaceViewRenderer.init(rootEglBase.getEglBaseContext(), null);
-            receiverSurfaceViewRenderer.setEnableHardwareScaler(true);
-            receiverSurfaceViewRenderer.setMirror(true);
-        }
+    private void initializeSurfaceViews(SurfaceViewRenderer surfaceViewRenderer) {
+        surfaceViewRenderer.init(rootEglBase.getEglBaseContext(), null);
+        surfaceViewRenderer.setEnableHardwareScaler(true);
+        surfaceViewRenderer.setMirror(true);
     }
 
     private void initializePeerConnectionFactory() {
+        rootEglBase = EglBase.create();
         PeerConnectionFactory.initializeAndroidGlobals(context, true, true, true);
         factory = new PeerConnectionFactory(null);
         factory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());
     }
 
-    private void createVideoTrackFromCameraAndShowIt() {
+    private void showFrontCameraVideoTrack() {
         audioConstraints = new MediaConstraints();
         VideoCapturer videoCapturer = createVideoCapturer();
         VideoSource videoSource = factory.createVideoSource(videoCapturer);
         videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
 
-        videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
-        videoTrackFromCamera.setEnabled(true);
-        videoTrackFromCamera.addRenderer(new VideoRenderer(senderSurfaceViewRenderer));
+        videoTrackFrontCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
+        videoTrackFrontCamera.setEnabled(true);
+        videoTrackFrontCamera.addRenderer(new VideoRenderer(senderSurfaceViewRenderer));
 
         //create an AudioSource instance
         audioSource = factory.createAudioSource(audioConstraints);
         localAudioTrack = factory.createAudioTrack("101", audioSource);
+    }
 
+    private void showBackCameraVideoTrack() {
+        VideoCapturer videoCapturer = createVideoCapturer();
+        VideoSource videoSource = factory.createVideoSource(videoCapturer);
+        videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
+
+        videoTrackBackCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
+        videoTrackBackCamera.setEnabled(true);
+        videoTrackBackCamera.addRenderer(new VideoRenderer(backCameraSVR));
     }
 
     private void initializePeerConnections() {
         peerConnection = createPeerConnection(factory);
     }
 
-    private void startStreamingVideo() {
+    private void startFrontStreamingVideo() {
         Log.d("CompleteActivity", "startStreamingVideo ");
-        mediaStream = factory.createLocalMediaStream("ARDAMS");
-        mediaStream.addTrack(videoTrackFromCamera);
-        mediaStream.addTrack(localAudioTrack);
-        peerConnection.addStream(mediaStream);
+        frontCameraMediaStream = factory.createLocalMediaStream("ARDAMS");
+        frontCameraMediaStream.addTrack(videoTrackFrontCamera);
+        frontCameraMediaStream.addTrack(localAudioTrack);
+        peerConnection.addStream(frontCameraMediaStream);
+
+        sendMessage("got user media");
+    }
+
+    private void startBackStreamingVideo() {
+        Log.d("CompleteActivity", "startStreamingVideo ");
+        backCameraMediaStream = factory.createLocalMediaStream("ARDAMS");
+        backCameraMediaStream.addTrack(videoTrackBackCamera);
+        backCameraMediaStream.addTrack(localAudioTrack);
+        peerConnection.addStream(backCameraMediaStream);
 
         sendMessage("got user media");
     }
 
     private void stopStreamingVideo() {
-        if(mediaStream != null) {
-            peerConnection.removeStream(mediaStream);
+        if(frontCameraMediaStream != null) {
+            peerConnection.removeStream(frontCameraMediaStream);
             sendMessage("stopStreamingVideo");
         }
     }

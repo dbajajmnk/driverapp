@@ -24,7 +24,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     ActivityCompat.OnRequestPermissionsResultCallback {
 
     lateinit var drowsinessAlertDialog: Dialog
-    private val webRtcHelper = WebRtcHelper()
+    private val webRtcHelper = WebRtcHelper.getInstance()
     private val drowsinessDetector = DrowsinessDetector({
         drowsinessAlertDialog.show()
     }, {
@@ -56,7 +56,10 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     }
 
     private fun doOnCameraPermissionGranted() {
-        webRtcHelper.start(requireContext(), binding.senderSurfaceview,null)
+//        webRtcHelper.start(requireContext(), binding.frontSurfaceview,null)
+        webRtcHelper.init(requireContext())
+        webRtcHelper.startFrontStreaming(binding.frontSurfaceview)
+        //webRtcHelper.startBackStreaming(binding.backSurfaceview)
         Timer().schedule(100, 100) {
             webRtcHelper.addFrameListener(frameListener)
         }
