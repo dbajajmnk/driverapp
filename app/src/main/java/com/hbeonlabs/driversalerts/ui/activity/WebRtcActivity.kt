@@ -70,16 +70,6 @@ class WebRtcActivity : AppCompatActivity() {
         //this.localAudioTrack = this.factory.createAudioTrack("101", this.audioSource)
     }
 
-//    private fun createVideoCapturer(): VideoCapturer? {
-//        val videoCapturer: VideoCapturer? = if (useCamera2()) {
-//            createCameraCapturer(Camera2Enumerator(this))
-//        } else {
-//            createCameraCapturer(Camera1Enumerator(true))
-//        }
-//        return videoCapturer
-//    }
-
-
     private fun createFrontCapturer(enumerator: CameraEnumerator): VideoCapturer? {
         val deviceNames = enumerator.deviceNames
         var var3 = deviceNames

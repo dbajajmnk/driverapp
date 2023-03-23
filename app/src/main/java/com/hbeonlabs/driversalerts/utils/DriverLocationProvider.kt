@@ -1,18 +1,33 @@
 package com.hbeonlabs.driversalerts.utils
 
 import android.app.Activity
+import android.content.Context
 import android.os.Looper
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
 import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import javax.inject.Inject
 
-class DriverLocationProvider(val activity: Activity, val webRtcHelper : WebRtcHelper) {
+class DriverLocationProvider (val activity : AppCompatActivity) {
+
+    private val _speedEvent= MutableStateFlow(0f)
+    val speedEvent: SharedFlow<Float> = _speedEvent
+
     private lateinit var lastLocation: LocationResult
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var locationRequest= LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
     private var locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             //TODO send this location in socket
-            locationResult?.let {
+            activity.lifecycleScope.launchWhenStarted {
+                _speedEvent.emit(locationResult.lastLocation?.speed ?:0f)
+            }
+            locationResult.let {
                 lastLocation = it
                 monitorSpeed()
             }
@@ -22,6 +37,8 @@ class DriverLocationProvider(val activity: Activity, val webRtcHelper : WebRtcHe
     init {
         startLocationUpdate()
     }
+
+
     /**
      * Request location update
      */
@@ -33,6 +50,8 @@ class DriverLocationProvider(val activity: Activity, val webRtcHelper : WebRtcHe
             // lacking permission to access location
         }
     }
+
+
     /**
      * Stop location updates
      */
@@ -45,6 +64,7 @@ class DriverLocationProvider(val activity: Activity, val webRtcHelper : WebRtcHe
     }
 
     fun monitorSpeed(){
+
 
     }
 

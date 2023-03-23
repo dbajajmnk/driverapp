@@ -33,13 +33,13 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     private val frameListener = FrameListener {
         it?.let { drowsinessDetector.detectDrowsiness(InputImage.fromBitmap(it,0)) }
     }
-    private lateinit var driverLocationProvider: DriverLocationProvider
+  //  private lateinit var driverLocationProvider: DriverLocationProvider
 
     override fun initView() {
         super.initView()
         drowsinessAlertDialog = dialogDrowsinessAlert()
         askCameraPermission()
-        driverLocationProvider = DriverLocationProvider(requireActivity(),webRtcHelper)
+       // driverLocationProvider = DriverLocationProvider(requireActivity())
     }
 
     private fun askCameraPermission() {
@@ -86,7 +86,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     override fun onDestroy() {
         super.onDestroy()
         webRtcHelper.onDestroy()
-        driverLocationProvider.onDestroy()
+      //  driverLocationProvider.onDestroy()
     }
 }
 
