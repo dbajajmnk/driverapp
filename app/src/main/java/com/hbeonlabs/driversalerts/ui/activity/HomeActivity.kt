@@ -74,7 +74,6 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
             permissions.entries.forEach {
                 Log.e("LOG_TAG", "${it.key} = ${it.value}")
             }
-
             if (granted) {
                 // your code if permission granted
                 doOnLocationPermissionAvailable()
