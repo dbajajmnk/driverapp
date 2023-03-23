@@ -61,9 +61,11 @@ public class WebRtcHelper {
     AudioTrack localAudioTrack;
     SurfaceTextureHelper surfaceTextureHelper;
 
-    VideoRenderer destVideoRenderer;
+    VideoRenderer frontStreamingRenderer;
+    VideoRenderer backStreamingRenderer;
     MediaStream frontCameraMediaStream, backCameraMediaStream;
-    private PeerConnection peerConnection;
+    private PeerConnection frontStreamingPeerConnection;
+    private PeerConnection backStreamingPeerConnection;
     private EglBase rootEglBase;
     private PeerConnectionFactory factory;
     private VideoTrack videoTrackFrontCamera;
@@ -71,7 +73,8 @@ public class WebRtcHelper {
 
     private SurfaceViewRenderer senderSurfaceViewRenderer;
     private SurfaceViewRenderer backCameraSVR;
-    private SurfaceViewRenderer receiverSurfaceViewRenderer;
+    private SurfaceViewRenderer receiverFrontSVR;
+    private SurfaceViewRenderer receiverBackSVR;
     private static WebRtcHelper webRtcHelperInstance;
     private WebRtcHelper(){}
     public static WebRtcHelper getInstance(){
@@ -131,9 +134,9 @@ public class WebRtcHelper {
         startBackStreamingVideo();
     }
 
-    public void startReceiverStreaming(SurfaceViewRenderer receiverSurfaceViewRenderer) {
-        this.receiverSurfaceViewRenderer = receiverSurfaceViewRenderer;
-        initializeSurfaceViews(this.receiverSurfaceViewRenderer);
+    public void startReceiverFrontStreaming(SurfaceViewRenderer receiverSurfaceViewRenderer) {
+        this.receiverFrontSVR = receiverSurfaceViewRenderer;
+        initializeSurfaceViews(this.receiverFrontSVR);
     }
 
 
@@ -190,14 +193,14 @@ public class WebRtcHelper {
                             if (!isInitiator && !isStarted) {
                                 maybeStart();
                             }
-                            peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(OFFER, message.getString("sdp")));
+                            frontStreamingPeerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(OFFER, message.getString("sdp")));
                             doAnswer();
                         } else if (message.getString("type").equals("answer") && isStarted) {
-                            peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(ANSWER, message.getString("sdp")));
+                            frontStreamingPeerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(ANSWER, message.getString("sdp")));
                         } else if (message.getString("type").equals("candidate") && isStarted) {
                             Log.d(TAG, "connectToSignallingServer: receiving candidates");
                             IceCandidate candidate = new IceCandidate(message.getString("id"), message.getInt("label"), message.getString("candidate"));
-                            peerConnection.addIceCandidate(candidate);
+                            frontStreamingPeerConnection.addIceCandidate(candidate);
                         }
                         /*else if (message === 'bye' && isStarted) {
                         handleRemoteHangup();
@@ -216,10 +219,10 @@ public class WebRtcHelper {
     }
 //MirtDPM4
     private void doAnswer() {
-        peerConnection.createAnswer(new SimpleSdpObserver() {
+        frontStreamingPeerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
-                peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
+                frontStreamingPeerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
                 JSONObject message = new JSONObject();
                 try {
                     message.put("type", "answer");
@@ -249,11 +252,11 @@ public class WebRtcHelper {
                 new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
         sdpMediaConstraints.mandatory.add(
                 new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
-        peerConnection.createOffer(new SimpleSdpObserver() {
+        frontStreamingPeerConnection.createOffer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 Log.d(TAG, "onCreateSuccess: ");
-                peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
+                frontStreamingPeerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
                 JSONObject message = new JSONObject();
                 try {
                     message.put("type", "offer");
@@ -299,7 +302,7 @@ public class WebRtcHelper {
     }
 
     private void showBackCameraVideoTrack() {
-        VideoCapturer videoCapturer = createVideoCapturer();
+        VideoCapturer videoCapturer = createBackCaptor(new Camera1Enumerator(true));
         VideoSource videoSource = factory.createVideoSource(videoCapturer);
         videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
 
@@ -309,7 +312,8 @@ public class WebRtcHelper {
     }
 
     private void initializePeerConnections() {
-        peerConnection = createPeerConnection(factory);
+        frontStreamingPeerConnection = createPeerConnectionForFront(factory);
+        backStreamingPeerConnection = createPeerConnectionForBack(factory);
     }
 
     private void startFrontStreamingVideo() {
@@ -317,7 +321,7 @@ public class WebRtcHelper {
         frontCameraMediaStream = factory.createLocalMediaStream("ARDAMS");
         frontCameraMediaStream.addTrack(videoTrackFrontCamera);
         frontCameraMediaStream.addTrack(localAudioTrack);
-        peerConnection.addStream(frontCameraMediaStream);
+        frontStreamingPeerConnection.addStream(frontCameraMediaStream);
 
         sendMessage("got user media");
     }
@@ -327,19 +331,22 @@ public class WebRtcHelper {
         backCameraMediaStream = factory.createLocalMediaStream("ARDAMS");
         backCameraMediaStream.addTrack(videoTrackBackCamera);
         backCameraMediaStream.addTrack(localAudioTrack);
-        peerConnection.addStream(backCameraMediaStream);
+        backStreamingPeerConnection.addStream(backCameraMediaStream);
 
         sendMessage("got user media");
     }
 
     private void stopStreamingVideo() {
         if(frontCameraMediaStream != null) {
-            peerConnection.removeStream(frontCameraMediaStream);
+            frontStreamingPeerConnection.removeStream(frontCameraMediaStream);
             sendMessage("stopStreamingVideo");
+        }
+        if(backCameraMediaStream != null) {
+            backStreamingPeerConnection.removeStream(backCameraMediaStream);
         }
     }
 
-    private PeerConnection createPeerConnection(PeerConnectionFactory factory) {
+    private PeerConnection createPeerConnectionForFront(PeerConnectionFactory factory) {
         ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
         String URL = "stun:stun.l.google.com:19302";
         iceServers.add(new PeerConnection.IceServer(URL));
@@ -394,13 +401,13 @@ public class WebRtcHelper {
             @Override
             public void onAddStream(MediaStream mediaStream) {
                 Log.d(TAG, "onAddStream: " + mediaStream.videoTracks.size());
-                if(receiverSurfaceViewRenderer != null) {
+                if(receiverFrontSVR != null) {
                     VideoTrack remoteVideoTrack = mediaStream.videoTracks.get(0);
                     AudioTrack remoteAudioTrack = mediaStream.audioTracks.get(0);
                     remoteAudioTrack.setEnabled(true);
                     remoteVideoTrack.setEnabled(true);
-                    destVideoRenderer = new VideoRenderer(receiverSurfaceViewRenderer);
-                    remoteVideoTrack.addRenderer(destVideoRenderer);
+                    frontStreamingRenderer = new VideoRenderer(receiverFrontSVR);
+                    remoteVideoTrack.addRenderer(frontStreamingRenderer);
                 }
 
             }
@@ -412,7 +419,98 @@ public class WebRtcHelper {
                 AudioTrack remoteAudioTrack = mediaStream.audioTracks.get(0);
                 remoteAudioTrack.setEnabled(false);
                 remoteVideoTrack.setEnabled(false);
-                remoteVideoTrack.removeRenderer(destVideoRenderer);
+                remoteVideoTrack.removeRenderer(frontStreamingRenderer);
+                remoteVideoTrack.dispose();
+            }
+
+            @Override
+            public void onDataChannel(DataChannel dataChannel) {
+                Log.d(TAG, "onDataChannel: ");
+            }
+
+            @Override
+            public void onRenegotiationNeeded() {
+                Log.d(TAG, "onRenegotiationNeeded: ");
+            }
+        };
+
+        return factory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
+    }
+
+    private PeerConnection createPeerConnectionForBack(PeerConnectionFactory factory) {
+        ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
+        String URL = "stun:stun.l.google.com:19302";
+        iceServers.add(new PeerConnection.IceServer(URL));
+
+        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
+        MediaConstraints pcConstraints = new MediaConstraints();
+
+        PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
+            @Override
+            public void onSignalingChange(PeerConnection.SignalingState signalingState) {
+                Log.d(TAG, "onSignalingChange: ");
+            }
+
+            @Override
+            public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
+                Log.d(TAG, "onIceConnectionChange: ");
+            }
+
+            @Override
+            public void onIceConnectionReceivingChange(boolean b) {
+                Log.d(TAG, "onIceConnectionReceivingChange: ");
+            }
+
+            @Override
+            public void onIceGatheringChange(PeerConnection.IceGatheringState iceGatheringState) {
+                Log.d(TAG, "onIceGatheringChange: ");
+            }
+
+            @Override
+            public void onIceCandidate(IceCandidate iceCandidate) {
+                Log.d(TAG, "onIceCandidate: ");
+                JSONObject message = new JSONObject();
+
+                try {
+                    message.put("type", "candidate");
+                    message.put("label", iceCandidate.sdpMLineIndex);
+                    message.put("id", iceCandidate.sdpMid);
+                    message.put("candidate", iceCandidate.sdp);
+
+                    Log.d(TAG, "onIceCandidate: sending candidate " + message);
+                    sendMessage(message);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onIceCandidatesRemoved(IceCandidate[] iceCandidates) {
+                Log.d(TAG, "onIceCandidatesRemoved: ");
+            }
+
+            @Override
+            public void onAddStream(MediaStream mediaStream) {
+                Log.d(TAG, "onAddStream: " + mediaStream.videoTracks.size());
+                if(receiverFrontSVR != null) {
+                    VideoTrack remoteVideoTrack = mediaStream.videoTracks.get(0);
+                    AudioTrack remoteAudioTrack = mediaStream.audioTracks.get(0);
+                    remoteAudioTrack.setEnabled(true);
+                    remoteVideoTrack.setEnabled(true);
+                    backStreamingRenderer = new VideoRenderer(receiverBackSVR);
+                    remoteVideoTrack.addRenderer(backStreamingRenderer);
+                }
+
+            }
+
+            @Override
+            public void onRemoveStream(MediaStream mediaStream) {
+                Log.d(TAG, "onRemoveStream: ");
+                VideoTrack remoteVideoTrack = mediaStream.videoTracks.get(0);
+                AudioTrack remoteAudioTrack = mediaStream.audioTracks.get(0);
+                remoteAudioTrack.setEnabled(false);
+                remoteVideoTrack.setEnabled(false);
+                remoteVideoTrack.removeRenderer(backStreamingRenderer);
                 remoteVideoTrack.dispose();
             }
 
@@ -468,6 +566,32 @@ public class WebRtcHelper {
 
     private boolean useCamera2() {
         return Camera2Enumerator.isSupported(context);
+    }
+
+
+    private VideoCapturer createBackCaptor(CameraEnumerator enumerator){
+        String[] deviceNames = enumerator.getDeviceNames();
+
+        // First, try to find back facing camera
+        for (String deviceName : deviceNames) {
+            if (enumerator.isBackFacing(deviceName)) {
+                VideoCapturer videoCapturer = enumerator.createCapturer(deviceName, null);
+                if (videoCapturer != null) {
+                    return videoCapturer;
+                }
+            }
+        }
+
+        // back facing camera not found, try something else
+        for (String deviceName : deviceNames) {
+            if (!enumerator.isBackFacing(deviceName)) {
+                VideoCapturer videoCapturer = enumerator.createCapturer(deviceName, null);
+                if (videoCapturer != null) {
+                    return videoCapturer;
+                }
+            }
+        }
+        return null;
     }
 
 }
