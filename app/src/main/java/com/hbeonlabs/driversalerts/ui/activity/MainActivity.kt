@@ -14,6 +14,7 @@ import com.hbeonlabs.driversalerts.ui.fragment.history.HistoryFragment
 import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationsFragment
 import com.hbeonlabs.driversalerts.ui.fragment.settings.SettingsFragment
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.appcompat.widget.Toolbar
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
@@ -23,7 +24,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             System.loadLibrary("jingle_peerconnection_so")
         }
     }*/
+
+//    private lateinit var myToolbar: Toolbar
+
     override fun getLayoutResourceId(): Int {
+
         return R.layout.activity_main
     }
 
@@ -34,13 +39,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val navHostFrag =
             supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFrag.navController
+//        myToolbar = findViewById(R.id.custom_toolbar);
+
 
         binding.bottomNav.setOnItemSelectedListener {
+
             when (it.itemId) {
                 R.id.camera_menu -> {
                     navController.navigate(R.id.cameraFragment)
                     true
                 }
+
                 R.id.history_menu -> {
                     navController.navigate(R.id.historyFragment)
                     true
@@ -57,6 +66,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     false
                 }
             }
+
         }
+
+    }
+
+    override fun onBackPressed() {
+        navController.navigate(R.id.cameraFragment)
     }
 }

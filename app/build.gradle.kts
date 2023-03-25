@@ -55,6 +55,7 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        viewBinding = true
     }
 }
 
@@ -69,6 +70,11 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
     implementation(files("libs/webRtcLib.aar"))
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.4.1")
+    implementation("androidx.navigation:navigation-ui-ktx:2.4.1")
     kapt(Libs.ROOM_COMPILER)
     implementation(Libs.ROOM_KTX)
     testImplementation(Libs.JUNIT_LIB)

@@ -3,18 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/camera_menu"
-        android:icon="@drawable/ic_setting"
-        android:title="Camera" />
+        android:icon="@drawable/dashboard_icon"
+        android:title="Dashboard" />
 
     <item android:id="@+id/history_menu"
-        android:icon="@drawable/ic_setting"
+        android:icon="@drawable/history_icon"
         android:title="History" />
 
     <item android:id="@+id/notification_menu"
-        android:icon="@drawable/download"
+        android:icon="@drawable/notification_icon"
         android:title="Notifications" />
 
+    <item android:id="@+id/attendance_menu"
+        android:icon="@drawable/attendance_icon"
+        android:title="Attendance" />
+
     <item android:id="@+id/setting_menu"
-        android:icon="@drawable/ic_setting"
+        android:icon="@drawable/settings_icon"
         android:title="Settings" />
 </menu>
