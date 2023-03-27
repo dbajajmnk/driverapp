@@ -35,7 +35,12 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
         binding.btnDriver.setOnClickListener(this)
         binding.btnAdmin.setOnClickListener(this)
 
-        checkPermissions()
+        if (checkPermissions())
+        {
+            doOnLocationPermissionAvailable()
+        }
+        else{
+            requestPermissions()}
 
     }
 
@@ -52,13 +57,10 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
 
 
         private fun checkPermissions(): Boolean {
-            return ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-
-            // If we want background location on Android 10.0 and higher, use:
-            // ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
+            return checkSelfPermission(
+                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(
+                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         }
 
         // request for permissions
@@ -88,9 +90,13 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
 
         lifecycleScope.launchWhenStarted {
             locationProvider.speedEvent.collectLatest {
-                binding.tvSpeed.text = it.toString()
+                binding.tvSpeed.text = "Speed $it"
             }
-
+        }
+        lifecycleScope.launchWhenStarted {
+            locationProvider.accelerationEvent.collectLatest {
+                binding.tvSpeed.text = "Acceleration Using Sensor $it"
+            }
         }
     }
 
