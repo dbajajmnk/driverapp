@@ -66,6 +66,7 @@ class DriverLocationProvider (val activity : AppCompatActivity) {
 
     init {
         startLocationUpdate()
+        getAccelerometerData()
     }
 
 
