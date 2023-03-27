@@ -70,8 +70,4 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
 
     }
-
-    override fun onBackPressed() {
-        navController.navigate(R.id.cameraFragment)
-    }
 }
