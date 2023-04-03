@@ -40,9 +40,9 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
             doOnLocationPermissionAvailable()
         }
         else{
-            requestPermissions()}
-
-    }
+            requestPermissions()
+        }
+        }
 
     override fun onClick(v: View?) {
         when(v?.id){
@@ -87,15 +87,15 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
 
     private fun doOnLocationPermissionAvailable() {
         locationProvider = DriverLocationProvider(this)
-
+        locationProvider.calculateAccelerationWithinThreshold()
         lifecycleScope.launchWhenStarted {
             locationProvider.speedEvent.collectLatest {
-                binding.tvSpeed.text = "Speed $it"
+                binding.tvSpeed.text = " Car Speed $it"
             }
         }
         lifecycleScope.launchWhenStarted {
-            locationProvider.accelerationEvent.collectLatest {
-                binding.tvSpeed.text = "Acceleration Using Sensor $it"
+            locationProvider.accelerationEvent.collect {
+                binding.tvAcceleration.text = "Acceleration $it"
             }
         }
     }
