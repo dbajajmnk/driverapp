@@ -30,7 +30,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun initView() {
         super.initView()
 
-        // ======== Connecting Nav graph to Fragment
+        // ======== Connecting Nav graph to Fragment =========
         val navHostFrag =
             supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFrag.navController

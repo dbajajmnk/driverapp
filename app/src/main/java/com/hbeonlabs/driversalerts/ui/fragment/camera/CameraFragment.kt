@@ -37,7 +37,10 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
 
     override fun initView() {
         super.initView()
-        drowsinessAlertDialog = dialogDrowsinessAlert()
+        drowsinessAlertDialog = dialogDrowsinessAlert(
+            headerText = "Drowsy Alert!!!",
+            descText = "Tracker suspects that the driver is experiencing Drowsiness. Touch OK Stop the Alarm"
+        )
         askCameraPermission()
        // driverLocationProvider = DriverLocationProvider(requireActivity())
     }

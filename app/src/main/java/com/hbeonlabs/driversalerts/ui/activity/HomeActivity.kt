@@ -1,6 +1,7 @@
 package com.hbeonlabs.driversalerts.ui.activity
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentHomeBinding
+import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import kotlinx.coroutines.flow.collectLatest
@@ -23,6 +25,7 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
 
     lateinit var binding: FragmentHomeBinding
     lateinit var locationProvider : DriverLocationProvider
+    lateinit var dialog : Dialog
 
     private var locationPermissions = arrayOf(
         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -30,6 +33,7 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        dialog =  dialogDrowsinessAlert(headerText = "Alert!", "You have crossed the Speed Limit")
         //askLocationPermission()
         binding = DataBindingUtil.setContentView(this, R.layout.fragment_home)
         binding.btnDriver.setOnClickListener(this)
@@ -91,6 +95,13 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
         lifecycleScope.launchWhenStarted {
             locationProvider.speedEvent.collectLatest {
                 binding.tvSpeed.text = " Car Speed $it"
+                if (it>50f)
+                {
+                  dialog.show()
+                }
+                else{
+                    dialog.dismiss()
+                }
             }
         }
         lifecycleScope.launchWhenStarted {
