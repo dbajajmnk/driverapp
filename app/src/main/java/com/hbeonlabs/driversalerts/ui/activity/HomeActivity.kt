@@ -14,14 +14,22 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.hbeonlabs.driversalerts.R
+import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.databinding.FragmentHomeBinding
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import pub.devrel.easypermissions.EasyPermissions
+import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class HomeActivity : AppCompatActivity() , View.OnClickListener{
+
+    @Inject
+    lateinit var speedDao: LocationAndSpeedDao
 
     lateinit var binding: FragmentHomeBinding
     lateinit var locationProvider : DriverLocationProvider
@@ -45,6 +53,12 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
         }
         else{
             requestPermissions()
+        }
+
+        lifecycleScope.launchWhenStarted {
+          speedDao.getAllCommunityChat().collectLatest {
+              Log.d("TAG", "List: "+it.toString())
+          }
         }
         }
 
@@ -90,7 +104,12 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
     }
 
     private fun doOnLocationPermissionAvailable() {
-        locationProvider = DriverLocationProvider(this)
+        locationProvider = DriverLocationProvider(this){
+            Log.d("TAG", "doOnLocationPermissionAvailable: "+it.toString())
+            lifecycleScope.launchWhenStarted {
+                speedDao.addData(it)
+            }
+        }
         locationProvider.calculateAccelerationWithinThreshold()
         lifecycleScope.launchWhenStarted {
             locationProvider.speedEvent.collectLatest {

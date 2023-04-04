@@ -62,7 +62,7 @@ class AdminActivity : AppCompatActivity(){
     }
 
     private fun doOnLocationPermissionAvailable() {
-        locationProvider = DriverLocationProvider(this)
+        locationProvider = DriverLocationProvider(this){}
 
         lifecycleScope.launchWhenStarted {
             locationProvider.speedEvent.collectLatest {

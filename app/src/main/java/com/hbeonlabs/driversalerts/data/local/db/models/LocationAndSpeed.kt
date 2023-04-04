@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 @Entity
 data class LocationAndSpeed(
     @PrimaryKey(autoGenerate = false)
-    val id: String,
+    val timeInMills:String,
     val locationLatitude :String,
     val locationLongitude:String,
     val speed:String,
-    val timeInMills:String
+
 )

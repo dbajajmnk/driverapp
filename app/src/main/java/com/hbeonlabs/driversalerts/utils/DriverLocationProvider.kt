@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
+import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -20,9 +21,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
-class DriverLocationProvider (val activity : AppCompatActivity) {
+class DriverLocationProvider (val activity : AppCompatActivity, onLocationChange:(locationData:LocationAndSpeed)->Unit ) {
     private lateinit var sensorManager: SensorManager
     private lateinit var lastLocation: LocationResult
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -47,10 +49,16 @@ class DriverLocationProvider (val activity : AppCompatActivity) {
                 val speed = locationResult.lastLocation?.speed ?:0f
                 _speedEvent.emit(speed)
                 _speedEvent2.emit(speed)
+                onLocationChange(LocationAndSpeed(
+                    locationLatitude = locationResult.lastLocation?.latitude.toString(),
+                    locationLongitude = locationResult.lastLocation?.longitude.toString(),
+                    speed = locationResult.lastLocation?.speed.toString(),
+                    timeInMills = android.icu.util.Calendar.getInstance().timeInMillis.toString()
+                ))
             }
             locationResult.let {
                 lastLocation = it
-                monitorSpeed()
+
             }
         }
     }

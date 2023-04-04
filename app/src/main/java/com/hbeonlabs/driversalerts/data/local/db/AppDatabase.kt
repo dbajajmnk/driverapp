@@ -8,7 +8,7 @@ import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
     entities = [
         LocationAndSpeed::class
                ],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase :RoomDatabase(){
     abstract fun getLocationAndSpeedDao(): LocationAndSpeedDao
