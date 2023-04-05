@@ -1,5 +1,6 @@
 package com.hbeonlabs.driversalerts.ui.activity
 
+import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -21,18 +22,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun initView() {
         super.initView()
 
-        val navHostFrag =
-            supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+        val navHostFrag = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFrag.navController
-
-        val toolbar = findViewById<Toolbar>(R.id.custom_toolbar)
-        setSupportActionBar(toolbar)
 
         binding.bottomNav.setOnItemSelectedListener {
 
             when (it.itemId) {
                 R.id.camera_menu -> {
-                    navController.navigate(R.id.cameraFragment)
+                    navController.navigate(R.id.dashboardFragment)
                     true
                 }
 
@@ -55,9 +52,5 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         }
 
-    }
-
-    override fun onBackPressed() {
-        navController.navigate(R.id.cameraFragment)
     }
 }

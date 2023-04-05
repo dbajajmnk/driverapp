@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_bg">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <CheckBox
+            android:id="@+id/overspeeding_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:buttonTint="@color/blue"
+            android:checked="false"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:buttonCompat="@null"
+            app:layout_constraintBottom_toBottomOf="@+id/my_checkbox_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/my_checkbox_text" />
+
+        <TextView
+            android:id="@+id/my_checkbox_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/overspeeding_checkbox"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="48dp"
+            android:text="Over Speeding"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Seat belt"
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/my_checkbox_text"
+            app:layout_constraintTop_toBottomOf="@+id/my_checkbox_text" />
+
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Rash driving"
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:textStyle="bold"
+
+            app:layout_constraintStart_toStartOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Rash driving"
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/textView5"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+        <CheckBox
+            android:id="@+id/seatbelt_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical"
+            android:buttonTint="@color/blue"
+            android:checked="false"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:buttonCompat="@null"
+            app:layout_constraintEnd_toEndOf="@+id/overspeeding_checkbox"
+            app:layout_constraintStart_toStartOf="@+id/overspeeding_checkbox"
+            app:layout_constraintTop_toBottomOf="@+id/overspeeding_checkbox" />
+
+        <CheckBox
+            android:id="@+id/rashdriving_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical"
+            android:buttonTint="@color/blue"
+            android:checked="false"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:buttonCompat="@null"
+            app:layout_constraintEnd_toEndOf="@+id/seatbelt_checkbox"
+            app:layout_constraintStart_toStartOf="@+id/seatbelt_checkbox"
+            app:layout_constraintTop_toBottomOf="@+id/seatbelt_checkbox" />
+
+        <CheckBox
+            android:id="@+id/drowsiness_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical"
+            android:buttonTint="@color/blue"
+            android:checked="false"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:buttonCompat="@null"
+            app:layout_constraintEnd_toEndOf="@+id/rashdriving_checkbox"
+            app:layout_constraintStart_toStartOf="@+id/rashdriving_checkbox"
+            app:layout_constraintTop_toBottomOf="@+id/rashdriving_checkbox" />
+
+        <Button
+            android:id="@+id/apply_filters"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Apply Filter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <Button
+            android:id="@+id/myButton"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/bottomsheet_background"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="Clear Filters"
+            android:textColor="@color/blue"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/apply_filters"
+            app:layout_constraintStart_toStartOf="@+id/apply_filters"
+            app:layout_constraintTop_toBottomOf="@+id/apply_filters" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
