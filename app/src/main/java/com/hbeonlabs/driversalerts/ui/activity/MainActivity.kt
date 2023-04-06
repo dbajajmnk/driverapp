@@ -41,6 +41,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     navController.navigate(R.id.notificationsFragment)
                     true
                 }
+
+                R.id.attendance_menu ->{
+                    navController.navigate(R.id.attendancedatesFragment)
+                    true
+                }
+
                 R.id.setting_menu -> {
                     navController.navigate(R.id.settingsFragment)
                     true

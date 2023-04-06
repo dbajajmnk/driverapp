@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
 
-@Suppress("DEPRECATION")
 class NotificationAdapter(private val items: List<Item>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
 

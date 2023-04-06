@@ -1,19 +1,16 @@
 package com.hbeonlabs.driversalerts.ui.fragment.notification
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentWarningsBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
+
 
 class WarningsFragment : BaseFragment<FragmentWarningsBinding>(),NotificationAdapter.OnItemClickListener{
 
@@ -32,27 +29,20 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(),NotificationAda
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_warnings, container, false)
 
-
-        //val navHostFragment = childFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
-        //val navController = navHostFragment.navController
-
         recyclerView = view.findViewById(R.id.recyclerview)
         itemAdapter = NotificationAdapter(getItems(), object : NotificationAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
-                /*val childFragment = NotificationDisplay()
-                val fragmentManager = requireActivity().supportFragmentManager
-                val currentFragment = fragmentManager.findFragmentById(R.id.navHostFragment)
 
-                if (currentFragment != null) {
-                    fragmentManager.beginTransaction()
-                        .replace(R.id.navHostFragment, childFragment)
-                        .commit()
+                val navController = NavHostFragment.findNavController(requireParentFragment())
 
-                    Log.d("Fragment", currentFragment.toString() )
-                }*/
+         //       val bundle = Bundle()
+/*                val passList: MutableList<String> = ArrayList()
+                passList.add(itemAdapter[position].uptext)
+                passList.add("item 2")*/
 
-/*                val action = MyFragmentDirections.actionMyFragmentToOtherFragment()
-                findNavController().navigate(action)*/
+//                bundle.putString("key","value")
+
+                navController.navigate(R.id.notificationDisplay);
             }
         })
 

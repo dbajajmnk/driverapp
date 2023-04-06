@@ -6,12 +6,26 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
+import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationAdapter
 
-class HistoryDatesAdapter(private val items: List<ItemD>) :
+class HistoryDatesAdapter(private val items: List<ItemD>,private val listener: NotificationAdapter.OnItemClickListener) :
     RecyclerView.Adapter<HistoryDatesAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         val titleTextView: TextView = view.findViewById(R.id.time)
+
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                listener.onItemClick(position)
+            }
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,5 +41,9 @@ class HistoryDatesAdapter(private val items: List<ItemD>) :
 
     override fun getItemCount(): Int {
         return items.size
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
     }
 }

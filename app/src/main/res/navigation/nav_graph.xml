@@ -41,4 +41,22 @@
         android:label="NotificationDisplay"
         />
 
+    <fragment
+        android:id="@+id/attendancedatesFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.attendance.AttendancedatesFragment"
+        android:label="NotificationDisplay"
+        />
+
+    <fragment
+        android:id="@+id/historyTimeFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.history.HistoryTimeFragment"
+        android:label="NotificationDisplay"
+        />
+
+    <fragment
+        android:id="@+id/attendanceFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.attendance.AttendanceFragment"
+        android:label="AttendanceFragment"
+        />
+
 </navigation>
