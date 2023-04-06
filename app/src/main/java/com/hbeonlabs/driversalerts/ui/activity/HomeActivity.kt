@@ -1,9 +1,14 @@
 package com.hbeonlabs.driversalerts.ui.activity
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.Dialog
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.util.Calendar
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,6 +22,7 @@ import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.databinding.FragmentHomeBinding
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
+import com.hbeonlabs.driversalerts.utils.DailyAlarmReceiver
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import dagger.hilt.android.AndroidEntryPoint
@@ -128,6 +134,31 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
                 binding.tvAcceleration.text = "Acceleration $it"
             }
         }
+    }
+
+
+    fun setADailyAlarm()
+    {
+        val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        // Intent part
+        val intent = Intent(applicationContext, DailyAlarmReceiver::class.java)
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(applicationContext,
+                1212121, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getBroadcast(
+                applicationContext,
+                1212121, intent, PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+        val calander = Calendar.getInstance()
+        calander.set(Calendar.HOUR_OF_DAY,8)
+        calander.set(Calendar.MINUTE,0)
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calander.timeInMillis,
+            AlarmManager.INTERVAL_DAY ,
+            pendingIntent)
     }
 
 }
