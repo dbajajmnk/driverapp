@@ -14,7 +14,6 @@ import com.hbeonlabs.driversalerts.utils.constants.AppConstants.CAMERA_PERMISSIO
 import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.EglRenderer.FrameListener
-import org.webrtc.SurfaceViewRenderer
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
@@ -34,16 +33,16 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     private val frameListener = FrameListener {
         it?.let { drowsinessDetector.detectDrowsiness(InputImage.fromBitmap(it,0)) }
     }
-    private lateinit var driverLocationProvider: DriverLocationProvider
-    private val recorder = Recorder()
+  //  private lateinit var driverLocationProvider: DriverLocationProvider
 
     override fun initView() {
         super.initView()
-        drowsinessAlertDialog = dialogDrowsinessAlert()
+        drowsinessAlertDialog = dialogDrowsinessAlert(
+            headerText = "Drowsy Alert!!!",
+            descText = "Tracker suspects that the driver is experiencing Drowsiness. Touch OK Stop the Alarm"
+        )
         askCameraPermission()
-        driverLocationProvider = DriverLocationProvider(requireActivity(),webRtcHelper)
-        //recorder.init(binding.frontSurfaceview)
-        //recorder.toggleRecording(true)
+       // driverLocationProvider = DriverLocationProvider(requireActivity())
     }
 
     private fun askCameraPermission() {
@@ -60,13 +59,13 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     }
 
     private fun doOnCameraPermissionGranted() {
+//        webRtcHelper.start(requireContext(), binding.frontSurfaceview,null)
         webRtcHelper.init(requireContext())
         webRtcHelper.startFrontStreaming(binding.frontSurfaceview)
-        webRtcHelper.startBackStreaming(binding.backSurfaceview)
-        webRtcHelper.startVideoStreaming()
-//        Timer().schedule(100, 100) {
-//            webRtcHelper.addFrameListener(frameListener)
-//        }
+        //webRtcHelper.startBackStreaming(binding.backSurfaceview)
+        Timer().schedule(100, 100) {
+            webRtcHelper.addFrameListener(frameListener)
+        }
     }
 
 
@@ -90,7 +89,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     override fun onDestroy() {
         super.onDestroy()
         webRtcHelper.onDestroy()
-        driverLocationProvider.onDestroy()
+      //  driverLocationProvider.onDestroy()
     }
 }
 
