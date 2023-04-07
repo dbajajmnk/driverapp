@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import com.hbeonlabs.driversalerts.R
 
 import com.hbeonlabs.driversalerts.databinding.FragmentSettingsBinding
@@ -34,24 +35,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(){
 
         titleView.text = "Settings"
 
- /*       setuptextView.setOnClickListener {
-            val childFragment = SettingsConfigureFragment()
-            val fragmentManager = requireActivity().supportFragmentManager
-            val currentFragment = fragmentManager.findFragmentById(R.id.navHostFragment)
+      setuptextView.setOnClickListener {
+          val navController = NavHostFragment.findNavController(requireParentFragment())
+          navController.navigate(R.id.settingsConfigureFragment);
 
-            if (currentFragment != null) {
-                fragmentManager.beginTransaction()
-                    .hide(currentFragment)
-                    .replace(R.id.navHostFragment, childFragment)
-                    .commit()
-
-                fragmentManager.beginTransaction()
-                    .show(childFragment)
-                    .commit()
-            }else{
-
-            }
-        }*/
+        }
 
         return view
     }
