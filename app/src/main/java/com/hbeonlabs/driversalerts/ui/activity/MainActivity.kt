@@ -1,7 +1,6 @@
 package com.hbeonlabs.driversalerts.ui.activity
 
-import android.widget.FrameLayout
-import androidx.appcompat.widget.Toolbar
+import android.content.Intent
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.hbeonlabs.driversalerts.R
@@ -13,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var navController: NavController
+    var count = 0;
 
     override fun getLayoutResourceId(): Int {
 
@@ -58,5 +58,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         }
 
+
+    }
+
+    override fun onBackPressed() {
+        if(count == 0) {
+            //binding.bottomNav.selectedItemId(R.id.camera_menu);
+            navController.navigate(R.id.cameraFragment)
+        }else{
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
+        count = count + 1
     }
 }

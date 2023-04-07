@@ -15,8 +15,10 @@
         app:srcCompat="@drawable/icon_app" />
 
     <ImageView
+        android:id="@+id/notification_dash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="true"
         app:srcCompat="@drawable/notification_icon" />
 
 </androidx.appcompat.widget.Toolbar>

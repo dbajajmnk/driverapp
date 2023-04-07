@@ -50,7 +50,7 @@ class LogsFragment : BaseFragment<FragmentLogsBinding>() , NotificationAdapter.O
     }
 
     override fun onItemClick(position: Int) {
-        Toast.makeText(requireContext(),"Item $position clicked", Toast.LENGTH_SHORT)
+        Toast.makeText(requireContext(),"ItemAttendance $position clicked", Toast.LENGTH_SHORT)
     }
 
 }

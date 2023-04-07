@@ -56,8 +56,8 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(),NotificationAda
 
     private fun getItems(): List<Item> {
         return listOf(
-            Item("Bus Driver",R.drawable.image_person,"Item 1","Speed is over 65 near to metro station saket | Location", "17-02-2-23 at 3:54 PM"),
-            Item("Bus Driver",R.drawable.image_person,"Item 2","Speed is over 65 near to metro station saket | Location","17-02-2-23 at 3:54 PM"),
+            Item("Bus Driver",R.drawable.image_person,"ItemAttendance 1","Speed is over 65 near to metro station saket | Location", "17-02-2-23 at 3:54 PM"),
+            Item("Bus Driver",R.drawable.image_person,"ItemAttendance 2","Speed is over 65 near to metro station saket | Location","17-02-2-23 at 3:54 PM"),
         )
     }
 

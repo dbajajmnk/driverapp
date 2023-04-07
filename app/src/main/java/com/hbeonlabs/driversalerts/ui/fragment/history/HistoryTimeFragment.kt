@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
@@ -32,6 +33,9 @@ class HistoryTimeFragment : BaseFragment<FragmentHistoryBinding>(){
         recyclerView = view.findViewById(R.id.recyclerview_time)
         itemAdapter = HistoryTimeAdapter(getItems())
         recyclerView.addItemDecoration(itemDecoration)
+
+        val title = view.findViewById<TextView>(R.id.title_frag);
+        title.setText("History")
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(context)

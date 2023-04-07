@@ -3,6 +3,8 @@ package com.hbeonlabs.driversalerts.ui.fragment.camera
 import android.Manifest
 import android.app.Dialog
 import androidx.core.app.ActivityCompat
+import androidx.navigation.fragment.NavHostFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.mlkit.vision.common.InputImage
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentCameraBinding
@@ -14,11 +16,10 @@ import com.hbeonlabs.driversalerts.utils.constants.AppConstants.CAMERA_PERMISSIO
 import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.EglRenderer.FrameListener
-import org.webrtc.SurfaceViewRenderer
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
-import kotlin.concurrent.schedule
+
 
 @AndroidEntryPoint
 class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.PermissionCallbacks,
@@ -44,6 +45,13 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         driverLocationProvider = DriverLocationProvider(requireActivity(),webRtcHelper)
         //recorder.init(binding.frontSurfaceview)
         //recorder.toggleRecording(true)
+
+
+
+        binding.include2.notificationDash.setOnClickListener{
+            val navController = NavHostFragment.findNavController(requireParentFragment())
+            navController.navigate(R.id.notificationsFragment);
+        }
     }
 
     private fun askCameraPermission() {

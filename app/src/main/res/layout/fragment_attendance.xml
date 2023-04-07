@@ -10,13 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/toolbar_frag"
+        <include
+            android:id="@+id/include6"
+            layout="@layout/toolbar_frag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
@@ -56,12 +57,83 @@
 
         </com.google.android.material.tabs.TabLayout>
 
+        <LinearLayout
+            android:id="@+id/background"
+            android:layout_width="375dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:background="#2E4D76"
+            app:layout_constraintEnd_toEndOf="@+id/tab_layout"
+            app:layout_constraintStart_toStartOf="@+id/tab_layout"
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="393dp"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Name "
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/Class"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.516" />
+
+                <TextView
+                    android:id="@+id/Class"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="96dp"
+                    android:text="Class"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/Name"
+                    app:layout_constraintStart_toEndOf="@+id/Name"
+                    app:layout_constraintTop_toTopOf="@+id/Name"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/in_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:text="In Time"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/Class"
+                    app:layout_constraintStart_toEndOf="@+id/Class"
+                    app:layout_constraintTop_toTopOf="@+id/Class"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/out_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Out Time"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/in_time"
+                    app:layout_constraintStart_toEndOf="@+id/in_time"
+                    app:layout_constraintTop_toTopOf="@+id/in_time"
+                    app:layout_constraintVertical_bias="0.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="409dp"
+            android:id="@+id/recyclerview"
+            android:layout_width="375dp"
             android:layout_height="537dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/background" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

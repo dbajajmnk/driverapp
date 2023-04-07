@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/background"
+        android:layout_width="375dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center_horizontal"
+        android:background="#F0F8FE">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/Name"
+                android:layout_width="120dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:text="Ravi Ranjan Tiwari"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.516" />
+
+            <TextView
+                android:id="@+id/Class"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="12A"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/Name"
+                app:layout_constraintStart_toEndOf="@+id/Name"
+                app:layout_constraintTop_toTopOf="@+id/Name" />
+
+            <TextView
+                android:id="@+id/in_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:text="2:20 PM"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/Class"
+                app:layout_constraintStart_toEndOf="@+id/Class"
+                app:layout_constraintTop_toTopOf="@+id/Class"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/out_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
+                android:text="3:10 PM"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/in_time"
+                app:layout_constraintStart_toEndOf="@+id/in_time"
+                app:layout_constraintTop_toTopOf="@+id/in_time"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
