@@ -2,7 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/cameraFragment">
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.dashboard.DashboardFragment"
+        android:label="DashboardFragment"/>
 
     <fragment
         android:id="@+id/notificationsFragment"
@@ -23,4 +28,35 @@
         android:id="@+id/historyFragment"
         android:name="com.hbeonlabs.driversalerts.ui.fragment.history.HistoryFragment"
         android:label="HistoryFragment" />
+
+    <fragment
+            android:id="@+id/settingsConfigureFragment"
+            android:name="com.hbeonlabs.driversalerts.ui.fragment.settings.SettingsConfigureFragment"
+            android:label="SettingsConfigure"
+            />
+
+    <fragment
+        android:id="@+id/notificationDisplay"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationDisplay"
+        android:label="NotificationDisplay"
+        />
+
+    <fragment
+        android:id="@+id/attendancedatesFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.attendance.AttendancedatesFragment"
+        android:label="NotificationDisplay"
+        />
+
+    <fragment
+        android:id="@+id/historyTimeFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.history.HistoryTimeFragment"
+        android:label="NotificationDisplay"
+        />
+
+    <fragment
+        android:id="@+id/attendanceFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.attendance.AttendanceFragment"
+        android:label="AttendanceFragment"
+        />
+
 </navigation>

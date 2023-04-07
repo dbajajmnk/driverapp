@@ -75,6 +75,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.4.1")
     implementation("androidx.navigation:navigation-ui-ktx:2.4.1")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     kapt(Libs.ROOM_COMPILER)
     implementation(Libs.ROOM_KTX)
     testImplementation(Libs.JUNIT_LIB)
@@ -132,9 +133,11 @@ dependencies {
     implementation ("androidx.camera:camera-camera2:1.3.0-alpha03")
     implementation ("androidx.camera:camera-view:1.3.0-alpha03")
     implementation ("androidx.camera:camera-lifecycle:1.3.0-alpha03")
-
+    implementation ("com.google.android.material:material:1.4.0")
     implementation("io.socket:socket.io-client:1.0.0") {
         exclude("org.json", "json")
     }
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
 }
