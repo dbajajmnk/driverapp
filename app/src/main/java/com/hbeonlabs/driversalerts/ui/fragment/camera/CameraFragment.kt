@@ -14,6 +14,7 @@ import com.hbeonlabs.driversalerts.utils.constants.AppConstants.CAMERA_PERMISSIO
 import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.EglRenderer.FrameListener
+import org.webrtc.SurfaceViewRenderer
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
@@ -34,12 +35,15 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         it?.let { drowsinessDetector.detectDrowsiness(InputImage.fromBitmap(it,0)) }
     }
     private lateinit var driverLocationProvider: DriverLocationProvider
+    private val recorder = Recorder()
 
     override fun initView() {
         super.initView()
         drowsinessAlertDialog = dialogDrowsinessAlert()
         askCameraPermission()
         driverLocationProvider = DriverLocationProvider(requireActivity(),webRtcHelper)
+        //recorder.init(binding.frontSurfaceview)
+        //recorder.toggleRecording(true)
     }
 
     private fun askCameraPermission() {
@@ -56,10 +60,10 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     }
 
     private fun doOnCameraPermissionGranted() {
-//        webRtcHelper.start(requireContext(), binding.frontSurfaceview,null)
         webRtcHelper.init(requireContext())
         webRtcHelper.startFrontStreaming(binding.frontSurfaceview)
         //webRtcHelper.startBackStreaming(binding.backSurfaceview)
+        webRtcHelper.startVideoStreaming()
         Timer().schedule(100, 100) {
             webRtcHelper.addFrameListener(frameListener)
         }

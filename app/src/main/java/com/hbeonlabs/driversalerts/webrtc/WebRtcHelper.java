@@ -1,12 +1,16 @@
 package com.hbeonlabs.driversalerts.webrtc;
 
+import static android.os.Environment.DIRECTORY_MOVIES;
 import static org.webrtc.SessionDescription.Type.ANSWER;
 import static org.webrtc.SessionDescription.Type.OFFER;
 import static io.socket.client.Socket.EVENT_CONNECT;
 import static io.socket.client.Socket.EVENT_DISCONNECT;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
+
+import com.hbeonlabs.driversalerts.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +22,7 @@ import org.webrtc.CameraEnumerator;
 import org.webrtc.DataChannel;
 import org.webrtc.EglBase;
 import org.webrtc.EglRenderer;
+import org.webrtc.FileVideoCapturer;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
@@ -31,6 +36,8 @@ import org.webrtc.VideoRenderer;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -124,14 +131,14 @@ public class WebRtcHelper {
         this.senderSurfaceViewRenderer = senderSurfaceViewRenderer;
         initializeSurfaceViews(this.senderSurfaceViewRenderer);
         showFrontCameraVideoTrack();
-        startFrontStreamingVideo();
+        //startFrontStreamingVideo();
     }
 
     public void startBackStreaming(SurfaceViewRenderer backSurfaceViewRenderer) {
         this.backCameraSVR = backSurfaceViewRenderer;
         initializeSurfaceViews(this.backCameraSVR);
         showBackCameraVideoTrack();
-        startBackStreamingVideo();
+        //startBackStreamingVideo();
     }
 
     public void startReceiverFrontStreaming(SurfaceViewRenderer receiverSurfaceViewRenderer) {
@@ -146,38 +153,36 @@ public class WebRtcHelper {
 
     private void connectToSignallingServer() {
         try {
-            // For me this was "http://192.168.1.220:3000";
-            // $ hostname -I
-            //String URL = "https://calm-badlands-59575.herokuapp.com/";
-            //String URL = "http://68.178.160.179:5000/";
             String URL = "http://68.178.160.179:3030";
-            Log.e(TAG, "REPLACE ME: IO Socket:" + URL);
+            //String URL = "http://192.168.1.2:5000?type=creator&busId=BUS-38598";
+            Log.e(TAG, "IO Socket:" + URL);
             socket = IO.socket(URL);
             this.socket.connect();
             socket.on(EVENT_CONNECT, args -> {
-                Log.d(TAG, "connectToSignallingServer: connect");
+                Log.d(TAG, "connectToSignallingServer: connect ");
                 socket.emit("create or join", "foo");
             }).on("ipaddr", args -> {
-                Log.d(TAG, "connectToSignallingServer: ipaddr");
+                Log.d(TAG, "connectToSignallingServer: ipaddr ");
             }).on("created", args -> {
-                Log.d(TAG, "connectToSignallingServer: created");
+                Log.d(TAG, "connectToSignallingServer: created ");
                 isInitiator = true;
             }).on("full", args -> {
-                Log.d(TAG, "connectToSignallingServer: full");
+                Log.d(TAG, "connectToSignallingServer: full ");
             }).on("join", args -> {
-                Log.d(TAG, "connectToSignallingServer: join");
-                Log.d(TAG, "connectToSignallingServer: Another peer made a request to join room");
-                Log.d(TAG, "connectToSignallingServer: This peer is the initiator of room");
+                Log.d(TAG, "connectToSignallingServer: join ");
+                Log.d(TAG, "connectToSignallingServer: Another peer made a request to join room ");
+                printArgs(args);
                 isChannelReady = true;
             }).on("joined", args -> {
-                Log.d(TAG, "connectToSignallingServer: joined");
+                Log.d(TAG, "connectToSignallingServer: joined ");
+                printArgs(args);
                 isChannelReady = true;
             }).on("log", args -> {
-                for (Object arg : args) {
-                    Log.d(TAG, "connectToSignallingServer: " + String.valueOf(arg));
-                }
+                Log.d(TAG, "connectToSignallingServer: logs ");
+                printArgs(args);
             }).on("message", args -> {
-                Log.d(TAG, "connectToSignallingServer: got a message");
+                Log.d(TAG, "connectToSignallingServer: message ");
+                printArgs(args);
             }).on("message", args -> {
                 try {
                     if (args[0] instanceof String) {
@@ -210,7 +215,7 @@ public class WebRtcHelper {
                     e.printStackTrace();
                 }
             }).on(EVENT_DISCONNECT, args -> {
-                Log.d(TAG, "connectToSignallingServer: disconnect");
+                Log.d(TAG, "connectToSignallingServer: disconnect "+args);
             });
             socket.connect();
         } catch (URISyntaxException e) {
@@ -291,7 +296,6 @@ public class WebRtcHelper {
         VideoCapturer videoCapturer = createVideoCapturer();
         VideoSource videoSource = factory.createVideoSource(videoCapturer);
         videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
-
         videoTrackFrontCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
         videoTrackFrontCamera.setEnabled(true);
         videoTrackFrontCamera.addRenderer(new VideoRenderer(senderSurfaceViewRenderer));
@@ -302,7 +306,12 @@ public class WebRtcHelper {
     }
 
     private void showBackCameraVideoTrack() {
-        VideoCapturer videoCapturer = createBackCaptor(new Camera1Enumerator(true));
+        VideoCapturer videoCapturer = null;
+        try {
+            videoCapturer = createBackCaptor(new Camera1Enumerator(true));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         VideoSource videoSource = factory.createVideoSource(videoCapturer);
         videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
 
@@ -336,6 +345,18 @@ public class WebRtcHelper {
         sendMessage("got user media");
     }
 
+    //Add multiple tracks to a single streaming in same connection
+    public void startVideoStreaming() {
+        Log.d("CompleteActivity", "startStreamingVideo ");
+        frontCameraMediaStream = factory.createLocalMediaStream("ARDAMS");
+        frontCameraMediaStream.addTrack(videoTrackFrontCamera);
+        //frontCameraMediaStream.addTrack(videoTrackBackCamera);
+        frontCameraMediaStream.addTrack(localAudioTrack);
+        frontStreamingPeerConnection.addStream(frontCameraMediaStream);
+
+        sendMessage("got user media");
+    }
+
     private void stopStreamingVideo() {
         if(frontCameraMediaStream != null) {
             frontStreamingPeerConnection.removeStream(frontCameraMediaStream);
@@ -344,6 +365,33 @@ public class WebRtcHelper {
         if(backCameraMediaStream != null) {
             backStreamingPeerConnection.removeStream(backCameraMediaStream);
         }
+        disconnect();
+        releaseRendererView();
+    }
+
+    private void releaseRendererView(){
+        if(senderSurfaceViewRenderer != null) {
+            senderSurfaceViewRenderer.pauseVideo();
+            senderSurfaceViewRenderer.release();
+        }
+        if(backCameraSVR != null) {
+            backCameraSVR.pauseVideo();
+            backCameraSVR.release();
+        }
+        if(receiverFrontSVR != null) {
+            receiverFrontSVR.pauseVideo();
+            receiverFrontSVR.release();
+        }
+        if(receiverBackSVR != null) {
+            receiverBackSVR.pauseVideo();
+            receiverBackSVR.release();
+        }
+    }
+    private void disconnect() {
+//        videoCapturer.stopCapture()
+//        localVideoTrack.removeSink(localVideoOutput);
+//        localVideoTrack.release();
+//        room.disconnect();
     }
 
     private PeerConnection createPeerConnectionForFront(PeerConnectionFactory factory) {
@@ -529,25 +577,32 @@ public class WebRtcHelper {
     }
 
     private VideoCapturer createVideoCapturer() {
-        VideoCapturer videoCapturer;
-        if (useCamera2()) {
-            videoCapturer = createCameraCapturer(new Camera2Enumerator(context));
-        } else {
-            videoCapturer = createCameraCapturer(new Camera1Enumerator(true));
+        VideoCapturer videoCapturer = null;
+
+        try {
+            if (useCamera2()) {
+                videoCapturer = createCameraCapturer(new Camera2Enumerator(context));
+
+            } else {
+                videoCapturer = createCameraCapturer(new Camera1Enumerator(true));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return videoCapturer;
     }
 
-    private VideoCapturer createCameraCapturer(CameraEnumerator enumerator) {
+    private VideoCapturer createCameraCapturer(CameraEnumerator enumerator) throws IOException {
         final String[] deviceNames = enumerator.getDeviceNames();
 
         for (String deviceName : deviceNames) {
             if (enumerator.isFrontFacing(deviceName)) {
                 VideoCapturer videoCapturer = enumerator.createCapturer(deviceName, null);
-
                 if (videoCapturer != null) {
                     return videoCapturer;
                 }
+//                String recordingFile = Utils.INSTANCE.makeOutputMediaFile();
+//                return new FileVideoCapturer(recordingFile);
             }
         }
 
@@ -558,6 +613,9 @@ public class WebRtcHelper {
                 if (videoCapturer != null) {
                     return videoCapturer;
                 }
+
+//                String recordingFile = Utils.INSTANCE.makeOutputMediaFile();
+//                return new FileVideoCapturer(recordingFile);
             }
         }
 
@@ -569,7 +627,7 @@ public class WebRtcHelper {
     }
 
 
-    private VideoCapturer createBackCaptor(CameraEnumerator enumerator){
+    private VideoCapturer createBackCaptor(CameraEnumerator enumerator) throws IOException {
         String[] deviceNames = enumerator.getDeviceNames();
 
         // First, try to find back facing camera
@@ -579,6 +637,9 @@ public class WebRtcHelper {
                 if (videoCapturer != null) {
                     return videoCapturer;
                 }
+
+//                String recordingFile = Utils.INSTANCE.makeOutputMediaFile();
+//                return new FileVideoCapturer(recordingFile);
             }
         }
 
@@ -589,9 +650,17 @@ public class WebRtcHelper {
                 if (videoCapturer != null) {
                     return videoCapturer;
                 }
+
+//                String recordingFile = Utils.INSTANCE.makeOutputMediaFile();
+//                return new FileVideoCapturer(recordingFile);
             }
         }
         return null;
     }
 
+    public void printArgs(Object[] args){
+        for (Object arg : args) {
+            Log.d(TAG, "connectToSignallingServer: " + String.valueOf(arg));
+        }
+    }
 }
