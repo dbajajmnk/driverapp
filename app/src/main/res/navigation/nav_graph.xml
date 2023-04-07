@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/dashboardFragment"
-        android:name="com.hbeonlabs.driversalerts.ui.fragment.dashboard.DashboardFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.camera.CameraFragment"
         android:label="DashboardFragment"/>
 
     <fragment

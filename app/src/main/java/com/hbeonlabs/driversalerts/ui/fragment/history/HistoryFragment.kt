@@ -17,23 +17,16 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(){
 
     override fun initView() {
         super.initView()
-
-    }
-
-    override fun getLayoutResourceId(): Int {
-        return R.layout.fragment_history
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_history, container, false)
-        val TitleView = view.findViewById<TextView>(R.id.title_frag)
-        TitleView.text = "History"
+        binding.include.titleFrag.text = "History"
         val childFragment = HistoryDatesFragment()
 
         childFragmentManager.beginTransaction()
             .replace(R.id.child_fragment_container, childFragment)
             .commit()
 
-        return view
+    }
+
+    override fun getLayoutResourceId(): Int {
+        return R.layout.fragment_history
     }
 }

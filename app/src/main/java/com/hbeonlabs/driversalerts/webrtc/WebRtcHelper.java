@@ -349,9 +349,12 @@ public class WebRtcHelper {
     public void startVideoStreaming() {
         Log.d("CompleteActivity", "startStreamingVideo ");
         frontCameraMediaStream = factory.createLocalMediaStream("ARDAMS");
-        frontCameraMediaStream.addTrack(videoTrackFrontCamera);
-        //frontCameraMediaStream.addTrack(videoTrackBackCamera);
-        frontCameraMediaStream.addTrack(localAudioTrack);
+        if(videoTrackFrontCamera != null)
+            frontCameraMediaStream.addTrack(videoTrackFrontCamera);
+        if(videoTrackBackCamera != null)
+            frontCameraMediaStream.addTrack(videoTrackBackCamera);
+        if(localAudioTrack != null)
+            frontCameraMediaStream.addTrack(localAudioTrack);
         frontStreamingPeerConnection.addStream(frontCameraMediaStream);
 
         sendMessage("got user media");

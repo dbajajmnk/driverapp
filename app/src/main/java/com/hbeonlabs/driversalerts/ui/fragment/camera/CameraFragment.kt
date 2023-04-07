@@ -62,11 +62,11 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     private fun doOnCameraPermissionGranted() {
         webRtcHelper.init(requireContext())
         webRtcHelper.startFrontStreaming(binding.frontSurfaceview)
-        //webRtcHelper.startBackStreaming(binding.backSurfaceview)
+        webRtcHelper.startBackStreaming(binding.backSurfaceview)
         webRtcHelper.startVideoStreaming()
-        Timer().schedule(100, 100) {
-            webRtcHelper.addFrameListener(frameListener)
-        }
+//        Timer().schedule(100, 100) {
+//            webRtcHelper.addFrameListener(frameListener)
+//        }
     }
 
 
