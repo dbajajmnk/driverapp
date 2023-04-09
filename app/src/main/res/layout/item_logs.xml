@@ -21,7 +21,7 @@
 
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/tv_bus_alert"
                 android:layout_width="134dp"
                 android:layout_height="28dp"
                 android:layout_marginStart="72dp"
@@ -34,7 +34,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cause"
+                android:id="@+id/tv_warning_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="72dp"
@@ -44,10 +44,10 @@
                 android:textSize="22dp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_bus_alert" />
 
             <TextView
-                android:id="@+id/reason"
+                android:id="@+id/tv_warning_message"
                 android:layout_width="272dp"
                 android:layout_height="47dp"
                 android:layout_marginTop="8dp"
@@ -55,25 +55,25 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.517"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cause" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_warning_title" />
 
             <TextView
-                android:id="@+id/time"
+                android:id="@+id/tv_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="17-02-2-23 at 3:54 PM"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.263"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/reason" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_warning_message" />
 
             <ImageView
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                app:layout_constraintBottom_toBottomOf="@+id/time"
-                app:layout_constraintStart_toEndOf="@+id/time"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_time"
+                app:layout_constraintStart_toEndOf="@+id/tv_time"
                 app:srcCompat="@drawable/ic_location" />
 
             <ImageView
@@ -82,8 +82,8 @@
                 android:layout_height="38dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.841"
-                app:layout_constraintStart_toEndOf="@+id/textView2"
-                app:layout_constraintTop_toTopOf="@+id/textView2"
+                app:layout_constraintStart_toEndOf="@+id/tv_bus_alert"
+                app:layout_constraintTop_toTopOf="@+id/tv_bus_alert"
                 app:srcCompat="@drawable/item_lefticon" />
 
             <ImageView
@@ -91,7 +91,7 @@
                 android:layout_width="35dp"
                 android:layout_height="31dp"
                 android:layout_marginTop="72dp"
-                app:layout_constraintEnd_toStartOf="@+id/textView2"
+                app:layout_constraintEnd_toStartOf="@+id/tv_bus_alert"
                 app:layout_constraintHorizontal_bias="0.432"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

@@ -2,15 +2,23 @@ package com.hbeonlabs.driversalerts.ui.fragment.camera
 
 import android.Manifest
 import android.app.Dialog
+import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
 import com.google.mlkit.vision.common.InputImage
 import com.hbeonlabs.driversalerts.R
+import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
+import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.databinding.FragmentCameraBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
+import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationSubType
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.DrowsinessDetector
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.CAMERA_PERMISSION_REQ_CODE
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants.LOCATION_PERMISSION_REQ_CODE
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants.OVERSPEEDING_THRESHOLD
 import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.EglRenderer.FrameListener
@@ -23,9 +31,25 @@ import kotlin.concurrent.schedule
 class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.PermissionCallbacks,
     ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private val viewModel:CameraViewModel by viewModels()
+    lateinit var locationProvider : DriverLocationProvider
+    lateinit var overSpeedingAlertdialog : Dialog
     lateinit var drowsinessAlertDialog: Dialog
     private val webRtcHelper = WebRtcHelper.getInstance()
+    private lateinit var currentLocationData :LocationAndSpeed
+
+    private var locationPermissions = arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
     private val drowsinessDetector = DrowsinessDetector({
+        viewModel.addDrowsinessWarningsData(Warning(
+            timeInMills = currentLocationData.timeInMills,
+            locationLatitude = currentLocationData.locationLatitude,
+            locationLongitude = currentLocationData.locationLatitude,
+            notificationSubType = NotificationSubType.DROWSNISS.ordinal,
+            message = AppConstants.DROWSINESS_MESSAGE
+        ))
         drowsinessAlertDialog.show()
     }, {
         drowsinessAlertDialog.dismiss()
@@ -33,16 +57,17 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     private val frameListener = FrameListener {
         it?.let { drowsinessDetector.detectDrowsiness(InputImage.fromBitmap(it,0)) }
     }
-  //  private lateinit var driverLocationProvider: DriverLocationProvider
+
+    override fun getLayoutResourceId(): Int {
+        return R.layout.fragment_camera
+    }
+
 
     override fun initView() {
         super.initView()
-        drowsinessAlertDialog = dialogDrowsinessAlert(
-            headerText = "Drowsy Alert!!!",
-            descText = "Tracker suspects that the driver is experiencing Drowsiness. Touch OK Stop the Alarm"
-        )
+        initDialogs()
+        askLocationPermissions()
         askCameraPermission()
-       // driverLocationProvider = DriverLocationProvider(requireActivity())
     }
 
     private fun askCameraPermission() {
@@ -58,38 +83,113 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         }
     }
 
+    private fun askLocationPermissions()
+    {
+        if (EasyPermissions.hasPermissions(requireContext(), *locationPermissions)) {
+            doOnLocationPermissionAvailable()
+        } else {
+            EasyPermissions.requestPermissions(
+                this,
+                "This application compulsory needs location permission to work.",
+                LOCATION_PERMISSION_REQ_CODE,
+                *locationPermissions
+            )
+        }
+
+    }
+
     private fun doOnCameraPermissionGranted() {
-//        webRtcHelper.start(requireContext(), binding.frontSurfaceview,null)
         webRtcHelper.init(requireContext())
         webRtcHelper.startFrontStreaming(binding.frontSurfaceview)
+        //webRtcHelper.start(requireContext(), binding.frontSurfaceview,null)
         //webRtcHelper.startBackStreaming(binding.backSurfaceview)
         Timer().schedule(100, 100) {
             webRtcHelper.addFrameListener(frameListener)
         }
     }
 
-
-    override fun getLayoutResourceId(): Int {
-        return R.layout.fragment_camera
+    private fun initDialogs()
+    {
+        drowsinessAlertDialog = dialogDrowsinessAlert(
+            headerText = "Drowsy Alert!!!",
+            descText = "Tracker suspects that the driver is experiencing Drowsiness. Touch OK Stop the Alarm"
+        )
+        overSpeedingAlertdialog = dialogDrowsinessAlert(
+            headerText = "Over Speeding Alert!!!",
+            descText = "Tracker suspects that the driver is Over Speeding. Please slow down!. Touch OK Stop the Alarm"
+        )
     }
 
+
+
+
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        askCameraPermission()
+        when(requestCode)
+        {
+            CAMERA_PERMISSION_REQ_CODE ->{
+                askCameraPermission()
+            }
+
+            LOCATION_PERMISSION_REQ_CODE ->{
+               askLocationPermissions()
+            }
+        }
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-        if (EasyPermissions.somePermissionDenied(this, perms.first())) {
-            AppSettingsDialog.Builder(requireActivity()).build().show()
-        } else {
-            askCameraPermission()
+        when(requestCode)
+        {
+            CAMERA_PERMISSION_REQ_CODE ->{
+                if (EasyPermissions.somePermissionDenied(this, perms.first())) {
+                    AppSettingsDialog.Builder(requireActivity()).build().show()
+                } else {
+                    askCameraPermission()
+                }
+            }
+
+            LOCATION_PERMISSION_REQ_CODE ->{
+                if (EasyPermissions.somePermissionDenied(this, perms.first())) {
+                    AppSettingsDialog.Builder(requireActivity()).build().show()
+                } else {
+                    askLocationPermissions()
+                }
+            }
         }
+
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
         webRtcHelper.onDestroy()
-      //  driverLocationProvider.onDestroy()
+        locationProvider.onDestroy()
     }
-}
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Log.d("TAG", "onRequestPermissionsResult: "+permissions)
+
+        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults)
+    }
+
+    private fun doOnLocationPermissionAvailable() {
+        locationProvider = DriverLocationProvider(this){locationAndSpeedData->
+            binding.tvSpeedData.text = "Speed =  ${locationAndSpeedData.speed}"
+            viewModel.addLocationData(locationAndSpeedData)
+            currentLocationData = locationAndSpeedData
+            if (locationAndSpeedData.speed.toFloat() >= OVERSPEEDING_THRESHOLD)
+            {
+                overSpeedingAlertdialog.show()
+            }
+            else
+            {
+                overSpeedingAlertdialog.dismiss()
+            }
+        }
+    }
+    }
 

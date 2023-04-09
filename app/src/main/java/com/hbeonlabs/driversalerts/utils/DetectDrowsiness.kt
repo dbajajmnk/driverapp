@@ -16,7 +16,7 @@ class DrowsinessDetector(
     private var faceDetector: FaceDetector
     private var drowsyTime = 0L
     private var drowsyThreshold = 1000
-    var drowsinessDetected = false
+    private var drowsinessDetected = false
 
     init {
         val options = FaceDetectorOptions.Builder()
@@ -34,7 +34,7 @@ class DrowsinessDetector(
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    public fun detectDrowsiness(imageProxy: ImageProxy) {
+    fun detectDrowsiness(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image ?: return
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
         detectDrowsiness(image)
@@ -43,7 +43,7 @@ class DrowsinessDetector(
 
 
     @SuppressLint("UnsafeOptInUsageError")
-    public fun detectDrowsiness(image: InputImage) {
+    fun detectDrowsiness(image: InputImage) {
         faceDetector.process(image)
             .addOnSuccessListener { faces ->
                 for (face in faces) {

@@ -1,4 +1,4 @@
-package com.hbeonlabs.driversalerts.ui.fragment.camera
+package com.hbeonlabs.driversalerts.ui.fragment.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,22 +13,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CameraViewModel @Inject constructor(
+class WarningViewModel @Inject constructor(
     val repository: LocationRepository
 
 ) : ViewModel() {
 
-    fun addLocationData(locationAndSpeed: LocationAndSpeed)
-    {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.addLocationData(locationAndSpeed)
-        }
-    }
-    fun addDrowsinessWarningsData(warning: Warning)
-    {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.addWarnings(warning)
-        }
-    }
+    fun getWarningList() = repository.getWarningsList()
 
 }

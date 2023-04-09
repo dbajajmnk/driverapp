@@ -3,9 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -28,40 +29,21 @@
         app:tabIndicatorColor="#0B3471"
         app:tabTextColor="#0B3471">
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="5dp"
-            android:text="Warnings" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Logs" />
-
 
     </com.google.android.material.tabs.TabLayout>
 
 
-        <FrameLayout
-            android:id="@+id/child_fragment_container"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_notifications"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
 
-        <!--    <androidx.fragment.app.FragmentContainerView-->
-        <!--        android:id="@+id/fragmentContainerView"-->
-        <!--        android:name="com.hbeonlabs.driversalerts.ui.fragment.notification.WarningsFragment"-->
-        <!--        android:layout_width="wrap_content"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--        app:layout_constraintStart_toStartOf="parent"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/tab_layout"-->
-        <!--        tools:layout_editor_absoluteX="192dp"-->
-        <!--        tools:layout_editor_absoluteY="376dp" />-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </layout>

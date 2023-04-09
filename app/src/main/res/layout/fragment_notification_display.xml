@@ -34,7 +34,7 @@
             app:layout_constraintTop_toBottomOf="@+id/person_image" />
 
         <TextView
-            android:id="@+id/cause"
+            android:id="@+id/tv_warning_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -53,8 +53,8 @@
             android:fontFamily="@font/poppins_light"
             android:text="Driver is delay due to traffic jam in location malviya nagar Driver is delay due to traffic jam in location malviya nagar Driver is delay due to traffic jam in location malviya nagar"
             android:textColor="#000000"
-            app:layout_constraintStart_toStartOf="@+id/cause"
-            app:layout_constraintTop_toBottomOf="@+id/cause" />
+            app:layout_constraintStart_toStartOf="@+id/tv_warning_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_warning_title" />
 
         <TextView
             android:id="@+id/date_text"

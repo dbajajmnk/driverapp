@@ -1,6 +1,5 @@
 package com.hbeonlabs.driversalerts.ui.fragment.notification
 
-import android.content.ClipData
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +12,11 @@ class NotificationAdapter(private val items: List<Item>, private val listener: O
     RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener{
-        val uptext:TextView = view.findViewById(R.id.textView2)
-        val titleTextView: TextView = view.findViewById(R.id.cause)
+        val uptext:TextView = view.findViewById(R.id.tv_bus_alert)
+        val titleTextView: TextView = view.findViewById(R.id.tv_warning_title)
         val personimageView: ImageView = view.findViewById(R.id.profile_image);
-        val location: TextView = view.findViewById(R.id.reason)
-        val date: TextView = view.findViewById(R.id.time)
+        val location: TextView = view.findViewById(R.id.tv_warning_message)
+        val date: TextView = view.findViewById(R.id.tv_time)
 
         init {
             itemView.setOnClickListener(this)

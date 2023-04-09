@@ -12,7 +12,7 @@ class HistoryDatesAdapter(private val items: List<ItemD>,private val listener: N
     RecyclerView.Adapter<HistoryDatesAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
-        val titleTextView: TextView = view.findViewById(R.id.time)
+        val titleTextView: TextView = view.findViewById(R.id.tv_time)
 
 
         init {

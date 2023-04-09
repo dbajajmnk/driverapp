@@ -8,16 +8,21 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentNotificationBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class NotificationsFragment : BaseFragment<FragmentNotificationBinding>(){
 
 
     override fun initView() {
         super.initView()
+        binding.include.titleFrag.text = "Notifications"
+        initTabLayout()
+
     }
 
     override fun getLayoutResourceId(): Int {
@@ -25,43 +30,16 @@ class NotificationsFragment : BaseFragment<FragmentNotificationBinding>(){
 
     }
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_notification, container, false)
-        val TitleView = view.findViewById<TextView>(R.id.title_frag)
-        val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
-        TitleView.text = "Notifications"
-
-        val childFragment = WarningsFragment()
-
-        childFragmentManager.beginTransaction()
-            .replace(R.id.child_fragment_container, childFragment)
-            .commit()
-
-        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val fragment: Fragment?
-                when (tab.position) {
-                    0 -> fragment = WarningsFragment()
-                    1 -> fragment = LogsFragment()
-                    else -> fragment = null
-                }
-                val transaction = fragmentManager!!.beginTransaction()
-                if (fragment != null) {
-                    transaction.replace(R.id.child_fragment_container, fragment).commit()
+    private fun initTabLayout() {
+        val tabLayoutMediator =
+            TabLayoutMediator(binding.tabLayout, binding.vpNotifications) { tab, position ->
+                when (position) {
+                    0 -> tab.text = "Warnings"
+                    1 -> tab.text = "Logs"
                 }
             }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-               return
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                return
-            }
-
-        })
-        return view
+        binding.vpNotifications.adapter = NotificationTabAdapter(childFragmentManager,lifecycle)
+        tabLayoutMediator.attach()
     }
 
 

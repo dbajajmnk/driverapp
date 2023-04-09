@@ -3,9 +3,11 @@ package com.hbeonlabs.driversalerts.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.google.gson.Gson
 import com.hbeonlabs.driversalerts.data.local.db.AppDatabase
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
+import com.hbeonlabs.driversalerts.data.local.db.WarningsDao
 import com.hbeonlabs.driversalerts.utils.network.NetworkResultCallAdapterFactory
 import com.hbeonlabs.driversalerts.utils.network.interceptors.AuthInterceptorImpl
 import com.hbeonlabs.driversalerts.utils.network.interceptors.NetworkConnectionInterceptor
@@ -83,14 +85,24 @@ object AppModule {
             .build()
     }
 
-
     @Provides
     @Singleton
-    fun provideLocationDao(application: Application): LocationAndSpeedDao {
+    fun provideRoomDatabase(application: Application):AppDatabase{
         return Room.databaseBuilder(application, AppDatabase::class.java, "driver_alert_local_db")
             .fallbackToDestructiveMigration()
             .build()
-            .getLocationAndSpeedDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationDao(application: Application, database: AppDatabase): LocationAndSpeedDao {
+        return database.getLocationAndSpeedDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWarningDao(application: Application, database: AppDatabase): WarningsDao {
+        return database.getWarningsDao()
     }
 
 

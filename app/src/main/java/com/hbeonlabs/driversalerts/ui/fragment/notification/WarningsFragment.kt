@@ -1,24 +1,38 @@
 package com.hbeonlabs.driversalerts.ui.fragment.notification
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentWarningsBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
+import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
-class WarningsFragment : BaseFragment<FragmentWarningsBinding>(),NotificationAdapter.OnItemClickListener{
+@AndroidEntryPoint
+class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var itemAdapter: NotificationAdapter
+    @Inject
+    lateinit var itemAdapter: WarningAdapter
+
+    private val viewModel:WarningViewModel by viewModels()
 
     override fun initView() {
         super.initView()
+
+        binding.recyclerview.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = itemAdapter
+        }
+
     }
 
     override fun getLayoutResourceId(): Int {
@@ -26,42 +40,13 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(),NotificationAda
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_warnings, container, false)
-
-        recyclerView = view.findViewById(R.id.recyclerview)
-        itemAdapter = NotificationAdapter(getItems(), object : NotificationAdapter.OnItemClickListener{
-            override fun onItemClick(position: Int) {
-
-                val navController = NavHostFragment.findNavController(requireParentFragment())
-
-         //       val bundle = Bundle()
-/*                val passList: MutableList<String> = ArrayList()
-                passList.add(itemAdapter[position].uptext)
-                passList.add("item 2")*/
-
-//                bundle.putString("key","value")
-
-                navController.navigate(R.id.notificationDisplay);
-            }
-        })
-
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = itemAdapter
+    override fun observe() {
+        super.observe()
+        collectLatestLifeCycleFlow(viewModel.getWarningList())
+        {
+            Log.d("TAG", "observe: "+it)
+            itemAdapter.differ.submitList(it)
         }
-
-        return view
     }
 
-    private fun getItems(): List<Item> {
-        return listOf(
-            Item("Bus Driver",R.drawable.image_person,"Item 1","Speed is over 65 near to metro station saket | Location", "17-02-2-23 at 3:54 PM"),
-            Item("Bus Driver",R.drawable.image_person,"Item 2","Speed is over 65 near to metro station saket | Location","17-02-2-23 at 3:54 PM"),
-        )
-    }
-
-    override fun onItemClick(position: Int) {
-
-    }
 }

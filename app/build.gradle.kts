@@ -69,7 +69,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
     implementation(files("libs/webRtcLib.aar"))
-    implementation("androidx.core:core-ktx:+")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
     kapt(Libs.ROOM_COMPILER)
     implementation(Libs.ROOM_KTX)
