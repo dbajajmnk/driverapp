@@ -43,7 +43,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         Manifest.permission.ACCESS_FINE_LOCATION
     )
     private val drowsinessDetector = DrowsinessDetector({
-        viewModel.addDrowsinessWarningsData(Warning(
+        viewModel.addWarningsData(Warning(
             timeInMills = currentLocationData.timeInMills,
             locationLatitude = currentLocationData.locationLatitude,
             locationLongitude = currentLocationData.locationLatitude,
@@ -183,6 +183,13 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
             currentLocationData = locationAndSpeedData
             if (locationAndSpeedData.speed.toFloat() >= OVERSPEEDING_THRESHOLD)
             {
+                viewModel.addWarningsData(Warning(
+                    timeInMills = locationAndSpeedData.timeInMills,
+                    locationLatitude = locationAndSpeedData.locationLatitude,
+                    locationLongitude = locationAndSpeedData.locationLatitude,
+                    notificationSubType = NotificationSubType.OVERSPEEDING.ordinal,
+                    message = AppConstants.OVERSPEEDING_MESSAGE
+                ))
                 overSpeedingAlertdialog.show()
             }
             else

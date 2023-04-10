@@ -3,6 +3,7 @@ package com.hbeonlabs.driversalerts.data.local.db.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationSubType
+import java.io.Serializable
 
 @Entity
 data class Warning(
@@ -12,4 +13,4 @@ data class Warning(
     val locationLongitude:String,
     val notificationSubType: Int,
     val message:String
-)
+):Serializable

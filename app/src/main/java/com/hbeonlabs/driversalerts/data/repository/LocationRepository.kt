@@ -17,16 +17,7 @@ class LocationRepository @Inject constructor(
     suspend fun addLocationData(locationAndSpeed: LocationAndSpeed)
     {
         locationDao.addData(locationAndSpeed)
-        if (locationAndSpeed.speed.toDouble() >= 15)
-        {
-            addWarnings(Warning(
-                timeInMills = locationAndSpeed.timeInMills,
-                locationLatitude = locationAndSpeed.locationLatitude,
-                locationLongitude = locationAndSpeed.locationLatitude,
-                notificationSubType = NotificationSubType.OVERSPEEDING.ordinal,
-                message = OVERSPEEDING_MESSAGE
-            ))
-        }
+
     }
 
     suspend fun addWarnings(warning: Warning)

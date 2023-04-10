@@ -10,7 +10,7 @@ import com.hbeonlabs.driversalerts.data.local.db.models.Warning
         LocationAndSpeed::class,
         Warning::class
                ],
-    version = 3
+    version = 1
 )
 abstract class AppDatabase :RoomDatabase(){
     abstract fun getLocationAndSpeedDao(): LocationAndSpeedDao

@@ -7,8 +7,6 @@ import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.repository.LocationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +22,7 @@ class CameraViewModel @Inject constructor(
             repository.addLocationData(locationAndSpeed)
         }
     }
-    fun addDrowsinessWarningsData(warning: Warning)
+    fun addWarningsData(warning: Warning)
     {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addWarnings(warning)

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/dashboardFragment">
 
@@ -12,7 +13,15 @@
     <fragment
         android:id="@+id/notificationsFragment"
         android:name="com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationsFragment"
-        android:label="NotificationsFragment" />
+        tools:layout="@layout/fragment_notification"
+        android:label="NotificationsFragment" >
+        <action
+            android:id="@+id/action_notificationsFragment_to_notificationDisplay"
+            app:destination="@id/notificationDisplay" />
+        <action
+            android:id="@+id/action_notificationsFragment_to_warningsFragment"
+            app:destination="@id/warningsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/cameraFragment"
@@ -39,7 +48,12 @@
         android:id="@+id/notificationDisplay"
         android:name="com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationDisplay"
         android:label="NotificationDisplay"
-        />
+        tools:layout="@layout/fragment_notification_display_with_map"
+        >
+        <argument
+            android:name="locationData"
+            app:argType="com.hbeonlabs.driversalerts.data.local.db.models.Warning" />
+    </fragment>
 
     <fragment
         android:id="@+id/attendancedatesFragment"
@@ -58,5 +72,13 @@
         android:name="com.hbeonlabs.driversalerts.ui.fragment.attendance.AttendanceFragment"
         android:label="AttendanceFragment"
         />
+    <fragment
+        android:id="@+id/warningsFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.notification.WarningsFragment"
+        android:label="WarningsFragment" >
+        <action
+            android:id="@+id/action_warningsFragment_to_notificationDisplay"
+            app:destination="@id/notificationDisplay" />
+    </fragment>
 
 </navigation>

@@ -1,5 +1,6 @@
 package com.hbeonlabs.driversalerts.ui.fragment.notification
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -7,6 +8,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.databinding.ItemNotificationBinding
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -20,6 +24,21 @@ class WarningAdapter @Inject constructor(): RecyclerView.Adapter<WarningAdapter.
 
             binding.tvWarningTitle.text = NotificationSubType.values()[data.notificationSubType].toString()
             binding.tvWarningMessage.text = data.message
+
+            try {
+                val dateFormat = SimpleDateFormat("dd-MM-yyyy hh:mm a", Locale.getDefault())
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = data.timeInMills.toLong()
+
+                val formattedDateTime = dateFormat.format(calendar.time)
+                binding.tvTime.text = formattedDateTime
+
+            }
+            catch (
+                e:Exception
+            ){
+                Log.d("TAG", "bind: ${e.localizedMessage}")
+            }
 
 
         }

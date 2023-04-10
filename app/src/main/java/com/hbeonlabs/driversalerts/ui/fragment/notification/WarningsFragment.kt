@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
@@ -28,10 +29,16 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
     override fun initView() {
         super.initView()
 
+        itemAdapter.setOnItemClickListener {
+            findNavController().navigate(NotificationsFragmentDirections.actionNotificationsFragmentToNotificationDisplay(it))
+        }
+
         binding.recyclerview.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = itemAdapter
         }
+
+
 
     }
 
