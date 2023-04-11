@@ -71,6 +71,7 @@ class NotificationDisplay : BaseFragment<FragmentNotificationDisplayWithMapBindi
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
+        Log.d("TAG", "onMapReady: ${args.locationData.locationLatitude.toDouble()}  ${args.locationData.locationLongitude.toDouble()} ")
         val originLocation = LatLng(args.locationData.locationLatitude.toDouble(), args.locationData.locationLongitude.toDouble())
         mMap.addMarker(MarkerOptions().position(originLocation))
 

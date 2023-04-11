@@ -46,7 +46,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         viewModel.addWarningsData(Warning(
             timeInMills = currentLocationData.timeInMills,
             locationLatitude = currentLocationData.locationLatitude,
-            locationLongitude = currentLocationData.locationLatitude,
+            locationLongitude = currentLocationData.locationLongitude,
             notificationSubType = NotificationSubType.DROWSNISS.ordinal,
             message = AppConstants.DROWSINESS_MESSAGE
         ))
@@ -186,7 +186,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
                 viewModel.addWarningsData(Warning(
                     timeInMills = locationAndSpeedData.timeInMills,
                     locationLatitude = locationAndSpeedData.locationLatitude,
-                    locationLongitude = locationAndSpeedData.locationLatitude,
+                    locationLongitude = locationAndSpeedData.locationLongitude,
                     notificationSubType = NotificationSubType.OVERSPEEDING.ordinal,
                     message = AppConstants.OVERSPEEDING_MESSAGE
                 ))
