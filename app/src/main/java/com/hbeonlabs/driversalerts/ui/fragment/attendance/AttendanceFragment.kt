@@ -48,7 +48,7 @@ class AttendanceFragment : BaseFragment<FragmentAttendanceBinding>() {
 
     private fun getItems(): List<ItemAttendance> {
         return listOf(
-            ItemAttendance("Karman Singh","11 A","20:35","20:50",Color.BLUE),
+            ItemAttendance("Karman Singh","11 A","20:35","20:50",R.color.purple_500),
             ItemAttendance("Karman Singh","11 A","20:35","20:50",Color.WHITE),
         )
     }

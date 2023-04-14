@@ -27,6 +27,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         binding.bottomNav.setOnItemSelectedListener {
 
+            count = 0
             when (it.itemId) {
                 R.id.camera_menu -> {
                     navController.navigate(R.id.dashboardFragment)
@@ -63,12 +64,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onBackPressed() {
         if(count == 0) {
-            //binding.bottomNav.selectedItemId(R.id.camera_menu);
+            binding.bottomNav.selectedItemId = R.id.camera_menu;
             navController.navigate(R.id.cameraFragment)
         }else{
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
-        count = count + 1
+        count += 1
     }
 }
