@@ -21,11 +21,13 @@ import com.hbeonlabs.driversalerts.receivers.DailyAlarmReceiver
 import com.hbeonlabs.driversalerts.receivers.EndAlarmReceiver
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
+import com.hbeonlabs.driversalerts.utils.batteryChargingStatusChecker
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.END_HOUR
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.END_MINUTES
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.START_HOUR
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.START_MINUTES
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
@@ -45,6 +47,12 @@ class HomeActivity : AppCompatActivity() , View.OnClickListener{
         binding = DataBindingUtil.setContentView(this, R.layout.fragment_home)
         binding.btnDriver.setOnClickListener(this)
         binding.btnAdmin.setOnClickListener(this)
+        lifecycleScope.launchWhenStarted {
+            while (true) {
+                delay(3000)
+                Log.d("TAG", "initView: "+batteryChargingStatusChecker())
+            }
+        }
 
         setADailyStartAndStopAlarm()
 
