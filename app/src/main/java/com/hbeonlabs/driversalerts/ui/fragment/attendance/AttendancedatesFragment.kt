@@ -14,7 +14,6 @@ import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.history.HistoryDatesAdapter
 import com.hbeonlabs.driversalerts.ui.fragment.history.ItemD
 import com.hbeonlabs.driversalerts.ui.fragment.history.RecyclerViewItemDecoration
-import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationAdapter
 
 
 class AttendancedatesFragment : BaseFragment<FragmentAttendancedatesBinding>() {
@@ -38,7 +37,7 @@ class AttendancedatesFragment : BaseFragment<FragmentAttendancedatesBinding>() {
         TitleView.text = "Attendance"
 
         recyclerView = view.findViewById(R.id.recyclerview);
-        itemAdapter = HistoryDatesAdapter(getItems(),object : NotificationAdapter.OnItemClickListener{
+        itemAdapter = HistoryDatesAdapter(getItems(),object : HistoryDatesAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
 
                 val navController = NavHostFragment.findNavController(requireParentFragment())

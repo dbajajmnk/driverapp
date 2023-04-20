@@ -1,15 +1,9 @@
 package com.hbeonlabs.driversalerts.ui.fragment.notification
 
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentWarningsBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
@@ -22,7 +16,7 @@ import javax.inject.Inject
 class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
 
     @Inject
-    lateinit var itemAdapter: WarningAdapter
+    lateinit var itemAdapter: NotificationAdapter
 
     private val viewModel:WarningViewModel by viewModels()
 

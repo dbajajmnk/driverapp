@@ -3,8 +3,8 @@ package com.hbeonlabs.driversalerts.ui.fragment.camera
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
-import com.hbeonlabs.driversalerts.data.local.db.models.Warning
-import com.hbeonlabs.driversalerts.data.repository.LocationRepository
+import com.hbeonlabs.driversalerts.data.local.db.models.Notification
+import com.hbeonlabs.driversalerts.data.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CameraViewModel @Inject constructor(
-    val repository: LocationRepository
+    val repository: AppRepository
 
 ) : ViewModel() {
 
@@ -22,7 +22,7 @@ class CameraViewModel @Inject constructor(
             repository.addLocationData(locationAndSpeed)
         }
     }
-    fun addWarningsData(warning: Warning)
+    fun addWarningsData(warning: Notification)
     {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addWarnings(warning)

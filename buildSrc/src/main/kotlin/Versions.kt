@@ -6,7 +6,7 @@ object Versions {
     const val CONSTRAINT_LAYOUT = "2.1.4"
 
     const val COROUTINE = "1.3.9"
-    const val ROOM = "2.4.0"
+    const val ROOM = "2.5.1"
     const val LIFE_CYCLE = "2.5.1"
     const val KOIN = "3.2.0"
     const val TIMBER_LIB = "5.0.1"

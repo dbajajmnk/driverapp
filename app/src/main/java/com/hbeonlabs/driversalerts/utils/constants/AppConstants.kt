@@ -16,5 +16,13 @@ object AppConstants {
 
     const val OVERSPEEDING_THRESHOLD = 30f
 
+    enum class NotificationType{
+        LOG,WARNING
+    }
+
+    enum class NotificationSubType{
+        RASHDRIVING,OVERSPEEDING,SEATBELT,DROWSNISS
+    }
+
 
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.os.Environment;

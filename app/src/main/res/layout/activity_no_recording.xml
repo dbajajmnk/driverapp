@@ -31,6 +31,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+
+    <Button
+        android:id="@+id/button_move_to_dashboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Move to Dashboard"
+        android:textAllCaps="false"
+        android:layout_marginTop="20dp"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

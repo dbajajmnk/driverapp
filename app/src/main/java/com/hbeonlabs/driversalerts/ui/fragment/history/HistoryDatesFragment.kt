@@ -10,9 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentHistoryBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
-import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationAdapter
 
-class HistoryDatesFragment : BaseFragment<FragmentHistoryBinding>(),NotificationAdapter.OnItemClickListener{
+class HistoryDatesFragment : BaseFragment<FragmentHistoryBinding>(),HistoryDatesAdapter.OnItemClickListener{
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var itemAdapter: HistoryDatesAdapter
@@ -30,7 +29,7 @@ class HistoryDatesFragment : BaseFragment<FragmentHistoryBinding>(),Notification
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_history_dates, container, false)
         recyclerView = view.findViewById(R.id.recyclerview_dates)
-        itemAdapter = HistoryDatesAdapter(getItems(),object : NotificationAdapter.OnItemClickListener{
+        itemAdapter = HistoryDatesAdapter(getItems(),object : HistoryDatesAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
 
                 val navController = NavHostFragment.findNavController(requireParentFragment())

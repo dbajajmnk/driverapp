@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.hbeonlabs.driversalerts.data.local.db.AppDatabase
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.data.local.db.WarningsDao
+import com.hbeonlabs.driversalerts.utils.constants.EndPoints.BASE_URL
 import com.hbeonlabs.driversalerts.utils.network.NetworkResultCallAdapterFactory
 import com.hbeonlabs.driversalerts.utils.network.interceptors.AuthInterceptorImpl
 import com.hbeonlabs.driversalerts.utils.network.interceptors.NetworkConnectionInterceptor
@@ -53,7 +54,7 @@ object AppModule {
         okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(NetworkResultCallAdapterFactory.create())
             .client(okHttpClient)

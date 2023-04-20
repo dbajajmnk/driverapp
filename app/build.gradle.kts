@@ -69,7 +69,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
     implementation(files("libs/webRtcLib.aar"))
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     kapt(Libs.ROOM_COMPILER)
     implementation(Libs.ROOM_KTX)
     testImplementation(Libs.JUNIT_LIB)
@@ -134,17 +134,24 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
 
     // Architectural Components
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
     // Lifecycle
     implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
     implementation("io.socket:socket.io-client:1.0.0") {
         exclude("org.json", "json")
     }
-    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+    implementation ("androidx.recyclerview:recyclerview:1.3.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
+
+    //DataStore
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
+    // WorkManager Kotlin + Coroutines
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
 }

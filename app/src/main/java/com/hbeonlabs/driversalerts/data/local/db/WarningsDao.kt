@@ -3,17 +3,16 @@ package com.hbeonlabs.driversalerts.data.local.db
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
-import com.hbeonlabs.driversalerts.data.local.db.models.Warning
+import com.hbeonlabs.driversalerts.data.local.db.models.Notification
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WarningsDao {
 
-    @Query("SELECT * FROM warning")
-    fun getAllWarnings(): Flow<List<Warning>>
+    @Query("SELECT * FROM notification")
+    fun getAllNotifications(): Flow<List<Notification>>
 
     @Insert
-    suspend fun addWarning(warning: Warning)
+    suspend fun addNotification(warning: Notification)
 
 }

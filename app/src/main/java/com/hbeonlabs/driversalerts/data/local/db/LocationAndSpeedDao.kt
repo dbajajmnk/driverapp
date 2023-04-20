@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface LocationAndSpeedDao {
 
     @Query("SELECT * FROM locationandspeed")
-    fun getAllCommunityChat(): Flow<List<LocationAndSpeed>>
+    fun getAllLocationAndSpeedData(): Flow<List<LocationAndSpeed>>
 
     @Insert
     suspend fun addData(chat:LocationAndSpeed)

@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
-import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationAdapter
 
-class HistoryDatesAdapter(private val items: List<ItemD>,private val listener: NotificationAdapter.OnItemClickListener) :
+class HistoryDatesAdapter(private val items: List<ItemD>,private val listener: HistoryDatesAdapter.OnItemClickListener) :
     RecyclerView.Adapter<HistoryDatesAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {

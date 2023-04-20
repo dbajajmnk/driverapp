@@ -18,6 +18,7 @@ import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentNotificationDisplayWithMapBinding
 import com.hbeonlabs.driversalerts.databinding.FragmentWarningsBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.makeToast
 import com.hbeonlabs.driversalerts.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +44,7 @@ class NotificationDisplay : BaseFragment<FragmentNotificationDisplayWithMapBindi
         mapFragment.getMapAsync(this)
 
 
-        binding.tvWarningTitle.text = NotificationSubType.values()[data.notificationSubType].toString()
+        binding.tvWarningTitle.text = AppConstants.NotificationSubType.values()[data.notificationSubType].toString()
         binding.tvWarningMessage.text = data.message
 
 

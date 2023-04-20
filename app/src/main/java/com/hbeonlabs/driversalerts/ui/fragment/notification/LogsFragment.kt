@@ -13,10 +13,12 @@ import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentLogsBinding
 import com.hbeonlabs.driversalerts.databinding.FragmentNotificationBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
+import javax.inject.Inject
 
-class LogsFragment : BaseFragment<FragmentLogsBinding>() , NotificationAdapter.OnItemClickListener{
+class LogsFragment : BaseFragment<FragmentLogsBinding>(){
 
     private lateinit var recyclerView: RecyclerView
+    @Inject
     private lateinit var itemAdapter: NotificationAdapter
 
     override fun getLayoutResourceId(): Int {
@@ -32,25 +34,15 @@ class LogsFragment : BaseFragment<FragmentLogsBinding>() , NotificationAdapter.O
         val view = inflater.inflate(R.layout.fragment_logs, container, false)
 
         recyclerView = view.findViewById(R.id.recycler_view)
-        itemAdapter = NotificationAdapter(getItems(), this)
+       // itemAdapter = NotificationAdapter(getItems(), this)
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = itemAdapter
+          //  adapter = itemAdapter
         }
 
         return view
     }
 
-    private fun getItems(): List<Item> {
-        return listOf(
-            Item("Live streaming", R.drawable.red_alert,"Stop","Driver is delay due to traffic jam in location malviya nagar", "17-02-2-23 at 3:54 PM"),
-            Item("Live streaming", R.drawable.red_alert,"Stop","Driver is delay due to traffic jam in location malviya nagar", "17-02-2-23 at 3:54 PM")
-        )
-    }
-
-    override fun onItemClick(position: Int) {
-        Toast.makeText(requireContext(),"Item $position clicked", Toast.LENGTH_SHORT)
-    }
 
 }

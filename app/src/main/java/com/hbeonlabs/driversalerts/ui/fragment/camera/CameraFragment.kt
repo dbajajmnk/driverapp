@@ -8,11 +8,10 @@ import androidx.fragment.app.viewModels
 import com.google.mlkit.vision.common.InputImage
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
-import com.hbeonlabs.driversalerts.data.local.db.models.Warning
+import com.hbeonlabs.driversalerts.data.local.db.models.Notification
 import com.hbeonlabs.driversalerts.databinding.FragmentCameraBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
-import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationSubType
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.DrowsinessDetector
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
@@ -43,12 +42,14 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         Manifest.permission.ACCESS_FINE_LOCATION
     )
     private val drowsinessDetector = DrowsinessDetector({
-        viewModel.addWarningsData(Warning(
+        viewModel.addWarningsData(Notification(
             timeInMills = currentLocationData.timeInMills,
             locationLatitude = currentLocationData.locationLatitude,
             locationLongitude = currentLocationData.locationLongitude,
-            notificationSubType = NotificationSubType.DROWSNISS.ordinal,
-            message = AppConstants.DROWSINESS_MESSAGE
+            notificationSubType = AppConstants.NotificationSubType.DROWSNISS.ordinal,
+            notificationType = AppConstants.NotificationType.WARNING.ordinal,
+            message = AppConstants.DROWSINESS_MESSAGE,
+            isSynced = false
         ))
         drowsinessAlertDialog.show()
     }, {
@@ -183,12 +184,14 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
             currentLocationData = locationAndSpeedData
             if (locationAndSpeedData.speed.toFloat() >= OVERSPEEDING_THRESHOLD)
             {
-                viewModel.addWarningsData(Warning(
+                viewModel.addWarningsData(Notification(
                     timeInMills = locationAndSpeedData.timeInMills,
                     locationLatitude = locationAndSpeedData.locationLatitude,
                     locationLongitude = locationAndSpeedData.locationLongitude,
-                    notificationSubType = NotificationSubType.OVERSPEEDING.ordinal,
-                    message = AppConstants.OVERSPEEDING_MESSAGE
+                    notificationSubType = AppConstants.NotificationSubType.OVERSPEEDING.ordinal,
+                    message = AppConstants.OVERSPEEDING_MESSAGE,
+                    notificationType = AppConstants.NotificationType.WARNING.ordinal,
+                    isSynced = false
                 ))
                 overSpeedingAlertdialog.show()
             }
