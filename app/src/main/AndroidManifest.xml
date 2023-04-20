@@ -41,9 +41,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".utils.DailyAlarmReceiver"/>
         <activity android:name=".ui.activity.MainActivity" />
         <activity android:name=".ui.activity.AdminActivity" />
+        <service android:name=".bluetooth.SerialService"/>
 
         <meta-data
             android:name="preloaded_fonts"

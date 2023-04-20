@@ -131,7 +131,7 @@ public class WebRtcHelper {
         this.senderSurfaceViewRenderer = senderSurfaceViewRenderer;
         initializeSurfaceViews(this.senderSurfaceViewRenderer);
         showFrontCameraVideoTrack();
-        //startFrontStreamingVideo();
+        startFrontStreamingVideo();
     }
 
     public void startBackStreaming(SurfaceViewRenderer backSurfaceViewRenderer) {
