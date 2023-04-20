@@ -7,6 +7,9 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import com.google.mlkit.vision.common.InputImage
 import com.hbeonlabs.driversalerts.R
+import com.hbeonlabs.driversalerts.bluetooth.AttendanceCallback
+import com.hbeonlabs.driversalerts.bluetooth.AttendanceManager
+import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Notification
 import com.hbeonlabs.driversalerts.databinding.FragmentCameraBinding
@@ -42,15 +45,19 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         Manifest.permission.ACCESS_FINE_LOCATION
     )
     private val drowsinessDetector = DrowsinessDetector({
-        viewModel.addWarningsData(Notification(
-            timeInMills = currentLocationData.timeInMills,
-            locationLatitude = currentLocationData.locationLatitude,
-            locationLongitude = currentLocationData.locationLongitude,
-            notificationSubType = AppConstants.NotificationSubType.DROWSNISS.ordinal,
-            notificationType = AppConstants.NotificationType.WARNING.ordinal,
-            message = AppConstants.DROWSINESS_MESSAGE,
-            isSynced = false
-        ))
+        if(this@CameraFragment::currentLocationData.isInitialized) {
+            viewModel.addWarningsData(
+                Notification(
+                    timeInMills = currentLocationData.timeInMills,
+                    locationLatitude = currentLocationData.locationLatitude,
+                    locationLongitude = currentLocationData.locationLongitude,
+                    notificationSubType = AppConstants.NotificationSubType.DROWSNISS.ordinal,
+                    notificationType = AppConstants.NotificationType.WARNING.ordinal,
+                    message = AppConstants.DROWSINESS_MESSAGE,
+                    isSynced = false
+                )
+            )
+        }
         drowsinessAlertDialog.show()
     }, {
         drowsinessAlertDialog.dismiss()
@@ -69,6 +76,19 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         initDialogs()
         askLocationPermissions()
         askCameraPermission()
+        initAttendanceManager()
+    }
+
+    private fun initAttendanceManager(){
+        val attendanceCallBack = object : AttendanceCallback{
+            override fun onAttendance(attendanceModel: AttendanceModel?) {
+                println(attendanceModel)
+                //TODO send this attendance record in api
+            }
+
+        }
+        val observer = AttendanceManager(requireActivity(),attendanceCallBack)
+        lifecycle.addObserver(observer)
     }
 
     private fun askCameraPermission() {
@@ -104,7 +124,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         webRtcHelper.startFrontStreaming(binding.frontSurfaceview)
         //webRtcHelper.start(requireContext(), binding.frontSurfaceview,null)
         //webRtcHelper.startBackStreaming(binding.backSurfaceview)
-        Timer().schedule(100, 100) {
+        timer = Timer()
+        timer.schedule(100, 100) {
             webRtcHelper.addFrameListener(frameListener)
         }
     }
@@ -164,6 +185,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
         super.onDestroy()
         webRtcHelper.onDestroy()
         locationProvider.onDestroy()
+        if(this@CameraFragment::timer.isInitialized)
+            timer.cancel()
     }
 
     override fun onRequestPermissionsResult(
