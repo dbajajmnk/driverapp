@@ -1,13 +1,17 @@
 package com.hbeonlabs.driversalerts.ui.activity
 
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.ActivityMainBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseActivity
+import com.hbeonlabs.driversalerts.utils.batteryChargingStatusChecker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 
 @AndroidEntryPoint
@@ -21,6 +25,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun initView() {
         super.initView()
+
+
 
         val navHostFrag = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFrag.navController
