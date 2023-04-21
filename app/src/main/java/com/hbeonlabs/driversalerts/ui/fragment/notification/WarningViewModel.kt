@@ -11,6 +11,6 @@ class WarningViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    fun getWarningList() = repository.getWarningsList()
+    fun getWarningList() = repository.getNotificationList()
 
 }

@@ -14,5 +14,5 @@ import com.hbeonlabs.driversalerts.data.local.db.models.Notification
 )
 abstract class AppDatabase :RoomDatabase(){
     abstract fun getLocationAndSpeedDao(): LocationAndSpeedDao
-    abstract fun getWarningsDao(): WarningsDao
+    abstract fun getNotificationDao(): NotificationDao
 }

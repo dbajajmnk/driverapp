@@ -1,18 +1,20 @@
 package com.hbeonlabs.driversalerts.data.repository
 
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
-import com.hbeonlabs.driversalerts.data.local.db.WarningsDao
+import com.hbeonlabs.driversalerts.data.local.db.NotificationDao
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Notification
 import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
+import com.hbeonlabs.driversalerts.utils.network.onError
+import com.hbeonlabs.driversalerts.utils.network.onException
 import com.hbeonlabs.driversalerts.utils.network.onSuccess
 import javax.inject.Inject
 
 class AppRepository @Inject constructor(
     private val locationDao : LocationAndSpeedDao,
-    private val warningsDao: WarningsDao,
+    private val notificationDao: NotificationDao,
     private val appApis: AppApis,
     private val prefManager: PrefManager
 
@@ -24,12 +26,20 @@ class AppRepository @Inject constructor(
 
     }
 
-    suspend fun addWarnings(warning: Notification)
+
+    suspend fun addNotification(notification: Notification)
     {
-        warningsDao.addNotification(warning)
+        appApis.sendNotificationData().onSuccess {
+            notification.isSynced = true
+        }.onError { code, message ->
+            notification.isSynced = false
+        }.onException {
+            notification.isSynced = false
+        }
+        notificationDao.addNotification(notification)
     }
 
-    fun getWarningsList() = warningsDao.getAllNotifications()
+    fun getNotificationList() = notificationDao.getAllNotifications()
 
     suspend fun getAllNotificationsFromApi() = appApis.getAllNotifications()
 

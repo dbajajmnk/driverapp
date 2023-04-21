@@ -7,7 +7,7 @@ import com.hbeonlabs.driversalerts.data.local.db.models.Notification
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface WarningsDao {
+interface NotificationDao {
 
     @Query("SELECT * FROM notification")
     fun getAllNotifications(): Flow<List<Notification>>

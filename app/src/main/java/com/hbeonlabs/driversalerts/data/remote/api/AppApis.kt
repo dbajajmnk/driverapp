@@ -6,6 +6,7 @@ import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import com.hbeonlabs.driversalerts.data.remote.response.NotificationResponse
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.CONFIGURE_DEVICE
+import com.hbeonlabs.driversalerts.utils.constants.EndPoints.CREATE_ATTENDANCE
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.GET_ALL_ATTENDANCE
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.GET_ALL_RECORDINGS
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.GET_DEVICE_CONFIGURATION
@@ -40,5 +41,12 @@ interface AppApis {
     // todo Request body
     @POST(CONFIGURE_DEVICE)
     suspend fun configureDevice(@Body deviceConfigurationRequest: DeviceConfigurationRequest): NetworkResult<BasicMessageResponse>
+
+    //todo request body needed
+    @POST(CREATE_ATTENDANCE)
+    suspend fun addAttendance():NetworkResult<BasicMessageResponse>
+
+
+
 
 }

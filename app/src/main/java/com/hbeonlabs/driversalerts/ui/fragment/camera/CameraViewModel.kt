@@ -22,10 +22,10 @@ class CameraViewModel @Inject constructor(
             repository.addLocationData(locationAndSpeed)
         }
     }
-    fun addWarningsData(warning: Notification)
+    fun addWarningsData(notification: Notification)
     {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addWarnings(warning)
+            repository.addNotification(notification)
         }
     }
 

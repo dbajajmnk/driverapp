@@ -8,6 +8,7 @@ object EndPoints {
     const val GET_ALL_RECORDINGS = "recordings/read"
     const val CONFIGURE_DEVICE = "masters/device/configure"
     const val POST_NOTIFICATION = "notification/create"
+    const val CREATE_ATTENDANCE = "attendance/create"
 
 
 }

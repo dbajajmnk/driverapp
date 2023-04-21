@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
-@Entity
+@Entity(tableName = "notification")
 data class Notification(
     @PrimaryKey(autoGenerate = false)
     val timeInMills:String,
@@ -13,5 +13,5 @@ data class Notification(
     val notificationSubType: Int,
     val notificationType: Int,
     val message:String,
-    val isSynced :Boolean
+    var isSynced :Boolean
 ):Serializable
