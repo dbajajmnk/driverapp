@@ -19,7 +19,7 @@ class LogsFragment : BaseFragment<FragmentLogsBinding>(){
 
     private lateinit var recyclerView: RecyclerView
     @Inject
-    private lateinit var itemAdapter: NotificationAdapter
+     lateinit var itemAdapter: NotificationAdapter
 
     override fun getLayoutResourceId(): Int {
         return R.layout.fragment_logs

@@ -11,7 +11,7 @@ import com.hbeonlabs.driversalerts.bluetooth.AttendanceCallback
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceManager
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
-import com.hbeonlabs.driversalerts.data.local.db.models.Notification
+import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.databinding.FragmentCameraBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
@@ -39,6 +39,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     lateinit var drowsinessAlertDialog: Dialog
     private val webRtcHelper = WebRtcHelper.getInstance()
     private lateinit var currentLocationData :LocationAndSpeed
+    lateinit var timer :Timer
 
     private var locationPermissions = arrayOf(
         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -47,7 +48,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     private val drowsinessDetector = DrowsinessDetector({
         if(this@CameraFragment::currentLocationData.isInitialized) {
             viewModel.addWarningsData(
-                Notification(
+                Warning(
                     timeInMills = currentLocationData.timeInMills,
                     locationLatitude = currentLocationData.locationLatitude,
                     locationLongitude = currentLocationData.locationLongitude,
@@ -80,13 +81,11 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     }
 
     private fun initAttendanceManager(){
-        val attendanceCallBack = object : AttendanceCallback{
-            override fun onAttendance(attendanceModel: AttendanceModel?) {
+        val attendanceCallBack =
+            AttendanceCallback { attendanceModel ->
                 println(attendanceModel)
-                //TODO send this attendance record in api
+                viewModel.addAttendance(attendanceModel)
             }
-
-        }
         val observer = AttendanceManager(requireActivity(),attendanceCallBack)
         lifecycle.addObserver(observer)
     }
@@ -207,7 +206,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
             currentLocationData = locationAndSpeedData
             if (locationAndSpeedData.speed.toFloat() >= OVERSPEEDING_THRESHOLD)
             {
-                viewModel.addWarningsData(Notification(
+                viewModel.addWarningsData(Warning(
                     timeInMills = locationAndSpeedData.timeInMills,
                     locationLatitude = locationAndSpeedData.locationLatitude,
                     locationLongitude = locationAndSpeedData.locationLongitude,

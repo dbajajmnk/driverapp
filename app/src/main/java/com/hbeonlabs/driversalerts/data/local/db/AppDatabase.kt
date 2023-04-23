@@ -3,12 +3,12 @@ package com.hbeonlabs.driversalerts.data.local.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
-import com.hbeonlabs.driversalerts.data.local.db.models.Notification
+import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 
 @Database(
     entities = [
         LocationAndSpeed::class,
-        Notification::class
+        Warning::class
                ],
     version = 1
 )

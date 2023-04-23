@@ -17,14 +17,14 @@ kapt{
 }
 
 android {
-    compileSdk = Versions.COMPILE_SDK
+    compileSdk = 33
 
     defaultConfig {
         applicationId ="com.hbeonlabs.driversalerts"
-        minSdk=Versions.MIN_Sdk
-        targetSdk=Versions.TARGET_SDK
-        versionCode =Versions.VERSION_CODE
-        versionName =Versions.VERSION_NAME
+        minSdk= 25
+        targetSdk= 33
+        versionCode = 1
+        versionName ="1.0"
 
         testInstrumentationRunner =
                 "androidx.test.runner.AndroidJUnitRunner"
@@ -60,75 +60,75 @@ android {
 
 dependencies {
 
-    implementation(Libs.KTS_CORE_LIB)
-    implementation(Libs.APP_COMPAT_LIB)
-    implementation (Libs.MATERIAL_LIB)
-    implementation (Libs.CONSTRAINT_LAYOUT_LIB)
-    implementation(Libs.ROOM_RUN_TIME)
+    implementation ("androidx.core:core-ktx:1.10.0")
+    implementation ("androidx.appcompat:appcompat:1.6.1")
+    implementation ("com.google.android.material:material:1.8.0")
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation ("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation ("androidx.security:security-crypto-ktx:1.1.0-alpha06")
+    testImplementation ("junit:junit:4.13.2")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
+
+    // navigation
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-dynamic-features-fragment:2.5.3")
+
+
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
     implementation(files("libs/webRtcLib.aar"))
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    kapt(Libs.ROOM_COMPILER)
-    implementation(Libs.ROOM_KTX)
-    testImplementation(Libs.JUNIT_LIB)
-    androidTestImplementation(Libs.JUNIT_EXT_LIB)
-    androidTestImplementation(Libs.ESPRESSO_CORE)
-    // ViewModel
-    implementation(Libs.VIEW_MODEL)
 
-    // LiveData
-    implementation(Libs.LIVE_DATA)
-    // Annotation processor
-    kapt(Libs.LIFECYCLE_COMPILER)
-    // alternately - if using Java8, use the following instead of lifecycle-compiler
-    implementation(Libs.LIFECYCELE_JAVA_SUPPORT)
-    //Koin -- Dependency  Injection
 
-    implementation(Libs.COROUTINE_LIB)
-    //Firebase
-   /* implementation( platform(Libs.FIREBASE_BOM))
-    implementation(Libs.FIREBASE_CRASHLYTICS)*/
-    //Logging
-    implementation(Libs.TIMBER_LIB)
-    //Memory Leak
-    // debugImplementation(Libs.LEAK_CANARY_LIB)
+    implementation("androidx.room:room-runtime:2.5.1")
+    implementation("androidx.room:room-ktx:2.5.1")
+    kapt("androidx.room:room-compiler:2.5.1")
+    annotationProcessor("androidx.room:room-compiler:2.5.1")
+
+
+
+
+    // Timber
+    implementation ("com.jakewharton.timber:timber:5.0.1")
+
     //Multidex
-    implementation(Libs.MULTIDEX_LIB)
+    implementation("androidx.multidex:multidex:2.0.1")
+
+
     // Dp SP Support
-    implementation(Libs.DP_LIB)
-    implementation(Libs.SP_LIB)
+    implementation ("com.intuit.sdp:sdp-android:1.1.0")
+    implementation ("com.intuit.ssp:ssp-android:1.1.0")
 
     // Navigation Components
-    implementation (Libs.NAV_FRAGMENT_LIB)
-    implementation (Libs.NAV_UI_LIB)
-    implementation (Libs.VIEW_PAGER_DOTS)
+    implementation ("me.relex:circleindicator:2.1.6")
 
     //Image Picker Library
     implementation ("com.github.dhaval2404:imagepicker:2.1")
 
     // Lottie dependency
-    implementation ("com.airbnb.android:lottie:5.2.0")
+    implementation ("com.airbnb.android:lottie:6.0.0")
 
     //Dagger - Hilt
-    implementation ("com.google.dagger:hilt-android:2.44.2")
-    kapt ("com.google.dagger:hilt-android-compiler:2.44.2")
+    implementation ("com.google.dagger:hilt-android:2.45")
+    kapt ("com.google.dagger:hilt-android-compiler:2.45")
     kapt ("androidx.hilt:hilt-compiler:1.0.0")
 
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
-    implementation (Libs.EASY_PERMISIONS)
+    implementation ("pub.devrel:easypermissions:3.0.0")
     implementation ("com.google.android.gms:play-services-mlkit-face-detection:17.1.0")
 
-    implementation ("androidx.camera:camera-core:1.3.0-alpha03")
-    implementation ("androidx.camera:camera-camera2:1.3.0-alpha03")
-    implementation ("androidx.camera:camera-view:1.3.0-alpha03")
-    implementation ("androidx.camera:camera-lifecycle:1.3.0-alpha03")
+    implementation ("androidx.camera:camera-core:1.3.0-alpha06")
+    implementation ("androidx.camera:camera-camera2:1.3.0-alpha06")
+    implementation ("androidx.camera:camera-view:1.3.0-alpha06")
+    implementation ("androidx.camera:camera-lifecycle:1.3.0-alpha06")
 
-    implementation("io.socket:socket.io-client:1.0.0") {
+    implementation("io.socket:socket.io-client:2.1.0") {
         exclude("org.json", "json")
     }
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
@@ -142,7 +142,18 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
-    implementation("io.socket:socket.io-client:1.0.0") {
+    // Coroutines
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    // Coroutine Lifecycle Scopes
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+
+    // Activity KTX for viewModels()
+    implementation ("androidx.activity:activity-ktx:1.7.1")
+
+    implementation("io.socket:socket.io-client:2.1.0") {
         exclude("org.json", "json")
     }
     implementation ("androidx.recyclerview:recyclerview:1.3.0")

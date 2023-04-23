@@ -2,8 +2,9 @@ package com.hbeonlabs.driversalerts.ui.fragment.camera
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
-import com.hbeonlabs.driversalerts.data.local.db.models.Notification
+import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,10 +23,17 @@ class CameraViewModel @Inject constructor(
             repository.addLocationData(locationAndSpeed)
         }
     }
-    fun addWarningsData(notification: Notification)
+    fun addWarningsData(notification: Warning)
     {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addNotification(notification)
+        }
+    }
+
+    fun addAttendance(attendance: AttendanceModel)
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.createAttendance(attendance)
         }
     }
 

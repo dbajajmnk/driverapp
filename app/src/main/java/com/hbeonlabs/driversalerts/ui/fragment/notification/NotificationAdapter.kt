@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.hbeonlabs.driversalerts.data.local.db.models.Notification
+import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.databinding.ItemNotificationBinding
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import java.text.SimpleDateFormat
@@ -21,7 +21,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
 
     inner class NotificationViewHolder(val binding: ItemNotificationBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Notification) {
+        fun bind(data: Warning) {
 
             binding.tvWarningTitle.text = AppConstants.NotificationSubType.values()[data.notificationSubType].toString()
             binding.tvWarningMessage.text = data.message
@@ -45,17 +45,17 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         }
     }
 
-    private val differCallback = object : DiffUtil.ItemCallback<Notification>() {
+    private val differCallback = object : DiffUtil.ItemCallback<Warning>() {
         override fun areItemsTheSame(
-            oldItem: Notification,
-            newItem: Notification
+            oldItem: Warning,
+            newItem: Warning
         ): Boolean {
             return oldItem.timeInMills == newItem.timeInMills
         }
 
         override fun areContentsTheSame(
-            oldItem: Notification,
-            newItem: Notification
+            oldItem: Warning,
+            newItem: Warning
         ): Boolean {
             return oldItem == newItem
         }
@@ -86,9 +86,9 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
 
     }
 
-    private var onClickListener: ((Notification) -> Unit)? = null
+    private var onClickListener: ((Warning) -> Unit)? = null
 
-    fun setOnItemClickListener(listener: (Notification) -> Unit) {
+    fun setOnItemClickListener(listener: (Warning) -> Unit) {
         onClickListener = listener
     }
 

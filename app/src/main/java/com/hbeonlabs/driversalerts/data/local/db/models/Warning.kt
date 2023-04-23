@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
-@Entity(tableName = "notification")
-data class Notification(
+@Entity
+data class Warning(
     @PrimaryKey(autoGenerate = false)
     val timeInMills:String,
     val locationLatitude :String,

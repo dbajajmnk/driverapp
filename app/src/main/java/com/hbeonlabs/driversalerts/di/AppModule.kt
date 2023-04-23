@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.hbeonlabs.driversalerts.data.local.db.AppDatabase
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.data.local.db.NotificationDao
+import com.hbeonlabs.driversalerts.data.remote.api.AppApis
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.BASE_URL
 import com.hbeonlabs.driversalerts.utils.network.NetworkResultCallAdapterFactory
 import com.hbeonlabs.driversalerts.utils.network.interceptors.AuthInterceptorImpl
@@ -105,5 +106,10 @@ object AppModule {
         return database.getNotificationDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideAuthApiService(
+        retrofit: Retrofit
+    ): AppApis = retrofit.create(AppApis::class.java)
 
 }

@@ -1,9 +1,10 @@
 package com.hbeonlabs.driversalerts.data.repository
 
+import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.data.local.db.NotificationDao
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
-import com.hbeonlabs.driversalerts.data.local.db.models.Notification
+import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
@@ -27,7 +28,7 @@ class AppRepository @Inject constructor(
     }
 
 
-    suspend fun addNotification(notification: Notification)
+    suspend fun addNotification(notification: Warning)
     {
         appApis.sendNotificationData().onSuccess {
             notification.isSynced = true
@@ -53,6 +54,9 @@ class AppRepository @Inject constructor(
     {
         return prefManager.getDeviceConfigurationDetails()
     }
+
+
+    suspend fun createAttendance(attendance: AttendanceModel) = appApis.addAttendance(attendance)
 
 
 }

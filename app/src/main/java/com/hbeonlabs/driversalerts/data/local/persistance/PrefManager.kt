@@ -5,8 +5,9 @@ import android.content.SharedPreferences
 import android.net.Uri
 import com.google.gson.Gson
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
+import javax.inject.Inject
 
-class PrefManager(context: Context) {
+class PrefManager @Inject constructor(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("DriverAlert", Context.MODE_PRIVATE)
     private val audioUriKey = "audioUriKey"

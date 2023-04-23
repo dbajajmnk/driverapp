@@ -2,7 +2,6 @@ package com.hbeonlabs.driversalerts.data.local.db.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.hbeonlabs.driversalerts.ui.fragment.notification.NotificationSubType
 
 @Entity
 data class Attendance(
