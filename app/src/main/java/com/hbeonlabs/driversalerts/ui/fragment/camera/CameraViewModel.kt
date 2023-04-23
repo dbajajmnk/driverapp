@@ -8,6 +8,8 @@ import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,6 +18,8 @@ class CameraViewModel @Inject constructor(
     val repository: AppRepository
 
 ) : ViewModel() {
+
+
 
     fun addLocationData(locationAndSpeed: LocationAndSpeed)
     {
@@ -36,5 +40,7 @@ class CameraViewModel @Inject constructor(
             repository.createAttendance(attendance)
         }
     }
+
+
 
 }

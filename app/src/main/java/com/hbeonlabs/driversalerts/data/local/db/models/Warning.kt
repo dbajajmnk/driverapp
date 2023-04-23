@@ -1,5 +1,6 @@
 package com.hbeonlabs.driversalerts.data.local.db.models
 
+import android.icu.text.CaseMap.Title
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
@@ -10,7 +11,7 @@ data class Warning(
     val timeInMills:String,
     val locationLatitude :String,
     val locationLongitude:String,
-    val notificationSubType: Int,
+    val notificationTitle: String,
     val notificationType: Int,
     val message:String,
     var isSynced :Boolean

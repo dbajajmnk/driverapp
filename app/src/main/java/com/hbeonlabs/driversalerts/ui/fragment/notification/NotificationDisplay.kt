@@ -44,7 +44,7 @@ class NotificationDisplay : BaseFragment<FragmentNotificationDisplayWithMapBindi
         mapFragment.getMapAsync(this)
 
 
-        binding.tvWarningTitle.text = AppConstants.NotificationSubType.values()[data.notificationSubType].toString()
+        binding.tvWarningTitle.text = data.notificationTitle
         binding.tvWarningMessage.text = data.message
 
 

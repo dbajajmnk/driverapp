@@ -16,10 +16,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
+import com.hbeonlabs.driversalerts.data.local.db.models.Warning
+import com.hbeonlabs.driversalerts.data.remote.response.NotificationResponseItem
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import pub.devrel.easypermissions.EasyPermissions
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 
 fun Fragment.makeToast(text: String) {
@@ -157,6 +161,34 @@ fun Dialog.setHeightWidthPercent(percentageWidth: Int, percentageHeight: Int) {
     val percentWidth = rect.width() * percent
     val percentHeight = rect.height() * percentH
     this.window?.setLayout(percentWidth.toInt(), percentHeight.toInt())
+}
+
+
+fun NotificationResponseItem.toNotification():Warning
+{
+    val notificationType =  when (this.type)
+    {
+         "log" -> AppConstants.NotificationType.LOG.ordinal
+         "warning" -> AppConstants.NotificationType.WARNING.ordinal
+         else -> AppConstants.NotificationType.WARNING.ordinal
+    }
+
+    val dateTimeStr = "${this.date} ${this.time}"
+    val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+    val date = sdf.parse(dateTimeStr)
+    val calendar = Calendar.getInstance()
+    calendar.time = date
+
+    return Warning(
+        timeInMills =  calendar.timeInMillis.toString(),
+        locationLatitude = this.latitude.toString(),
+        locationLongitude = this.longitude.toString(),
+        message = this.description.toString(),
+        isSynced = true,
+        notificationTitle = this.title.toString(),
+        notificationType = notificationType
+    )
+
 }
 
 

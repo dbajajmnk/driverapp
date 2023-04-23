@@ -7,19 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentLogsBinding
 import com.hbeonlabs.driversalerts.databinding.FragmentNotificationBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
+import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
+import com.hbeonlabs.driversalerts.utils.makeToast
 import javax.inject.Inject
 
 class LogsFragment : BaseFragment<FragmentLogsBinding>(){
 
-    private lateinit var recyclerView: RecyclerView
     @Inject
-     lateinit var itemAdapter: NotificationAdapter
+    lateinit var itemAdapter: NotificationAdapter
+
+    private val viewModel:WarningViewModel by viewModels()
 
     override fun getLayoutResourceId(): Int {
         return R.layout.fragment_logs
@@ -28,20 +32,35 @@ class LogsFragment : BaseFragment<FragmentLogsBinding>(){
 
     override fun initView() {
         super.initView()
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = itemAdapter
+        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_logs, container, false)
 
-        recyclerView = view.findViewById(R.id.recycler_view)
-       // itemAdapter = NotificationAdapter(getItems(), this)
+    override fun observe() {
+        super.observe()
+        collectLatestLifeCycleFlow(viewModel.notificationEvent)
+        {
+            when(it){
+                is WarningViewModel.NotificationEvents.ErrorEvent -> {
+                    makeToast(it.message)
+                }
+                is WarningViewModel.NotificationEvents.LoadingEvent -> {
+                    if (it.isLoading)
+                    {
 
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-          //  adapter = itemAdapter
+                    }
+                    else{
+
+                    }
+                }
+                is WarningViewModel.NotificationEvents.NotificationListEvents -> {
+                    itemAdapter.differ.submitList(it.notifications)
+                }
+            }
         }
-
-        return view
     }
 
 

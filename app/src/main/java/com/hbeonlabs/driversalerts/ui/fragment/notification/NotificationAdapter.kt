@@ -23,7 +23,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Warning) {
 
-            binding.tvWarningTitle.text = AppConstants.NotificationSubType.values()[data.notificationSubType].toString()
+            binding.tvWarningTitle.text = data.notificationTitle
             binding.tvWarningMessage.text = data.message
 
             try {

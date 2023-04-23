@@ -52,7 +52,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
                     timeInMills = currentLocationData.timeInMills,
                     locationLatitude = currentLocationData.locationLatitude,
                     locationLongitude = currentLocationData.locationLongitude,
-                    notificationSubType = AppConstants.NotificationSubType.DROWSNISS.ordinal,
+                    notificationTitle = AppConstants.NotificationSubType.DROWSNISS.toString(),
                     notificationType = AppConstants.NotificationType.WARNING.ordinal,
                     message = AppConstants.DROWSINESS_MESSAGE,
                     isSynced = false
@@ -210,7 +210,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
                     timeInMills = locationAndSpeedData.timeInMills,
                     locationLatitude = locationAndSpeedData.locationLatitude,
                     locationLongitude = locationAndSpeedData.locationLongitude,
-                    notificationSubType = AppConstants.NotificationSubType.OVERSPEEDING.ordinal,
+                    notificationTitle = AppConstants.NotificationSubType.OVERSPEEDING.toString(),
                     message = AppConstants.OVERSPEEDING_MESSAGE,
                     notificationType = AppConstants.NotificationType.WARNING.ordinal,
                     isSynced = false
