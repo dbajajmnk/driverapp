@@ -18,6 +18,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.ActivityResultRegistry;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
@@ -34,17 +35,15 @@ public class AttendanceManager implements ServiceConnection, SerialListener, Def
     private boolean initialStart = true;
     private boolean hexEnabled = false;
     private String newline = TextUtil.newline_crlf;
-    private Activity activity;
+    private FragmentActivity activity;
     private ActivityResultLauncher<String> permissionLauncher;
     private ActivityResultLauncher<Intent> enableBluetoothLauncher;
     private AttendanceModel attendanceModel;
     private AttendanceCallback attendanceCallback;
-    public AttendanceManager(Activity activity, AttendanceCallback attendanceCallback){
+    public AttendanceManager(FragmentActivity activity, AttendanceCallback attendanceCallback){
         this.activity = activity;
         this.attendanceCallback = attendanceCallback;
-        if(BluetoothUtil.hasPermissions(activity,permissionLauncher)) {
-            this.deviceAddress = BluetoothUtil.getAttendanceDeviceAddress(activity, enableBluetoothLauncher);
-        }
+        getDeviceAddress(activity);
         onAttach(activity);
     }
 
@@ -90,6 +89,14 @@ public class AttendanceManager implements ServiceConnection, SerialListener, Def
         }
     }
 
+    private void getDeviceAddress(LifecycleOwner owner){
+        if(deviceAddress == null) {
+            initLaunchers(owner, activity.getActivityResultRegistry());
+            if (BluetoothUtil.hasPermissions(activity, permissionLauncher)) {
+                this.deviceAddress = BluetoothUtil.getAttendanceDeviceAddress(activity, enableBluetoothLauncher);
+            }
+        }
+    }
     @Override
     public void onServiceConnected(ComponentName name, IBinder binder) {
         service = ((SerialService.SerialBinder) binder).getService();
@@ -156,6 +163,7 @@ public class AttendanceManager implements ServiceConnection, SerialListener, Def
             if (hexEnabled) {
                 spn.append(TextUtil.toHexString(data)).append('\n');
             } else {
+                send("Y");
                 String msg = new String(data);
                 sendCallback(msg);
             }
