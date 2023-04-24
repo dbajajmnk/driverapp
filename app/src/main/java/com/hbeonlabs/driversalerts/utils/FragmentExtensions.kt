@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 
 fun Fragment.makeToast(text: String) {
@@ -174,12 +176,13 @@ fun NotificationResponseItem.toNotification():Warning
     }
 
     val dateTimeStr = "${this.date} ${this.time}"
-    val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+    val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH)
     val date = sdf.parse(dateTimeStr)
     val calendar = Calendar.getInstance()
     calendar.time = date
 
-    return Warning(
+
+    val warning =  Warning(
         timeInMills =  calendar.timeInMillis.toString(),
         locationLatitude = this.latitude.toString(),
         locationLongitude = this.longitude.toString(),
@@ -188,6 +191,9 @@ fun NotificationResponseItem.toNotification():Warning
         notificationTitle = this.title.toString(),
         notificationType = notificationType
     )
+
+    Log.d("TAG", "toNotification: "+warning)
+    return warning
 
 }
 

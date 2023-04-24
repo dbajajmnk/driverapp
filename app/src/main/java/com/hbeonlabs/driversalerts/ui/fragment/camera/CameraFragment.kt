@@ -9,7 +9,6 @@ import com.google.mlkit.vision.common.InputImage
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceCallback
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceManager
-import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.databinding.FragmentCameraBinding
@@ -17,10 +16,12 @@ import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.DrowsinessDetector
+import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.CAMERA_PERMISSION_REQ_CODE
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.LOCATION_PERMISSION_REQ_CODE
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.OVERSPEEDING_THRESHOLD
+import com.hbeonlabs.driversalerts.utils.makeToast
 import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.EglRenderer.FrameListener
@@ -28,6 +29,7 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 import kotlin.concurrent.schedule
+import kotlin.math.round
 
 @AndroidEntryPoint
 class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.PermissionCallbacks,
@@ -201,10 +203,11 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
 
     private fun doOnLocationPermissionAvailable() {
         locationProvider = DriverLocationProvider(this){locationAndSpeedData->
-            binding.tvSpeedData.text = "Speed =  ${locationAndSpeedData.speed}"
+            val speedInKmph = "%.2f".format(locationAndSpeedData.speed.toDouble()*3.6)
+            binding.tvSpeedData.text = "Speed =  $speedInKmph"
             viewModel.addLocationData(locationAndSpeedData)
             currentLocationData = locationAndSpeedData
-            if (locationAndSpeedData.speed.toFloat() >= OVERSPEEDING_THRESHOLD)
+            if (speedInKmph.toFloat() >= OVERSPEEDING_THRESHOLD)
             {
                 viewModel.addWarningsData(Warning(
                     timeInMills = locationAndSpeedData.timeInMills,
@@ -220,6 +223,22 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
             else
             {
                 overSpeedingAlertdialog.dismiss()
+            }
+        }
+    }
+
+    override fun observe() {
+        super.observe()
+        collectLatestLifeCycleFlow(viewModel.getLast5LocationData()){
+            val acceleration = it.first().speed.toFloat() - it.last().speed.toFloat()
+            binding.tvAccelerationData.text = acceleration.toString()
+            if (acceleration>10)
+            {
+                makeToast("Instant SpeedUp")
+            }
+            else if(acceleration< -15)
+            {
+                makeToast("Immediate breaking")
             }
         }
     }

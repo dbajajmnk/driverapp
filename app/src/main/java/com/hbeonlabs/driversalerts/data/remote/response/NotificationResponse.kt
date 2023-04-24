@@ -2,11 +2,6 @@ package com.hbeonlabs.driversalerts.data.remote.response
 
 import com.google.gson.annotations.SerializedName
 
-data class NotificationResponse(
-
-	@field:SerializedName("NotificationResponse")
-	val notificationResponse: List<NotificationResponseItem?>? = null
-)
 
 data class NotificationResponseItem(
 
@@ -14,7 +9,7 @@ data class NotificationResponseItem(
 	val date: String? = null,
 
 	@field:SerializedName("latitude")
-	val latitude: Double? = null,
+	val latitude: Float? = null,
 
 	@field:SerializedName("description")
 	val description: String? = null,
@@ -44,7 +39,7 @@ data class NotificationResponseItem(
 	val time: String? = null,
 
 	@field:SerializedName("longitude")
-	val longitude: Double? = null,
+	val longitude: Float? = null,
 
 	@field:SerializedName("status")
 	val status: String? = null,

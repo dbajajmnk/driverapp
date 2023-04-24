@@ -56,12 +56,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
         setADailyStartAndStopAlarm()
 
-
-        lifecycleScope.launchWhenStarted {
-            speedDao.getAllLocationAndSpeedData().collectLatest {
-                Log.d("TAG", "List: " + it.toString())
-            }
-        }
     }
 
     override fun onClick(v: View?) {

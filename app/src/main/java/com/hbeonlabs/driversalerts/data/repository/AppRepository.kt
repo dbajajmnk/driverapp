@@ -58,5 +58,7 @@ class AppRepository @Inject constructor(
 
     suspend fun createAttendance(attendance: AttendanceModel) = appApis.addAttendance(attendance)
 
+    fun getLast5LocationListFromDB() = locationDao.getLast5Items()
+
 
 }
