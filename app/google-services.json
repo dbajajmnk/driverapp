@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "890656852404",
+    "project_id": "driver-alert-app-c50ca",
+    "storage_bucket": "driver-alert-app-c50ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890656852404:android:3ce1c22340770cf95bcae1",
+        "android_client_info": {
+          "package_name": "com.hbeonlabs.driversalerts"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "890656852404-egdr18vp0g68kcpgqbrdou103jkv553g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC90d_SkzjrZ9iBRyd_D3IQAushVNgoz2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "890656852404-egdr18vp0g68kcpgqbrdou103jkv553g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

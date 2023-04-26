@@ -8,6 +8,8 @@ plugins {
     //id("com.google.firebase.crashlytics")
     id ("dagger.hilt.android.plugin")
     id ("androidx.navigation.safeargs.kotlin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 
 
 }
@@ -66,6 +68,8 @@ dependencies {
     implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation ("androidx.legacy:legacy-support-v4:1.0.0")
     implementation ("androidx.security:security-crypto-ktx:1.1.0-alpha06")
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.2")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
