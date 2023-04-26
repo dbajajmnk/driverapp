@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Rect
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -17,8 +16,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
-import com.hbeonlabs.driversalerts.data.local.db.models.Warning
-import com.hbeonlabs.driversalerts.data.remote.response.NotificationResponseItem
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -165,36 +162,22 @@ fun Dialog.setHeightWidthPercent(percentageWidth: Int, percentageHeight: Int) {
     this.window?.setLayout(percentWidth.toInt(), percentHeight.toInt())
 }
 
-
-fun NotificationResponseItem.toNotification():Warning
-{
-    val notificationType =  when (this.type)
-    {
-         "log" -> AppConstants.NotificationType.LOG.ordinal
-         "warning" -> AppConstants.NotificationType.WARNING.ordinal
-         else -> AppConstants.NotificationType.WARNING.ordinal
-    }
-
-    val dateTimeStr = "${this.date} ${this.time}"
-    val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH)
-    val date = sdf.parse(dateTimeStr)
+fun Long.timeInMillsToDate(): String {
+    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
     val calendar = Calendar.getInstance()
-    calendar.time = date
-
-
-    val warning =  Warning(
-        timeInMills =  calendar.timeInMillis.toString(),
-        locationLatitude = this.latitude.toString(),
-        locationLongitude = this.longitude.toString(),
-        message = this.description.toString(),
-        isSynced = true,
-        notificationTitle = this.title.toString(),
-        notificationType = notificationType
-    )
-
-    Log.d("TAG", "toNotification: "+warning)
-    return warning
-
+    calendar.timeInMillis = this
+    return sdf.format(calendar.time)
 }
+
+fun Long.timeInMillsToTime():String
+{
+    val sdf = SimpleDateFormat("hh:mm:ss", Locale.ENGLISH)
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = this
+    return sdf.format(calendar.time)
+}
+
+
+
 
 

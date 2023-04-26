@@ -1,6 +1,7 @@
 package com.hbeonlabs.driversalerts.data.remote.api
 
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
+import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
 import com.hbeonlabs.driversalerts.data.remote.request.DeviceConfigurationRequest
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponse
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
@@ -34,9 +35,8 @@ interface AppApis {
     @GET(GET_ALL_RECORDINGS)
     suspend fun getAllRecordings()
 
-    // todo Request body
     @POST(POST_NOTIFICATION)
-    suspend fun sendNotificationData(): NetworkResult<BasicMessageResponse>
+    suspend fun sendNotificationData(@Body createNotificationDTO: CreateNotificationDTO): NetworkResult<BasicMessageResponse>
 
     // todo Request body
     @POST(CONFIGURE_DEVICE)
