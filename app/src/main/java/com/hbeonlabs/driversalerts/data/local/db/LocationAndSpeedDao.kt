@@ -12,6 +12,9 @@ interface LocationAndSpeedDao {
     @Query("SELECT * FROM locationandspeed")
     fun getAllLocationAndSpeedData(): Flow<List<LocationAndSpeed>>
 
+    @Query("SELECT * FROM locationandspeed ORDER BY timeInMills DESC LIMIT 3")
+    fun getLast5Items():Flow<List<LocationAndSpeed>>
+
     @Insert
     suspend fun addData(chat:LocationAndSpeed)
 }

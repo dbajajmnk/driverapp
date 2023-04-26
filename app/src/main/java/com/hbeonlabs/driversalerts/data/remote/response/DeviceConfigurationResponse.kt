@@ -4,11 +4,14 @@ import com.google.gson.annotations.SerializedName
 
 data class DeviceConfigurationResponse(
 
-	@field:SerializedName("licenceKey")
-	val licenceKey: String? = null,
+	@field:SerializedName("deviceType")
+	val deviceType: Int? = null,
 
 	@field:SerializedName("modelNo")
 	val modelNo: String? = null,
+
+	@field:SerializedName("uuid")
+	val uuid: String? = null,
 
 	@field:SerializedName("deviceId")
 	val deviceId: String? = null,
@@ -19,20 +22,26 @@ data class DeviceConfigurationResponse(
 	@field:SerializedName("expiryDate")
 	val expiryDate: String? = null,
 
+	@field:SerializedName("Vehicle")
+	val vehicle: Vehicle? = null,
+
+	@field:SerializedName("licenseKey")
+	val licenseKey: String? = null,
+
 	@field:SerializedName("createdAt")
 	val createdAt: String? = null,
+
+	@field:SerializedName("School")
+	val school: School? = null,
 
 	@field:SerializedName("schoolId")
 	val schoolId: Int? = null,
 
+	@field:SerializedName("id")
+	val id: Int? = null,
+
 	@field:SerializedName("vehicleId")
 	val vehicleId: Int? = null,
-
-	@field:SerializedName("tbl_vehicle")
-	val tblVehicle: TblVehicle? = null,
-
-	@field:SerializedName("tbl_type")
-	val tblType: TblType? = null,
 
 	@field:SerializedName("startDate")
 	val startDate: String? = null,
@@ -44,178 +53,11 @@ data class DeviceConfigurationResponse(
 	val updatedAt: String? = null
 )
 
-data class TblAddress(
-
-	@field:SerializedName("pincode")
-	val pincode: Int? = null,
-
-	@field:SerializedName("address")
-	val address: String? = null,
-
-	@field:SerializedName("city")
-	val city: String? = null,
-
-	@field:SerializedName("contact")
-	val contact: String? = null,
-
-	@field:SerializedName("state")
-	val state: String? = null,
-
-	@field:SerializedName("type")
-	val type: String? = null
+data class SupportedVehicles(
+	val any: Any? = null
 )
 
-data class TblTypeMasters(
-
-	@field:SerializedName("type")
-	val type: String? = null
-)
-
-data class TblRoute(
-
-	@field:SerializedName("endPoint")
-	val endPoint: String? = null,
-
-	@field:SerializedName("startPoint")
-	val startPoint: String? = null,
-
-	@field:SerializedName("tbl_route_stops")
-	val tblRouteStops: List<TblRouteStopsItem?>? = null,
-
-	@field:SerializedName("supportedVehicles")
-	val supportedVehicles: List<String?>? = null,
-
-	@field:SerializedName("status")
-	val status: Int? = null
-)
-
-data class TblType(
-
-	@field:SerializedName("type")
-	val type: String? = null
-)
-
-data class TblDocumentsItem(
-
-	@field:SerializedName("path")
-	val path: String? = null,
-
-	@field:SerializedName("size")
-	val size: Int? = null,
-
-	@field:SerializedName("name")
-	val name: String? = null,
-
-	@field:SerializedName("type")
-	val type: String? = null
-)
-
-data class TblStaffItem(
-
-	@field:SerializedName("gender")
-	val gender: String? = null,
-
-	@field:SerializedName("tbl_type_masters")
-	val tblTypeMasters: TblTypeMasters? = null,
-
-	@field:SerializedName("tbl_address")
-	val tblAddress: TblAddress? = null,
-
-	@field:SerializedName("name")
-	val name: String? = null,
-
-	@field:SerializedName("aadhar")
-	val aadhar: String? = null,
-
-	@field:SerializedName("experiance")
-	val experiance: String? = null,
-
-	@field:SerializedName("licenceNo")
-	val licenceNo: String? = null,
-
-	@field:SerializedName("age")
-	val age: Int? = null,
-
-	@field:SerializedName("tbl_documents")
-	val tblDocuments: List<TblDocumentsItem?>? = null,
-
-	@field:SerializedName("status")
-	val status: Int? = null
-)
-
-data class TblStudentsItem(
-
-	@field:SerializedName("gender")
-	val gender: String? = null,
-
-	@field:SerializedName("dob")
-	val dob: String? = null,
-
-	@field:SerializedName("father")
-	val father: String? = null,
-
-	@field:SerializedName("name")
-	val name: String? = null,
-
-	@field:SerializedName("monther")
-	val monther: String? = null,
-
-	@field:SerializedName("rollNo")
-	val rollNo: Int? = null,
-
-	@field:SerializedName("class")
-	val jsonMemberClass: String? = null,
-
-	@field:SerializedName("status")
-	val status: Int? = null
-)
-
-data class Owner(
-
-	@field:SerializedName("name")
-	val name: String? = null,
-
-	@field:SerializedName("aadhar")
-	val aadhar: String? = null
-)
-
-data class TblVehicle(
-
-	@field:SerializedName("owner")
-	val owner: Owner? = null,
-
-	@field:SerializedName("tbl_staff")
-	val tblStaff: List<TblStaffItem?>? = null,
-
-	@field:SerializedName("tbl_route")
-	val tblRoute: TblRoute? = null,
-
-	@field:SerializedName("registrationNo")
-	val registrationNo: String? = null,
-
-	@field:SerializedName("pollutionCertificateNo")
-	val pollutionCertificateNo: String? = null,
-
-	@field:SerializedName("occurances")
-	val occurances: Int? = null,
-
-	@field:SerializedName("tbl_students")
-	val tblStudents: List<TblStudentsItem?>? = null,
-
-	@field:SerializedName("fitnessCertificateNo")
-	val fitnessCertificateNo: String? = null,
-
-	@field:SerializedName("startTime")
-	val startTime: String? = null,
-
-	@field:SerializedName("endTime")
-	val endTime: String? = null,
-
-	@field:SerializedName("status")
-	val status: Int? = null
-)
-
-data class TblRouteStopsItem(
+data class RouteStopsItem(
 
 	@field:SerializedName("departureTime")
 	val departureTime: String? = null,
@@ -227,5 +69,146 @@ data class TblRouteStopsItem(
 	val arrivalOrder: Int? = null,
 
 	@field:SerializedName("point")
-	val point: String? = null
+	val point: String? = null,
+
+	@field:SerializedName("status")
+	val status: Int? = null
+)
+
+data class Route(
+
+	@field:SerializedName("endPoint")
+	val endPoint: String? = null,
+
+	@field:SerializedName("Students")
+	val students: List<StudentsItem?>? = null,
+
+	@field:SerializedName("startPoint")
+	val startPoint: String? = null,
+
+	@field:SerializedName("RouteStops")
+	val routeStops: List<RouteStopsItem?>? = null,
+
+	@field:SerializedName("supportedVehicles")
+	val supportedVehicles: SupportedVehicles? = null,
+
+	@field:SerializedName("status")
+	val status: Int? = null
+)
+
+data class Vehicle(
+
+	@field:SerializedName("occurrences")
+	val occurrences: Int? = null,
+
+	@field:SerializedName("helperDetails")
+	val helperDetails: HelperDetails? = null,
+
+	@field:SerializedName("driverDetails")
+	val driverDetails: DriverDetails? = null,
+
+	@field:SerializedName("registrationNo")
+	val registrationNo: String? = null,
+
+	@field:SerializedName("startTime")
+	val startTime: String? = null,
+
+	@field:SerializedName("endTime")
+	val endTime: String? = null,
+
+	@field:SerializedName("Route")
+	val route: Route? = null
+)
+
+data class StudentsItem(
+
+	@field:SerializedName("standard")
+	val standard: String? = null,
+
+	@field:SerializedName("Addresses")
+	val addresses: List<AddressesItem?>? = null,
+
+	@field:SerializedName("mother")
+	val mother: String? = null,
+
+	@field:SerializedName("dob")
+	val dob: String? = null,
+
+	@field:SerializedName("father")
+	val father: String? = null,
+
+	@field:SerializedName("name")
+	val name: String? = null,
+
+	@field:SerializedName("rollNo")
+	val rollNo: String? = null
+)
+
+data class AddressesItem(
+
+	@field:SerializedName("pincode")
+	val pincode: Int? = null,
+
+	@field:SerializedName("address2")
+	val address2: Any? = null,
+
+	@field:SerializedName("city")
+	val city: String? = null,
+
+	@field:SerializedName("address1")
+	val address1: String? = null,
+
+	@field:SerializedName("state")
+	val state: String? = null,
+
+	@field:SerializedName("type")
+	val type: Int? = null
+)
+
+data class DriverDetails(
+
+	@field:SerializedName("licenseNo")
+	val licenseNo: String? = null,
+
+	@field:SerializedName("name")
+	val name: String? = null,
+
+	@field:SerializedName("aadhar")
+	val aadhar: String? = null,
+
+	@field:SerializedName("experience")
+	val experience: String? = null
+)
+
+data class School(
+
+	@field:SerializedName("devices")
+	val devices: Int? = null,
+
+	@field:SerializedName("registrationNo")
+	val registrationNo: String? = null,
+
+	@field:SerializedName("name")
+	val name: String? = null,
+
+	@field:SerializedName("vehicles")
+	val vehicles: Int? = null,
+
+	@field:SerializedName("status")
+	val status: Int? = null
+)
+
+data class HelperDetails(
+
+	@field:SerializedName("licenseNo")
+	val licenseNo: String? = null,
+
+	@field:SerializedName("name")
+	val name: String? = null,
+
+	@field:SerializedName("aadhar")
+	val aadhar: String? = null,
+
+	@field:SerializedName("experience")
+	val experience: String? = null
 )

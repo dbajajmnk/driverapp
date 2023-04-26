@@ -1,6 +1,6 @@
 package com.hbeonlabs.driversalerts.ui.fragment.notification
 
-import android.app.Notification
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
@@ -28,10 +28,12 @@ class WarningViewModel @Inject constructor(
     fun getAllNotificationsFromApi (){
         viewModelScope.launch {
             repository.getAllNotificationsFromApi().onSuccess {
+                Log.d("TAG", "getAllNotificationsFromApi: "+it)
                 _notificationEvent.emit(NotificationEvents.LoadingEvent(false))
-                val list = listOf<Warning>()
-                it.notificationResponse?.forEach {notificationResponseItem ->
-                    notificationResponseItem?.toNotification()
+                val list = arrayListOf<Warning>()
+
+                it.forEach {notificationResponseItem ->
+                  list.add(  notificationResponseItem.toNotification())
                 }
                 _notificationEvent.emit(NotificationEvents.NotificationListEvents(list))
             }.onError { code, message ->

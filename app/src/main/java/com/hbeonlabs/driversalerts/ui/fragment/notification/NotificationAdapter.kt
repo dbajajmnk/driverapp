@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.databinding.ItemNotificationBinding
-import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

@@ -7,10 +7,13 @@ import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
+import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import com.hbeonlabs.driversalerts.utils.network.onError
 import com.hbeonlabs.driversalerts.utils.network.onException
 import com.hbeonlabs.driversalerts.utils.network.onSuccess
+import com.hbeonlabs.driversalerts.utils.timeInMillsToDate
+import com.hbeonlabs.driversalerts.utils.timeInMillsToTime
 import javax.inject.Inject
 
 class AppRepository @Inject constructor(
@@ -30,7 +33,23 @@ class AppRepository @Inject constructor(
 
     suspend fun addNotification(notification: Warning)
     {
-        appApis.sendNotificationData().onSuccess {
+        val driverData = prefManager.getDeviceConfigurationDetails()
+
+        val notificationRequest = CreateNotificationDTO(
+            date = notification.timeInMills.toLong().timeInMillsToDate(),
+            routeId = 12,
+            schoolId = driverData.schoolId,
+            latitude = notification.locationLatitude,
+            description = notification.message,
+            vehicleId = driverData.vehicleId,
+            time =  notification.timeInMills.toLong().timeInMillsToTime(),
+            title = notification.notificationTitle,
+            type = 1,
+            longitude = notification.locationLongitude
+
+
+        )
+        appApis.sendNotificationData(notificationRequest).onSuccess {
             notification.isSynced = true
         }.onError { code, message ->
             notification.isSynced = false
@@ -45,7 +64,7 @@ class AppRepository @Inject constructor(
     suspend fun getAllNotificationsFromApi() = appApis.getAllNotifications()
 
     suspend fun fetchDeviceConfigurationFromServer(){
-        appApis.getDeviceConfigurationDetails("20").onSuccess {
+        appApis.getDeviceConfigurationDetails(prefManager.getDeviceConfigurationDetails().deviceId?:"").onSuccess {
             prefManager.saveDeviceConfigurationDetails(it)
         }
     }
@@ -57,6 +76,8 @@ class AppRepository @Inject constructor(
 
 
     suspend fun createAttendance(attendance: AttendanceModel) = appApis.addAttendance(attendance)
+
+    fun getLast5LocationListFromDB() = locationDao.getLast5Items()
 
 
 }

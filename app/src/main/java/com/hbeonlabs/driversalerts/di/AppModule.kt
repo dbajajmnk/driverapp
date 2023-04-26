@@ -40,7 +40,7 @@ object AppModule {
         return OkHttpClient.Builder()
             .cache(cache)
             .addInterceptor(networkConnectionInterceptor)
-            .addInterceptor(authInterceptor)
+            //.addInterceptor(authInterceptor)
             .addInterceptor(onlineInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY

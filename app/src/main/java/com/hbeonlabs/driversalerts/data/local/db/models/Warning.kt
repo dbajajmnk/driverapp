@@ -1,6 +1,5 @@
 package com.hbeonlabs.driversalerts.data.local.db.models
 
-import android.icu.text.CaseMap.Title
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
