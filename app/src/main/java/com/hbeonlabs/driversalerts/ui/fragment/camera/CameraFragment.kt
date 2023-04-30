@@ -229,18 +229,17 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
 
     override fun observe() {
         super.observe()
-        collectLatestLifeCycleFlow(viewModel.getLast5LocationData()){
-            val acceleration = it.first().speed.toFloat() - it.last().speed.toFloat()
-            binding.tvAccelerationData.text = acceleration.toString()
-            if (acceleration>10)
-            {
-                makeToast("Instant SpeedUp")
-            }
-            else if(acceleration< -15)
-            {
-                makeToast("Immediate breaking")
+        collectLatestLifeCycleFlow(viewModel.getLast5LocationData()) {
+            if (it.isNotEmpty()) {
+                val acceleration = it.first().speed.toFloat() - it.last().speed.toFloat()
+                binding.tvAccelerationData.text = acceleration.toString()
+                if (acceleration > 10) {
+                    makeToast("Instant SpeedUp")
+                } else if (acceleration < -15) {
+                    makeToast("Immediate breaking")
+                }
             }
         }
     }
-    }
+}
 
