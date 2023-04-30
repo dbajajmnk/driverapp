@@ -374,10 +374,12 @@ public class WebRtcHelper {
 
     private void releaseRendererView(){
         if(senderSurfaceViewRenderer != null) {
+            videoTrackFrontCamera.removeRenderer(frontStreamingRenderer);
             senderSurfaceViewRenderer.pauseVideo();
             senderSurfaceViewRenderer.release();
         }
         if(backCameraSVR != null) {
+            videoTrackBackCamera.removeRenderer(backStreamingRenderer);
             backCameraSVR.pauseVideo();
             backCameraSVR.release();
         }

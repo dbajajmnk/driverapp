@@ -91,7 +91,9 @@ public class AttendanceManager implements ServiceConnection, SerialListener, Def
 
     private void getDeviceAddress(LifecycleOwner owner){
         if(deviceAddress == null) {
-            initLaunchers(owner, activity.getActivityResultRegistry());
+            if(deviceAddress == null) {
+                initLaunchers(owner, activity.getActivityResultRegistry());
+            }
             if (BluetoothUtil.hasPermissions(activity, permissionLauncher)) {
                 this.deviceAddress = BluetoothUtil.getAttendanceDeviceAddress(activity, enableBluetoothLauncher);
             }
@@ -203,19 +205,23 @@ public class AttendanceManager implements ServiceConnection, SerialListener, Def
     }
 
     private void initLaunchers(LifecycleOwner owner, ActivityResultRegistry registry) {
-         permissionLauncher = registry.register("1", owner, new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
-            @Override
-            public void onActivityResult(Boolean result) {
-                deviceAddress = BluetoothUtil.getAttendanceDeviceAddress(activity, enableBluetoothLauncher);
-            }
-        });
+        try {
+            permissionLauncher = registry.register("1", owner, new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+                    deviceAddress = BluetoothUtil.getAttendanceDeviceAddress(activity, enableBluetoothLauncher);
+                }
+            });
 
-        enableBluetoothLauncher = registry.register("2", owner, new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                deviceAddress = BluetoothUtil.getAttendanceDeviceAddress(activity, enableBluetoothLauncher);
-            }
-        });
+            enableBluetoothLauncher = registry.register("2", owner, new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    deviceAddress = BluetoothUtil.getAttendanceDeviceAddress(activity, enableBluetoothLauncher);
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void sendCallback(String msg){

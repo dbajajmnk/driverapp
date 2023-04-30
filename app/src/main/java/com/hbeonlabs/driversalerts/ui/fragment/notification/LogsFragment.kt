@@ -33,6 +33,7 @@ class LogsFragment : BaseFragment<FragmentLogsBinding>(){
     override fun initView() {
         super.initView()
         binding.recyclerView.apply {
+            itemAdapter = NotificationAdapter()
             layoutManager = LinearLayoutManager(context)
             adapter = itemAdapter
         }

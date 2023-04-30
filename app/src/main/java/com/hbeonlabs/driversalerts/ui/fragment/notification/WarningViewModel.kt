@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
+import com.hbeonlabs.driversalerts.data.mappers.toNotification
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
 import com.hbeonlabs.driversalerts.utils.network.onError
 import com.hbeonlabs.driversalerts.utils.network.onException
 import com.hbeonlabs.driversalerts.utils.network.onSuccess
-import com.hbeonlabs.driversalerts.utils.toNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
