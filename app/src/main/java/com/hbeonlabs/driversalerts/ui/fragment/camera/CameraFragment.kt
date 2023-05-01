@@ -87,7 +87,6 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     private fun initAttendanceManager(){
         val attendanceCallBack =
             AttendanceCallback { attendanceModel ->
-                println(attendanceModel)
                 viewModel.addAttendance(attendanceModel)
             }
         val observer = AttendanceManager(requireActivity(),attendanceCallBack)
@@ -125,7 +124,6 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
     private fun doOnCameraPermissionGranted() {
         webRtcHelper.init(requireContext())
         webRtcHelper.startFrontStreaming(binding.frontSurfaceview)
-        //webRtcHelper.start(requireContext(), binding.frontSurfaceview,null)
         webRtcHelper.startBackStreaming(binding.backSurfaceview)
         timer = Timer()
         timer.schedule(100, 100) {

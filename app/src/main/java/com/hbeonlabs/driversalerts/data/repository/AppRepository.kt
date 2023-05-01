@@ -75,13 +75,13 @@ class AppRepository @Inject constructor(
 
     suspend fun fetchDeviceConfigurationFromServer(){
         val id = try {
-            prefManager.getDeviceConfigurationDetails()?.id.toString()
+            prefManager.getDeviceConfigurationDetails()?.id?:1
         }catch (e:Exception)
         {
-            "1"
+            1
         }
         Log.d("TAG", "fetchDeviceConfigurationFromServer: "+id)
-        appApis.getDeviceConfigurationDetails(id).onSuccess {
+        appApis.getDeviceConfigurationDetails(id.toString()).onSuccess {
             Log.d("TAG", "fetchDeviceConfigurationFromServer: "+it)
             prefManager.saveDeviceConfigurationDetails(it)
         }.onError { code, message ->
