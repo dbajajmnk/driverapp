@@ -76,6 +76,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(), EasyPermissions.Pe
 
     override fun initView() {
         super.initView()
+
+        viewModel.getDeviceConfiguration()
         initDialogs()
         askLocationPermissions()
         askCameraPermission()

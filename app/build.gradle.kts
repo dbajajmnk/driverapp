@@ -68,8 +68,8 @@ dependencies {
     implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation ("androidx.legacy:legacy-support-v4:1.0.0")
     implementation ("androidx.security:security-crypto-ktx:1.1.0-alpha06")
-    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.2")
-    implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.6")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.2.2")
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
@@ -168,5 +168,8 @@ dependencies {
 
     // WorkManager Kotlin + Coroutines
     implementation("androidx.work:work-runtime-ktx:2.8.1")
+
+    // Paging 3
+    implementation ("androidx.paging:paging-runtime-ktx:3.2.0-alpha04")
 
 }

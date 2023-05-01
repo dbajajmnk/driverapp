@@ -3,6 +3,7 @@ package com.hbeonlabs.driversalerts.ui.fragment.notification
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -14,9 +15,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 
-class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
-
-    
+class NotificationAdapter @Inject constructor(): PagingDataAdapter<Warning, NotificationAdapter.NotificationViewHolder>(Diff)  {
 
     inner class NotificationViewHolder(val binding: ItemNotificationBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -44,7 +43,7 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         }
     }
 
-    private val differCallback = object : DiffUtil.ItemCallback<Warning>() {
+    object Diff : DiffUtil.ItemCallback<Warning>() {
         override fun areItemsTheSame(
             oldItem: Warning,
             newItem: Warning
@@ -60,7 +59,6 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         }
     }
 
-    val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
         return NotificationViewHolder(
@@ -72,16 +70,18 @@ class NotificationAdapter @Inject constructor(): RecyclerView.Adapter<Notificati
         )
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
-    }
+
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        val data = differ.currentList[position]
-        holder.bind(data)
-        holder.itemView.setOnClickListener {
-            onClickListener?.let { it(data) }
+
+        val data = getItem(position)
+        if (data != null) {
+            holder.bind(data)
+            holder.itemView.setOnClickListener {
+                onClickListener?.let { it(data) }
+            }
         }
+
 
     }
 

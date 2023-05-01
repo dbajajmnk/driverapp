@@ -3,6 +3,15 @@ package com.hbeonlabs.driversalerts.data.remote.response
 import com.google.gson.annotations.SerializedName
 
 
+data class NotificationResponse(
+	@field:SerializedName("count")
+	val count: Int? = null,
+
+	@field:SerializedName("rows")
+	val list: List<NotificationResponseItem>? = null,
+)
+
+
 data class NotificationResponseItem(
 
 	@field:SerializedName("date")

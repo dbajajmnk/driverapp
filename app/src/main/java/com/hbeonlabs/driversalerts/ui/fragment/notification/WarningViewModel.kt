@@ -1,18 +1,18 @@
 package com.hbeonlabs.driversalerts.ui.fragment.notification
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
-import com.hbeonlabs.driversalerts.data.mappers.toNotification
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
-import com.hbeonlabs.driversalerts.utils.network.onError
-import com.hbeonlabs.driversalerts.utils.network.onException
-import com.hbeonlabs.driversalerts.utils.network.onSuccess
+import com.hbeonlabs.driversalerts.data.repository.NotificationPagingDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +25,7 @@ class WarningViewModel @Inject constructor(
     val notificationEvent: SharedFlow<NotificationEvents> = _notificationEvent
     fun getWarningList() = repository.getNotificationList()
 
-    fun getAllNotificationsFromApi (){
+/*    fun getAllNotificationsFromApi (){
         viewModelScope.launch {
             repository.getAllNotificationsFromApi().onSuccess {
                 Log.d("TAG", "getAllNotificationsFromApi: "+it)
@@ -45,7 +45,14 @@ class WarningViewModel @Inject constructor(
                 _notificationEvent.emit(NotificationEvents.ErrorEvent(it.localizedMessage?:"Some Error Occured"))
             }
         }
-    }
+    }*/
+
+    fun getAllNotificationsFromApi(): Flow<PagingData<Warning>> = Pager(
+        config = PagingConfig(10, enablePlaceholders = false)
+    ){
+        NotificationPagingDataSource(repository)
+    }.flow.cachedIn(viewModelScope)
+
 
     sealed class NotificationEvents{
         class ErrorEvent(val message:String) : NotificationEvents()

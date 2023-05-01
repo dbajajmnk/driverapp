@@ -3,6 +3,7 @@ package com.hbeonlabs.driversalerts.ui.fragment.notification
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentWarningsBinding
@@ -23,6 +24,8 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
 
     override fun initView() {
         super.initView()
+        checkPagingStates()
+
         viewModel.getAllNotificationsFromApi()
 
         itemAdapter.setOnItemClickListener {
@@ -33,9 +36,6 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
             layoutManager = LinearLayoutManager(context)
             adapter = itemAdapter
         }
-
-
-
     }
 
     override fun getLayoutResourceId(): Int {
@@ -45,6 +45,11 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
 
     override fun observe() {
         super.observe()
+        collectLatestLifeCycleFlow(viewModel.getAllNotificationsFromApi())
+        {
+            itemAdapter.submitData(it)
+        }
+
         collectLatestLifeCycleFlow(viewModel.getWarningList())
         {
             Log.d("TAG", "observe: "+it)
@@ -67,9 +72,43 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
                     }
                 }
                 is WarningViewModel.NotificationEvents.NotificationListEvents -> {
-                    itemAdapter.differ.submitList(it.notifications)
+                  //  itemAdapter.differ.submitList(it.notifications)
                 }
             }
+        }
+    }
+
+
+
+    private fun checkPagingStates()
+    {
+        collectLatestLifeCycleFlow(itemAdapter.loadStateFlow){loadState->
+            val errorState = when {
+                loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                loadState.prepend is LoadState.Error ->  loadState.prepend as LoadState.Error
+                loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                else -> null
+            }
+            errorState?.let {
+                makeToast(it.error.message?:"Unknown Error")
+            }
+
+            if (loadState.refresh == LoadState.Loading)
+            {
+                // =========== Shimmer During Only First Loading ==========
+
+            }
+            else if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && itemAdapter.itemCount < 1)
+            {
+                // =========== Empty List  ==========
+
+            }
+            else if (loadState.refresh is LoadState.NotLoading)
+            {
+                // ======== When First Loading Finished ===========
+
+            }
+
         }
     }
 

@@ -1,5 +1,7 @@
 package com.hbeonlabs.driversalerts.data.repository
 
+import android.util.Log
+import com.google.gson.annotations.SerializedName
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.data.local.db.NotificationDao
@@ -7,8 +9,11 @@ import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
+import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
+import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
+import com.hbeonlabs.driversalerts.utils.network.NetworkResult
 import com.hbeonlabs.driversalerts.utils.network.onError
 import com.hbeonlabs.driversalerts.utils.network.onException
 import com.hbeonlabs.driversalerts.utils.network.onSuccess
@@ -33,43 +38,62 @@ class AppRepository @Inject constructor(
 
     suspend fun addNotification(notification: Warning)
     {
-        val driverData = prefManager.getDeviceConfigurationDetails()
+        val driverData = fetchDeviceConfiguration()
+        Log.d("TAG", "addNotification: "+driverData)
+        if (driverData!=null)
+        {
+            val notificationRequest = CreateNotificationDTO(
+                date = notification.timeInMills.toLong().timeInMillsToDate(),
+                routeId = 12,
+                schoolId = driverData.schoolId,
+                latitude = notification.locationLatitude,
+                description = notification.message,
+                vehicleId = driverData.vehicleId,
+                time =  notification.timeInMills.toLong().timeInMillsToTime(),
+                title = notification.notificationTitle,
+                type = 1,
+                longitude = notification.locationLongitude
 
-        val notificationRequest = CreateNotificationDTO(
-            date = notification.timeInMills.toLong().timeInMillsToDate(),
-            routeId = 12,
-            schoolId = driverData.schoolId,
-            latitude = notification.locationLatitude,
-            description = notification.message,
-            vehicleId = driverData.vehicleId,
-            time =  notification.timeInMills.toLong().timeInMillsToTime(),
-            title = notification.notificationTitle,
-            type = 1,
-            longitude = notification.locationLongitude
 
-
-        )
-        appApis.sendNotificationData(notificationRequest).onSuccess {
-            notification.isSynced = true
-        }.onError { code, message ->
-            notification.isSynced = false
-        }.onException {
-            notification.isSynced = false
+            )
+            appApis.sendNotificationData(notificationRequest).onSuccess {
+                notification.isSynced = true
+            }.onError { code, message ->
+                notification.isSynced = false
+            }.onException {
+                notification.isSynced = false
+            }
+            notificationDao.addNotification(notification)
         }
-        notificationDao.addNotification(notification)
+
+
     }
 
     fun getNotificationList() = notificationDao.getAllNotifications()
 
-    suspend fun getAllNotificationsFromApi() = appApis.getAllNotifications()
+    suspend fun getAllNotificationsFromApi(page:String,pageSize:String) = appApis.getAllNotifications(page, pageSize)
 
     suspend fun fetchDeviceConfigurationFromServer(){
-        appApis.getDeviceConfigurationDetails(prefManager.getDeviceConfigurationDetails().deviceId?:"").onSuccess {
+        val id = try {
+            prefManager.getDeviceConfigurationDetails()?.id.toString()
+        }catch (e:Exception)
+        {
+            "1"
+        }
+        Log.d("TAG", "fetchDeviceConfigurationFromServer: "+id)
+        appApis.getDeviceConfigurationDetails(id).onSuccess {
+            Log.d("TAG", "fetchDeviceConfigurationFromServer: "+it)
             prefManager.saveDeviceConfigurationDetails(it)
+        }.onError { code, message ->
+            Log.d("TAG", "fetchDeviceConfigurationFromServer:error "+message)
+
+        }.onException {
+            Log.d("TAG", "fetchDeviceConfigurationFromServer: exception"+it.localizedMessage)
+
         }
     }
 
-    fun fetchDeviceConfiguration():DeviceConfigurationResponse
+    fun fetchDeviceConfiguration():DeviceConfigurationResponse?
     {
         return prefManager.getDeviceConfigurationDetails()
     }
@@ -78,6 +102,33 @@ class AppRepository @Inject constructor(
     suspend fun createAttendance(attendance: AttendanceModel) = appApis.addAttendance(attendance)
 
     fun getLast5LocationListFromDB() = locationDao.getLast5Items()
+
+    suspend fun configureDevice(
+        deviceType: Int,
+        expiryDate: String,
+        licenseKey: String,
+        schoolId: Int,
+        vehicleId: Int,
+        modelNo: String,
+        deviceId: String,
+        startDate: String,
+        serialNo: String
+    ): NetworkResult<BasicMessageResponse> {
+        val driverData = fetchDeviceConfiguration()
+
+        return appApis.configureDevice(ConfigureDeviceRequest(
+            deviceType = deviceType,
+            expiryDate = expiryDate,
+            licenseKey = licenseKey,
+            schoolId = schoolId,
+            vehicleId = vehicleId,
+            modelNo = modelNo,
+            deviceId = deviceId,
+            startDate = startDate,
+            serialNo = serialNo
+
+        ))
+    }
 
 
 }

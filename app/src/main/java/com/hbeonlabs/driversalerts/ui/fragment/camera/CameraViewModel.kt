@@ -70,6 +70,12 @@ class CameraViewModel @Inject constructor(
 
     fun getLast5LocationData() = repository.getLast5LocationListFromDB()
 
+    fun getDeviceConfiguration(){
+        viewModelScope.launch {
+            repository.fetchDeviceConfigurationFromServer()
+        }
+    }
+
 
 
 }

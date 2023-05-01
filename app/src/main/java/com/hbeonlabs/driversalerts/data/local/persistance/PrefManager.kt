@@ -28,8 +28,12 @@ class PrefManager @Inject constructor(context: Context) {
         sharedPreferences.edit().putString(deviceConfigurationKey, deviceConfigurationResponseInString).apply()
     }
 
-    fun getDeviceConfigurationDetails():DeviceConfigurationResponse{
+    fun getDeviceConfigurationDetails():DeviceConfigurationResponse?{
         val deviceConfigurationResponseInString = sharedPreferences.getString(deviceConfigurationKey,"")
+        if (deviceConfigurationResponseInString.isNullOrEmpty())
+        {
+            return null
+        }
         return  Gson().fromJson(deviceConfigurationResponseInString,DeviceConfigurationResponse::class.java)
     }
 
