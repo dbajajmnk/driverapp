@@ -12,8 +12,12 @@ object AppConstants {
     const val END_HOUR= 23
     const val END_MINUTES= 49
 
+    const val RFID_CONNECTION_SUCCESS_MESSAGE = "Connected with RFID device successfully"
+    const val RFID_CONNECTION_FAIL_MESSAGE = "Could not be connected with RFID device"
     const val OVERSPEEDING_MESSAGE = "You are over speeding. Please slow down"
     const val DROWSINESS_MESSAGE = "Are you feeling drowsy. Please stop and fresh up"
+    const val STEAMING_START_MESSAGE = "Streaming started"
+    const val STEAMING_STOP_MESSAGE = "Streaming stoped"
 
     const val OVERSPEEDING_THRESHOLD = 30f
 
@@ -22,7 +26,7 @@ object AppConstants {
     }
 
     enum class NotificationSubType{
-        RASHDRIVING,OVERSPEEDING,SEATBELT,DROWSNISS
+        RASHDRIVING,OVERSPEEDING,SEATBELT,DROWSNISS, RFID_CONNECTION, STREAMING_START, STREAMING_STOP
     }
 
 

@@ -40,19 +40,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
     lateinit var timer :Timer
 
     private val drowsinessDetector = DrowsinessDetector({
-        if(this@CameraFragment::currentLocationData.isInitialized) {
-            viewModel.createNotification(
-                Warning(
-                    timeInMills = currentLocationData.timeInMills,
-                    locationLatitude = currentLocationData.locationLatitude,
-                    locationLongitude = currentLocationData.locationLongitude,
-                    notificationTitle = AppConstants.NotificationSubType.DROWSNISS.toString(),
-                    notificationType = AppConstants.NotificationType.WARNING.ordinal,
-                    message = AppConstants.DROWSINESS_MESSAGE,
-                    isSynced = false
-                )
-            )
-        }
+        createNotification(AppConstants.NotificationSubType.DROWSNISS.toString(), AppConstants.DROWSINESS_MESSAGE, AppConstants.NotificationType.WARNING.ordinal)
         drowsinessAlertDialog.show()
     }, {
         drowsinessAlertDialog.dismiss()
@@ -65,16 +53,6 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
         return R.layout.fragment_camera
     }
 
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        //TODO Add log of streaming start
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        //TODO Add log of streaming stop
-    }
     override fun initView() {
         super.initView()
 
@@ -83,6 +61,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
         initLocationProvider()
         initWebRtc()
         initAttendanceManager()
+        createNotification(AppConstants.NotificationSubType.STREAMING_START.toString(), AppConstants.STEAMING_START_MESSAGE, AppConstants.NotificationType.LOG.ordinal)
     }
 
     private fun initAttendanceManager(){
@@ -95,7 +74,9 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
                 }
 
                 override fun onConnect(status: Boolean) {
-                    //TODO add log for bluetooth device connect status
+                    val notificationType = if(status) AppConstants.NotificationType.LOG else AppConstants.NotificationType.WARNING
+                    val msg = if(status) AppConstants.RFID_CONNECTION_SUCCESS_MESSAGE else AppConstants.RFID_CONNECTION_FAIL_MESSAGE
+                    createNotification(AppConstants.NotificationSubType.RFID_CONNECTION.toString(), msg, notificationType.ordinal)
                 }
             }
             val observer = AttendanceManager(requireActivity(), callback)
@@ -133,6 +114,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
         super.onDestroy()
         webRtcHelper.onDestroy()
         locationProvider.onDestroy()
+        createNotification(AppConstants.NotificationSubType.STREAMING_STOP.toString(), AppConstants.STEAMING_STOP_MESSAGE, AppConstants.NotificationType.LOG.ordinal)
         if(this@CameraFragment::timer.isInitialized)
             timer.cancel()
     }
@@ -147,17 +129,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
             viewModel.addLocationData(locationAndSpeedData)
             currentLocationData = locationAndSpeedData
             if (speedInKmph.toFloat() >= OVERSPEEDING_THRESHOLD) {
-                viewModel.createNotification(
-                    Warning(
-                        timeInMills = locationAndSpeedData.timeInMills,
-                        locationLatitude = locationAndSpeedData.locationLatitude,
-                        locationLongitude = locationAndSpeedData.locationLongitude,
-                        notificationTitle = AppConstants.NotificationSubType.OVERSPEEDING.toString(),
-                        message = AppConstants.OVERSPEEDING_MESSAGE,
-                        notificationType = AppConstants.NotificationType.WARNING.ordinal,
-                        isSynced = false
-                    )
-                )
+                createNotification(AppConstants.NotificationSubType.OVERSPEEDING.toString(), AppConstants.OVERSPEEDING_MESSAGE, AppConstants.NotificationType.WARNING.ordinal)
                 overSpeedingAlertdialog.show()
             } else {
                 overSpeedingAlertdialog.dismiss()
@@ -179,6 +151,34 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
                 }
             }
         }
+    }
+
+    private fun getLat() : String{
+        return if(this@CameraFragment::currentLocationData.isInitialized)
+            return currentLocationData.locationLatitude
+        else
+            ""
+    }
+
+    private fun getLong() : String{
+        return if(this@CameraFragment::currentLocationData.isInitialized)
+            return currentLocationData.locationLongitude
+        else
+            ""
+    }
+
+    private fun createNotification(title: String, msg : String, notificationType: Int){
+        viewModel.createNotification(
+            Warning(
+                timeInMills = ""+System.currentTimeMillis(),
+                locationLatitude = getLat(),
+                locationLongitude = getLong(),
+                notificationTitle = title,
+                message = msg,
+                notificationType = notificationType,
+                isSynced = false
+            )
+        )
     }
 }
 
