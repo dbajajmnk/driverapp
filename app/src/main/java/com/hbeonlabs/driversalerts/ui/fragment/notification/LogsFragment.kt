@@ -16,6 +16,7 @@ import com.hbeonlabs.driversalerts.databinding.FragmentLogsBinding
 import com.hbeonlabs.driversalerts.databinding.FragmentNotificationBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.makeToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -47,7 +48,7 @@ class LogsFragment : BaseFragment<FragmentLogsBinding>(){
 
     override fun observe() {
         super.observe()
-        collectLatestLifeCycleFlow(viewModel.getAllNotificationsFromApi())
+        collectLatestLifeCycleFlow(viewModel.getAllNotificationsFromApi(AppConstants.NotificationType.LOG))
         {
             itemAdapter.submitData(it)
         }

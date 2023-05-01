@@ -9,6 +9,7 @@ import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentWarningsBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.makeToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -26,7 +27,7 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
         super.initView()
         checkPagingStates()
 
-        viewModel.getAllNotificationsFromApi()
+        viewModel.getAllNotificationsFromApi(AppConstants.NotificationType.WARNING)
 
         itemAdapter.setOnItemClickListener {
             findNavController().navigate(NotificationsFragmentDirections.actionNotificationsFragmentToNotificationDisplay(it))
@@ -45,7 +46,7 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
 
     override fun observe() {
         super.observe()
-        collectLatestLifeCycleFlow(viewModel.getAllNotificationsFromApi())
+        collectLatestLifeCycleFlow(viewModel.getAllNotificationsFromApi(AppConstants.NotificationType.WARNING))
         {
             itemAdapter.submitData(it)
         }

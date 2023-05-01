@@ -124,10 +124,10 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
             Toast.makeText(requireContext(), "Please provide location permissions to get vehicle location.", Toast.LENGTH_SHORT).show()
         }else{
         locationProvider = DriverLocationProvider(this) { locationAndSpeedData ->
+            currentLocationData = locationAndSpeedData
             val speedInKmph = "%.2f".format(locationAndSpeedData.speed.toDouble() * 3.6)
             binding.tvSpeedData.text = "Speed =  $speedInKmph"
             viewModel.addLocationData(locationAndSpeedData)
-            currentLocationData = locationAndSpeedData
             if (speedInKmph.toFloat() >= OVERSPEEDING_THRESHOLD) {
                 createNotification(AppConstants.NotificationSubType.OVERSPEEDING.toString(), AppConstants.OVERSPEEDING_MESSAGE, AppConstants.NotificationType.WARNING.ordinal)
                 overSpeedingAlertdialog.show()
@@ -157,14 +157,14 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
         return if(this@CameraFragment::currentLocationData.isInitialized)
             return currentLocationData.locationLatitude
         else
-            ""
+            "1.0"
     }
 
     private fun getLong() : String{
         return if(this@CameraFragment::currentLocationData.isInitialized)
             return currentLocationData.locationLongitude
         else
-            ""
+            "1.0"
     }
 
     private fun createNotification(title: String, msg : String, notificationType: Int){

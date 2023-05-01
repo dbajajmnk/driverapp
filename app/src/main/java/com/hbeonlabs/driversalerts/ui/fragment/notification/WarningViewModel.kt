@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
 import com.hbeonlabs.driversalerts.data.repository.NotificationPagingDataSource
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,10 +48,10 @@ class WarningViewModel @Inject constructor(
         }
     }*/
 
-    fun getAllNotificationsFromApi(): Flow<PagingData<Warning>> = Pager(
+    fun getAllNotificationsFromApi(notificationType: AppConstants.NotificationType): Flow<PagingData<Warning>> = Pager(
         config = PagingConfig(10, enablePlaceholders = false)
     ){
-        NotificationPagingDataSource(repository)
+        NotificationPagingDataSource(notificationType,repository)
     }.flow.cachedIn(viewModelScope)
 
 
