@@ -1,5 +1,6 @@
 package com.hbeonlabs.driversalerts.ui.activity
 
+import android.Manifest
 import android.app.AlarmManager
 import android.app.Dialog
 import android.app.PendingIntent
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.hbeonlabs.driversalerts.R
@@ -20,6 +22,7 @@ import com.hbeonlabs.driversalerts.receivers.DailyAlarmReceiver
 import com.hbeonlabs.driversalerts.receivers.EndAlarmReceiver
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
 import com.hbeonlabs.driversalerts.utils.batteryChargingStatusChecker
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.END_HOUR
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.END_MINUTES
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.START_HOUR
@@ -27,17 +30,31 @@ import com.hbeonlabs.driversalerts.utils.constants.AppConstants.START_MINUTES
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import pub.devrel.easypermissions.AppSettingsDialog
+import pub.devrel.easypermissions.EasyPermissions
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity(), View.OnClickListener {
+class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.PermissionCallbacks,
+    ActivityCompat.OnRequestPermissionsResultCallback {
 
+    object RequiredPermissions{
+        val cameraPermissions = arrayOf(
+            Manifest.permission.CAMERA
+        )
+        val bluetoothPermissions = arrayOf(
+            Manifest.permission.BLUETOOTH_CONNECT
+        )
+        val locationPermissions = arrayOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    }
     @Inject
     lateinit var speedDao: LocationAndSpeedDao
 
     lateinit var binding: FragmentHomeBinding
     lateinit var dialog: Dialog
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +72,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         setADailyStartAndStopAlarm()
-
+        askForPermissions()
     }
 
     override fun onClick(v: View?) {
@@ -124,5 +141,110 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
+    private fun askForPermissions()
+    {
+        askCameraPermission()
+        askBluetoothPermission()
+        askLocationPermission()
+    }
+
+    private fun askCameraPermission(){
+        if (EasyPermissions.hasPermissions(this,*RequiredPermissions.cameraPermissions)) {
+            Log.v("EasyPermissions", "Camera permissions granted.")
+        } else {
+            Log.v("EasyPermissions", "Camera permissions not granted.")
+            EasyPermissions.requestPermissions(
+                this,
+                "Please provide Camera permission.",
+                AppConstants.CAMERA_PERMISSION_REQ_CODE,
+                *RequiredPermissions.cameraPermissions
+            )
+        }
+    }
+
+    private fun askBluetoothPermission(){
+        if (EasyPermissions.hasPermissions(this, *RequiredPermissions.bluetoothPermissions)) {
+            Log.v("EasyPermissions", "Bluetooth permissions granted.")
+        } else {
+            Log.v("EasyPermissions", "Bluetooth permissions not granted.")
+            EasyPermissions.requestPermissions(
+                this,
+                "Please provide Bluetooth permission.",
+                AppConstants.BLUETOOTH_PERMISSION_REQ_CODE,
+                *RequiredPermissions.bluetoothPermissions
+            )
+        }
+    }
+
+    private fun askLocationPermission(){
+        if (EasyPermissions.hasPermissions(this, *RequiredPermissions.locationPermissions)) {
+            Log.v("EasyPermissions", "Location permissions granted.")
+        } else {
+            Log.v("EasyPermissions", "Location permissions not granted.")
+            EasyPermissions.requestPermissions(
+                this,
+                "Please provide Location permission.",
+                AppConstants.LOCATION_PERMISSION_REQ_CODE,
+                *RequiredPermissions.locationPermissions
+            )
+        }
+    }
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        when(requestCode)
+        {
+            AppConstants.CAMERA_PERMISSION_REQ_CODE ->{
+                askCameraPermission()
+            }
+
+            AppConstants.LOCATION_PERMISSION_REQ_CODE ->{
+                askLocationPermission()
+            }
+
+            AppConstants.BLUETOOTH_PERMISSION_REQ_CODE ->{
+                askBluetoothPermission()
+            }
+        }
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        when(requestCode)
+        {
+            AppConstants.CAMERA_PERMISSION_REQ_CODE ->{
+                if (EasyPermissions.somePermissionDenied(this, perms.first())) {
+                    AppSettingsDialog.Builder(this).build().show()
+                } else {
+                    askCameraPermission()
+                }
+            }
+
+            AppConstants.LOCATION_PERMISSION_REQ_CODE ->{
+                if (EasyPermissions.somePermissionDenied(this, perms.first())) {
+                    AppSettingsDialog.Builder(this).build().show()
+                } else {
+                    askLocationPermission()
+                }
+            }
+
+            AppConstants.BLUETOOTH_PERMISSION_REQ_CODE ->{
+                if (EasyPermissions.somePermissionDenied(this, perms.first())) {
+                    AppSettingsDialog.Builder(this).build().show()
+                } else {
+                    askBluetoothPermission()
+                }
+            }
+        }
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Log.d("TAG", "onRequestPermissionsResult: "+permissions)
+
+        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults)
+    }
 
 }

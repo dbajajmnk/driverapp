@@ -5,6 +5,7 @@ object AppConstants {
     const val TEST = ""
     const val CAMERA_PERMISSION_REQ_CODE = 1111
     const val LOCATION_PERMISSION_REQ_CODE = 2222
+    const val BLUETOOTH_PERMISSION_REQ_CODE = 3333
 
     const val START_HOUR = 8
     const val START_MINUTES = 0

@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.hbeonlabs.driversalerts.BuildConfig;
@@ -34,15 +35,15 @@ public class BluetoothUtil {
      */
     @SuppressLint("MissingPermission")
     static int compareTo(BluetoothDevice a, BluetoothDevice b) {
-        boolean aValid = a.getName()!=null && !a.getName().isEmpty();
-        boolean bValid = b.getName()!=null && !b.getName().isEmpty();
-        if(aValid && bValid) {
+        boolean aValid = a.getName() != null && !a.getName().isEmpty();
+        boolean bValid = b.getName() != null && !b.getName().isEmpty();
+        if (aValid && bValid) {
             int ret = a.getName().compareTo(b.getName());
             if (ret != 0) return ret;
             return a.getAddress().compareTo(b.getAddress());
         }
-        if(aValid) return -1;
-        if(bValid) return +1;
+        if (aValid) return -1;
+        if (bValid) return +1;
         return a.getAddress().compareTo(b.getAddress());
     }
 
@@ -70,16 +71,19 @@ public class BluetoothUtil {
         builder.show();
     }
 
+    public static boolean checkPermissions(Activity activity){
+        return activity.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
+    }
     public static boolean hasPermissions(Activity activity, ActivityResultLauncher<String> requestPermissionLauncher) {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
             return true;
-        boolean missingPermissions = activity.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED;
+        boolean hasPermissions = checkPermissions(activity);
         boolean showRationale = activity.shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT);
 
-        if(missingPermissions) {
+        if (!hasPermissions) {
             if (showRationale) {
                 showRationaleDialog(activity, (dialog, which) ->
-                requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT));
+                        requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT));
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
             }
@@ -90,7 +94,7 @@ public class BluetoothUtil {
     }
 
     public static void onPermissionsResult(Activity activity, boolean granted, PermissionGrantedCallback cb) {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
             return;
         boolean showRationale = activity.shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT);
         if (granted) {
@@ -103,7 +107,7 @@ public class BluetoothUtil {
     }
 
 
-    private static BluetoothAdapter initBluetoothAdapter(Activity activity, ActivityResultLauncher<Intent> resultLauncher){
+    private static BluetoothAdapter initBluetoothAdapter(Activity activity, ActivityResultLauncher<Intent> resultLauncher) {
         BluetoothManager bluetoothManager = activity.getSystemService(BluetoothManager.class);
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         if (bluetoothAdapter == null) {
@@ -113,15 +117,18 @@ public class BluetoothUtil {
         return bluetoothAdapter;
     }
 
-    @SuppressLint("MissingPermission")
-    public static String getAttendanceDeviceAddress(Activity activity,ActivityResultLauncher<Intent> resultLauncher){
-        BluetoothAdapter bluetoothAdapter = initBluetoothAdapter(activity,resultLauncher);
+    public static String getAttendanceDeviceAddress(Activity activity, ActivityResultLauncher<Intent> resultLauncher) {
+        BluetoothAdapter bluetoothAdapter = initBluetoothAdapter(activity, resultLauncher);
         if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             resultLauncher.launch(intent);
         }
         String deviceAddress = null;
-        if(bluetoothAdapter != null) {
+        if (bluetoothAdapter != null) {
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(activity, "Please provide bluetooth permissions for attendance.", Toast.LENGTH_SHORT).show();
+                return null;
+            }
             Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
             for (BluetoothDevice device : pairedDevices) {
                 if (device.getName().equals("BLE_RFID_DEVICE")) {

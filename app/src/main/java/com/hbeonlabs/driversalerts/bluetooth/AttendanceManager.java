@@ -83,7 +83,7 @@ public class AttendanceManager implements ServiceConnection, SerialListener, Def
     @Override
     public void onResume(@NonNull LifecycleOwner owner) {
         DefaultLifecycleObserver.super.onResume(owner);
-        if(initialStart && service != null && deviceAddress != null) {
+        if(initialStart && service != null && deviceAddress != null && BluetoothUtil.checkPermissions(activity)) {
             initialStart = false;
             activity.runOnUiThread(this::connect);
         }
@@ -178,13 +178,15 @@ public class AttendanceManager implements ServiceConnection, SerialListener, Def
     @Override
     public void onSerialConnect() {
         connected = Connected.True;
-        Toast.makeText(activity,"onSerialConnect",Toast.LENGTH_SHORT).show();
+        attendanceCallback.onConnect(true);
+        Toast.makeText(activity,"Connected with RFID device.",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSerialConnectError(Exception e) {
         disconnect();
-        Toast.makeText(activity,"onSerialConnectError",Toast.LENGTH_SHORT).show();
+        attendanceCallback.onConnect(false);
+        Toast.makeText(activity,"Could not connect with RFID device.",Toast.LENGTH_SHORT).show();
     }
 
     @Override

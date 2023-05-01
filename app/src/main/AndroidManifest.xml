@@ -53,6 +53,12 @@
 
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCo--TR5Skyf2-Jj0qS4kymvpuuAonexGg"/>
+
+        <receiver android:name=".receivers.BootCompleteReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
