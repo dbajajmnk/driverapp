@@ -11,14 +11,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class CameraViewModel @Inject constructor(
@@ -54,10 +49,10 @@ class CameraViewModel @Inject constructor(
             repository.addLocationData(locationAndSpeed)
         }
     }
-    fun addWarningsData(notification: Warning)
+    fun createNotification(warning: Warning)
     {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addNotification(notification)
+            repository.addNotification(warning)
         }
     }
 

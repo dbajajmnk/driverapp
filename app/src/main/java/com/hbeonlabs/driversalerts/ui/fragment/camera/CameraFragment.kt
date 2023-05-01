@@ -1,11 +1,8 @@
 package com.hbeonlabs.driversalerts.ui.fragment.camera
 
-import android.Manifest
 import android.app.Dialog
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import com.google.mlkit.vision.common.InputImage
 import com.hbeonlabs.driversalerts.R
@@ -22,14 +19,11 @@ import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.DrowsinessDetector
 import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
-import com.hbeonlabs.driversalerts.utils.constants.AppConstants.CAMERA_PERMISSION_REQ_CODE
-import com.hbeonlabs.driversalerts.utils.constants.AppConstants.LOCATION_PERMISSION_REQ_CODE
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.OVERSPEEDING_THRESHOLD
 import com.hbeonlabs.driversalerts.utils.makeToast
 import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.EglRenderer.FrameListener
-import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 import kotlin.concurrent.schedule
@@ -47,7 +41,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
 
     private val drowsinessDetector = DrowsinessDetector({
         if(this@CameraFragment::currentLocationData.isInitialized) {
-            viewModel.addWarningsData(
+            viewModel.createNotification(
                 Warning(
                     timeInMills = currentLocationData.timeInMills,
                     locationLatitude = currentLocationData.locationLatitude,
@@ -74,12 +68,12 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        //Add log of streaming start
+        //TODO Add log of streaming start
     }
 
     override fun onDetach() {
         super.onDetach()
-        //Add log of streaming stop
+        //TODO Add log of streaming stop
     }
     override fun initView() {
         super.initView()
@@ -143,17 +137,6 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
             timer.cancel()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.d("TAG", "onRequestPermissionsResult: "+permissions)
-
-        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults)
-    }
-
     private fun initLocationProvider() {
         if(!EasyPermissions.hasPermissions(requireContext(), *HomeActivity.RequiredPermissions.locationPermissions)){
             Toast.makeText(requireContext(), "Please provide location permissions to get vehicle location.", Toast.LENGTH_SHORT).show()
@@ -164,7 +147,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
             viewModel.addLocationData(locationAndSpeedData)
             currentLocationData = locationAndSpeedData
             if (speedInKmph.toFloat() >= OVERSPEEDING_THRESHOLD) {
-                viewModel.addWarningsData(
+                viewModel.createNotification(
                     Warning(
                         timeInMills = locationAndSpeedData.timeInMills,
                         locationLatitude = locationAndSpeedData.locationLatitude,

@@ -1,7 +1,6 @@
 package com.hbeonlabs.driversalerts.data.repository
 
 import android.util.Log
-import com.google.gson.annotations.SerializedName
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.data.local.db.NotificationDao
@@ -36,34 +35,34 @@ class AppRepository @Inject constructor(
     }
 
 
-    suspend fun addNotification(notification: Warning)
+    suspend fun addNotification(warning: Warning)
     {
         val driverData = fetchDeviceConfiguration()
         Log.d("TAG", "addNotification: "+driverData)
         if (driverData!=null)
         {
             val notificationRequest = CreateNotificationDTO(
-                date = notification.timeInMills.toLong().timeInMillsToDate(),
+                date = warning.timeInMills.toLong().timeInMillsToDate(),
                 routeId = 12,
                 schoolId = driverData.schoolId,
-                latitude = notification.locationLatitude,
-                description = notification.message,
+                latitude = warning.locationLatitude,
+                description = warning.message,
                 vehicleId = driverData.vehicleId,
-                time =  notification.timeInMills.toLong().timeInMillsToTime(),
-                title = notification.notificationTitle,
-                type = 1,
-                longitude = notification.locationLongitude
+                time =  warning.timeInMills.toLong().timeInMillsToTime(),
+                title = warning.notificationTitle,
+                type = warning.notificationType,
+                longitude = warning.locationLongitude
 
 
             )
             appApis.sendNotificationData(notificationRequest).onSuccess {
-                notification.isSynced = true
+                warning.isSynced = true
             }.onError { code, message ->
-                notification.isSynced = false
+                warning.isSynced = false
             }.onException {
-                notification.isSynced = false
+                warning.isSynced = false
             }
-            notificationDao.addNotification(notification)
+            notificationDao.addNotification(warning)
         }
 
 
