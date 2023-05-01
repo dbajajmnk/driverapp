@@ -107,11 +107,12 @@ class AppRepository @Inject constructor(
         expiryDate: String,
         licenseKey: String,
         schoolId: Int,
-        vehicleId: Int,
+        vehicleId: String,
         modelNo: String,
         deviceId: String,
         startDate: String,
-        serialNo: String
+        serialNo: String,
+        bluetoothId: String
     ): NetworkResult<BasicMessageResponse> {
         val driverData = fetchDeviceConfiguration()
 
@@ -124,8 +125,8 @@ class AppRepository @Inject constructor(
             modelNo = modelNo,
             deviceId = deviceId,
             startDate = startDate,
-            serialNo = serialNo
-
+            serialNo = serialNo,
+            bluetoothId = bluetoothId
         ))
     }
 

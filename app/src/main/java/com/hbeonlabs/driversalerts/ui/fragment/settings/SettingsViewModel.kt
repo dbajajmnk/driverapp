@@ -1,5 +1,6 @@
 package com.hbeonlabs.driversalerts.ui.fragment.settings
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
@@ -16,34 +17,33 @@ class SettingsViewModel @Inject constructor(
     val repository: AppRepository
 ) : ViewModel() {
 
+    public val showProgressBarLiveData = MutableLiveData<Boolean>(false)
+
     fun addDeviceConfiguration(
-        deviceType: Int,
-        expiryDate: String,
         licenseKey: String,
-        schoolId: Int,
-        vehicleId: Int,
-        modelNo: String,
         deviceId: String,
-        startDate: String,
-        serialNo: String
+        vehicleId: String,
+        bluetoothId: String
     ) {
+        showProgressBarLiveData.value = true
         viewModelScope.launch {
             repository.configureDevice(
                 deviceType = 9413,
                 expiryDate = "mnesarchum",
-                licenseKey = "dolore",
+                licenseKey = licenseKey,
                 schoolId = 4402,
-                vehicleId = 4641,
+                vehicleId = vehicleId,
                 modelNo = "noluisse",
-                deviceId = "hendrerit",
+                deviceId = deviceId,
                 startDate = "finibus",
-                serialNo = "nascetur"
+                serialNo = "nascetur",
+                bluetoothId = bluetoothId
             ).onSuccess {
-
+                showProgressBarLiveData.value = false
             }.onError { code, message ->
-
+                showProgressBarLiveData.value = false
             }.onException {
-
+                showProgressBarLiveData.value = false
             }
         }
     }

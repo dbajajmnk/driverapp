@@ -7,29 +7,38 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentSettingsConfigureBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
+import com.hbeonlabs.driversalerts.ui.fragment.notification.WarningViewModel
 
 
 class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>() {
 
+    private val viewModel: SettingsViewModel by viewModels()
     override fun getLayoutResourceId(): Int {
         return R.layout.fragment_settings_configure;
     }
 
     override fun initView() {
         super.initView()
+        binding.include4.titleFrag.text = "Settings"
+        binding.button.setOnClickListener {
+            viewModel.addDeviceConfiguration(
+                binding.licenseKey.text.toString(),
+                binding.deviceId.text.toString(),
+                binding.vehicleId.text.toString(),
+                binding.bluetoothId.text.toString()
+            )
+        }
+        /*viewModel.showProgressBarLiveData.observe(this) {
+            if (it)
+                binding.progressBar.visibility = View.VISIBLE
+            else
+                binding.progressBar.visibility = View.GONE
+        }*/
 
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_settings_configure, container, false)
-
-        val titleView = view.findViewById<TextView>(R.id.title_frag);
-        titleView.text = "Settings"
-
-        return view;
-    }
-
 }

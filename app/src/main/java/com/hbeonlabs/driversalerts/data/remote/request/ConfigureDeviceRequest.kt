@@ -17,7 +17,7 @@ data class ConfigureDeviceRequest(
 	val schoolId: Int? = null,
 
 	@field:SerializedName("vehicleId")
-	val vehicleId: Int? = null,
+	val vehicleId: String? = null,
 
 	@field:SerializedName("modelNo")
 	val modelNo: String? = null,
@@ -29,5 +29,8 @@ data class ConfigureDeviceRequest(
 	val startDate: String? = null,
 
 	@field:SerializedName("serialNo")
-	val serialNo: String? = null
+	val serialNo: String? = null,
+
+	@field:SerializedName("bluetoothId")
+	val bluetoothId: String? = null
 )
