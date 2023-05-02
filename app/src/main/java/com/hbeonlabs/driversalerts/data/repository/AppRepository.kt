@@ -72,8 +72,8 @@ class AppRepository @Inject constructor(
 
     suspend fun getAllNotificationsFromApi(page:String,pageSize:String) = appApis.getAllNotifications(page, pageSize)
 
-    suspend fun fetchDeviceConfigurationFromServer(deviceId:Int?){
-        val id  = deviceId ?: prefManager.getDeviceConfigurationDetails()?.id
+    suspend fun fetchDeviceConfigurationFromServer(){
+        val id  = prefManager.getDeviceConfigId()
         if (id!=null) {
             appApis.getDeviceConfigurationDetails(id.toString()).onSuccess {
                 prefManager.saveDeviceConfigurationDetails(it)
@@ -124,5 +124,7 @@ class AppRepository @Inject constructor(
         ))
     }
 
-
+    fun saveDeviceConfigId(id:String){
+        prefManager.saveDeviceConfigId(id)
+    }
 }

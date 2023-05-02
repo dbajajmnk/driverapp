@@ -19,7 +19,7 @@ object AppConstants {
     const val STEAMING_START_MESSAGE = "Streaming started"
     const val STEAMING_STOP_MESSAGE = "Streaming stoped"
 
-    const val OVERSPEEDING_THRESHOLD = 30f
+    const val OVERSPEEDING_THRESHOLD = 80f
 
     enum class NotificationType{
         LOG,WARNING

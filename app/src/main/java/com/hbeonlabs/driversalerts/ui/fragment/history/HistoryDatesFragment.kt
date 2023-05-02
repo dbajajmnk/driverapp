@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentHistoryBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
+import com.hbeonlabs.driversalerts.utils.timeInMillsToDate
+import java.util.Calendar
+import java.util.Date
 
 class HistoryDatesFragment : BaseFragment<FragmentHistoryBinding>(),HistoryDatesAdapter.OnItemClickListener{
 
@@ -55,10 +58,13 @@ class HistoryDatesFragment : BaseFragment<FragmentHistoryBinding>(),HistoryDates
     }
 
     private fun getItems(): List<ItemD> {
-        return listOf(
-            ItemD("21 Feb 2023"),
-            ItemD("22 Feb 2023"),
-        )
+        val calendar: Calendar = Calendar.getInstance()
+        val dateList = mutableListOf<ItemD>()
+        for(i in 1..7) {
+            calendar.add(Calendar.DAY_OF_YEAR, - 1)
+            dateList.add(ItemD(calendar.timeInMillis.timeInMillsToDate()))
+        }
+        return dateList
     }
 
     override fun onItemClick(position: Int) {

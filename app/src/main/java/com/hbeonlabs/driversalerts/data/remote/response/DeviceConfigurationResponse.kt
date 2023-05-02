@@ -50,7 +50,10 @@ data class DeviceConfigurationResponse(
 	val status: Int? = null,
 
 	@field:SerializedName("updatedAt")
-	val updatedAt: String? = null
+	val updatedAt: String? = null,
+
+	@field:SerializedName("bluetoothId")
+	val bluetoothId: String? = null
 )
 
 data class SupportedVehicles(

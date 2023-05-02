@@ -14,6 +14,8 @@ import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.history.HistoryDatesAdapter
 import com.hbeonlabs.driversalerts.ui.fragment.history.ItemD
 import com.hbeonlabs.driversalerts.ui.fragment.history.RecyclerViewItemDecoration
+import com.hbeonlabs.driversalerts.utils.timeInMillsToDate
+import java.util.Calendar
 
 
 class AttendancedatesFragment : BaseFragment<FragmentAttendancedatesBinding>() {
@@ -65,9 +67,12 @@ class AttendancedatesFragment : BaseFragment<FragmentAttendancedatesBinding>() {
     }
 
     private fun getItems(): List<ItemD> {
-        return listOf(
-            ItemD("21 Feb 2023"),
-            ItemD("22 Feb 2023"),
-        )
+        val calendar: Calendar = Calendar.getInstance()
+        val dateList = mutableListOf<ItemD>()
+        for(i in 1..7) {
+            calendar.add(Calendar.DAY_OF_YEAR, - 1)
+            dateList.add(ItemD(calendar.timeInMillis.timeInMillsToDate()))
+        }
+        return dateList
     }
 }

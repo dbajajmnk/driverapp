@@ -67,7 +67,7 @@ class CameraViewModel @Inject constructor(
 
     fun getDeviceConfiguration(){
         viewModelScope.launch {
-            repository.fetchDeviceConfigurationFromServer(null)
+            repository.fetchDeviceConfigurationFromServer()
         }
     }
 

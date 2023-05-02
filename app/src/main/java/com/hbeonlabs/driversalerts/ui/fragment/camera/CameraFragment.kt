@@ -72,6 +72,10 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
         createNotification(AppConstants.NotificationSubType.STREAMING_START.toString(), AppConstants.STEAMING_START_MESSAGE, AppConstants.NotificationType.LOG.ordinal)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        createNotification(AppConstants.NotificationSubType.STREAMING_STOP.toString(), AppConstants.STEAMING_STOP_MESSAGE, AppConstants.NotificationType.LOG.ordinal)
+    }
     override fun onResume() {
         super.onResume()
         showDialogs = true
@@ -131,7 +135,6 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
         super.onDestroy()
         webRtcHelper.onDestroy()
         locationProvider.onDestroy()
-        createNotification(AppConstants.NotificationSubType.STREAMING_STOP.toString(), AppConstants.STEAMING_STOP_MESSAGE, AppConstants.NotificationType.LOG.ordinal)
         if(this@CameraFragment::timer.isInitialized)
             timer.cancel()
     }

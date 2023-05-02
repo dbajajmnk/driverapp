@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentSettingsConfigureBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
@@ -19,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>() {
 
     private val viewModel: SettingsViewModel by viewModels()
+    private var hasSubmittedConfigure = false
     override fun getLayoutResourceId(): Int {
         return R.layout.fragment_settings_configure;
     }
@@ -41,10 +43,16 @@ class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>
     override fun observe() {
         super.observe()
         viewModel.showProgressBarLiveData.observe(this) {
-            if (it)
+            if (it) {
+                hasSubmittedConfigure = true
                 binding.progressBar.visibility = View.VISIBLE
-            else
+            }else {
                 binding.progressBar.visibility = View.GONE
+                if(hasSubmittedConfigure){
+                    val navController = NavHostFragment.findNavController(requireParentFragment())
+                    navController.popBackStack()
+                }
+            }
         }
     }
 }

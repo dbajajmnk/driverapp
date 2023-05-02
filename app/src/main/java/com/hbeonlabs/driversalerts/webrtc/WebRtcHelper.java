@@ -373,6 +373,9 @@ public class WebRtcHelper {
     }
 
     private void releaseRendererView(){
+        rootEglBase.releaseSurface();
+        rootEglBase.release();
+
         if(senderSurfaceViewRenderer != null) {
             videoTrackFrontCamera.removeRenderer(frontStreamingRenderer);
             senderSurfaceViewRenderer.pauseVideo();
