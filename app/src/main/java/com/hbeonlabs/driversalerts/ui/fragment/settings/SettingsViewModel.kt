@@ -14,10 +14,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    val repository: AppRepository
+    private val repository: AppRepository
 ) : ViewModel() {
 
-    public val showProgressBarLiveData = MutableLiveData<Boolean>(false)
+     val showProgressBarLiveData = MutableLiveData<Boolean>(false)
 
     fun addDeviceConfiguration(
         licenseKey: String,
@@ -29,7 +29,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             repository.configureDevice(
                 deviceType = 9413,
-                expiryDate = "mnesarchum",
+                expiryDate = "04-12-2025",
                 licenseKey = licenseKey,
                 schoolId = 4402,
                 vehicleId = vehicleId,
@@ -39,6 +39,7 @@ class SettingsViewModel @Inject constructor(
                 serialNo = "nascetur",
                 bluetoothId = bluetoothId
             ).onSuccess {
+
                 showProgressBarLiveData.value = false
             }.onError { code, message ->
                 showProgressBarLiveData.value = false

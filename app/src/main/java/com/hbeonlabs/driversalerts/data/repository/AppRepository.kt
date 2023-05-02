@@ -72,24 +72,19 @@ class AppRepository @Inject constructor(
 
     suspend fun getAllNotificationsFromApi(page:String,pageSize:String) = appApis.getAllNotifications(page, pageSize)
 
-    suspend fun fetchDeviceConfigurationFromServer(){
-        val id = try {
-            prefManager.getDeviceConfigurationDetails()?.id?:1
-        }catch (e:Exception)
-        {
-            1
-        }
-        Log.d("TAG", "fetchDeviceConfigurationFromServer: "+id)
-        appApis.getDeviceConfigurationDetails(id.toString()).onSuccess {
-            Log.d("TAG", "fetchDeviceConfigurationFromServer: "+it)
-            prefManager.saveDeviceConfigurationDetails(it)
-        }.onError { code, message ->
-            Log.d("TAG", "fetchDeviceConfigurationFromServer:error "+message)
+    suspend fun fetchDeviceConfigurationFromServer(deviceId:Int?){
+        val id  = deviceId ?: prefManager.getDeviceConfigurationDetails()?.id
+        if (id!=null) {
+            appApis.getDeviceConfigurationDetails(id.toString()).onSuccess {
+                prefManager.saveDeviceConfigurationDetails(it)
+            }.onError { code, message ->
+                Log.d("TAG", "fetchDeviceConfigurationFromServer:error "+message)
+            }.onException {
+                Log.d("TAG", "fetchDeviceConfigurationFromServer: exception"+it.localizedMessage)
 
-        }.onException {
-            Log.d("TAG", "fetchDeviceConfigurationFromServer: exception"+it.localizedMessage)
-
+            }
         }
+
     }
 
     fun fetchDeviceConfiguration():DeviceConfigurationResponse?
@@ -114,7 +109,6 @@ class AppRepository @Inject constructor(
         serialNo: String,
         bluetoothId: String
     ): NetworkResult<BasicMessageResponse> {
-        val driverData = fetchDeviceConfiguration()
 
         return appApis.configureDevice(ConfigureDeviceRequest(
             deviceType = deviceType,

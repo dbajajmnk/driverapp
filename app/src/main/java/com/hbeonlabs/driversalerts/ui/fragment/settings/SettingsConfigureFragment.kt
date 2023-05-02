@@ -13,8 +13,9 @@ import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentSettingsConfigureBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.notification.WarningViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>() {
 
     private val viewModel: SettingsViewModel by viewModels()
@@ -33,12 +34,17 @@ class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>
                 binding.bluetoothId.text.toString()
             )
         }
-        /*viewModel.showProgressBarLiveData.observe(this) {
+
+
+    }
+
+    override fun observe() {
+        super.observe()
+        viewModel.showProgressBarLiveData.observe(this) {
             if (it)
                 binding.progressBar.visibility = View.VISIBLE
             else
                 binding.progressBar.visibility = View.GONE
-        }*/
-
+        }
     }
 }

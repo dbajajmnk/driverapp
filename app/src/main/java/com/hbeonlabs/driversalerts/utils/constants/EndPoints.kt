@@ -6,7 +6,7 @@ object EndPoints {
     const val GET_NOTIFICATIONS = "driver/notification/read"
     const val GET_ALL_ATTENDANCE = "attendance/read"
     const val GET_ALL_RECORDINGS = "recordings/read"
-    const val CONFIGURE_DEVICE = "masters/device/configure"
+    const val CONFIGURE_DEVICE = "driver/device/create"
     const val POST_NOTIFICATION = "driver/notification/create"
     const val CREATE_ATTENDANCE = "attendance/create"
 
