@@ -2,9 +2,11 @@ package com.hbeonlabs.driversalerts.data.remote.api
 
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
+import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
 import com.hbeonlabs.driversalerts.data.remote.request.DeviceConfigurationRequest
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponse
+import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import com.hbeonlabs.driversalerts.data.remote.response.NotificationResponse
@@ -33,7 +35,7 @@ interface AppApis {
 
     // Date Format =  2023-01-09 = YYYY-MM-DD
     @GET("$GET_ALL_ATTENDANCE/{date}")
-    suspend fun getAllAttendance(@Path("date") date:String): NetworkResult<AttendanceListResponse>
+    suspend fun getAllAttendance(@Path("date") date:String): NetworkResult<List<AttendanceListResponseItem>>
 
     @GET(GET_ALL_RECORDINGS)
     suspend fun getAllRecordings()
@@ -41,13 +43,11 @@ interface AppApis {
     @POST(POST_NOTIFICATION)
     suspend fun sendNotificationData(@Body createNotificationDTO: CreateNotificationDTO): NetworkResult<BasicMessageResponse>
 
-
     @POST(CONFIGURE_DEVICE)
     suspend fun configureDevice(@Body deviceConfigurationRequest: ConfigureDeviceRequest): NetworkResult<BasicMessageResponse>
 
-    //todo request body needed
     @POST(CREATE_ATTENDANCE)
-    suspend fun addAttendance(@Body attendance: AttendanceModel):NetworkResult<BasicMessageResponse>
+    suspend fun addAttendance(@Body attendance: List<CreateAttendanceRequest>):NetworkResult<BasicMessageResponse>
 
 
 

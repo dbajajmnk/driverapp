@@ -10,6 +10,7 @@ import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
+import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import com.hbeonlabs.driversalerts.utils.network.NetworkResult
@@ -93,7 +94,13 @@ class AppRepository @Inject constructor(
     }
 
 
-    suspend fun createAttendance(attendance: AttendanceModel) = appApis.addAttendance(attendance)
+    suspend fun createAttendance(attendance: AttendanceModel) {
+        appApis.addAttendance(attendance)
+    }
+
+    suspend fun getAttendanceList(date:String): NetworkResult<List<AttendanceListResponseItem>> {
+        return appApis.getAllAttendance(date)
+    }
 
     fun getLast5LocationListFromDB() = locationDao.getLast5Items()
 

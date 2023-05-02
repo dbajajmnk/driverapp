@@ -8,43 +8,55 @@ data class AttendanceListResponse(
 	val attendanceListResponse: List<AttendanceListResponseItem?>? = null
 )
 
+data class TblStudent(
+
+	@field:SerializedName("mother")
+	val mother: String? = null,
+
+	@field:SerializedName("gender")
+	val gender: String? = null,
+
+	@field:SerializedName("dob")
+	val dob: String? = null,
+
+	@field:SerializedName("father")
+	val father: String? = null,
+
+	@field:SerializedName("name")
+	val name: String? = null,
+
+	@field:SerializedName("rollNo")
+	val rollNo: Int? = null,
+
+	@field:SerializedName("class")
+	val jsonMemberClass: String? = null,
+
+	@field:SerializedName("status")
+	val status: Int? = null
+)
+
 data class AttendanceListResponseItem(
+
+	@field:SerializedName("studentId")
+	val studentId: Int? = null,
 
 	@field:SerializedName("date")
 	val date: String? = null,
 
-	@field:SerializedName("latitude")
-	val latitude: Any? = null,
-
-	@field:SerializedName("description")
-	val description: String? = null,
-
-	@field:SerializedName("title")
-	val title: String? = null,
-
-	@field:SerializedName("type")
-	val type: String? = null,
+	@field:SerializedName("inTime")
+	val inTime: String? = null,
 
 	@field:SerializedName("createdAt")
 	val createdAt: String? = null,
 
-	@field:SerializedName("routeId")
-	val routeId: String? = null,
+	@field:SerializedName("tbl_student")
+	val tblStudent: TblStudent? = null,
 
-	@field:SerializedName("schoolId")
-	val schoolId: String? = null,
+	@field:SerializedName("isPresent")
+	val isPresent: Boolean? = null,
 
-	@field:SerializedName("id")
-	val id: Int? = null,
-
-	@field:SerializedName("vehicleId")
-	val vehicleId: String? = null,
-
-	@field:SerializedName("time")
-	val time: String? = null,
-
-	@field:SerializedName("longitude")
-	val longitude: Any? = null,
+	@field:SerializedName("outTime")
+	val outTime: String? = null,
 
 	@field:SerializedName("status")
 	val status: String? = null,
