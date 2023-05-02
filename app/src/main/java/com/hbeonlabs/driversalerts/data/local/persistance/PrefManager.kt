@@ -17,6 +17,7 @@ class PrefManager @Inject constructor(context: Context) {
     private val licenseActivatedKey = "licenseActivatedKey"
     private val locationFequencyKey = "locationFequencyKey"
     private val deviceConfigurationKey = "deviceConfigurationKey"
+    private val deviceConfigIdKey = "deviceConfigIdKey"
 
     fun saveAudioUri(uri: Uri?) {
         val value = uri?.toString() ?: ""
@@ -85,4 +86,11 @@ class PrefManager @Inject constructor(context: Context) {
         return sharedPreferences.getInt(locationFequencyKey, 5000)
     }
 
+    fun saveDeviceConfigId(deviceConfigId: String) {
+        sharedPreferences.edit().putString(deviceConfigIdKey, deviceConfigId). apply()
+    }
+
+    fun getDeviceConfigId(): String? {
+        return sharedPreferences.getString(deviceConfigIdKey, "")
+    }
 }

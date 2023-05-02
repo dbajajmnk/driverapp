@@ -17,7 +17,7 @@ class SettingsViewModel @Inject constructor(
     private val repository: AppRepository
 ) : ViewModel() {
 
-     val showProgressBarLiveData = MutableLiveData<Boolean>(false)
+     val showProgressBarLiveData = MutableLiveData(false)
 
     fun addDeviceConfiguration(
         licenseKey: String,
@@ -39,8 +39,8 @@ class SettingsViewModel @Inject constructor(
                 serialNo = "nascetur",
                 bluetoothId = bluetoothId
             ).onSuccess {
-
                 showProgressBarLiveData.value = false
+                repository.saveDeviceConfigId(deviceId)
             }.onError { code, message ->
                 showProgressBarLiveData.value = false
             }.onException {
@@ -52,6 +52,4 @@ class SettingsViewModel @Inject constructor(
     fun getDeviceConfiguration(): DeviceConfigurationResponse? {
         return repository.fetchDeviceConfiguration()
     }
-
-
 }
