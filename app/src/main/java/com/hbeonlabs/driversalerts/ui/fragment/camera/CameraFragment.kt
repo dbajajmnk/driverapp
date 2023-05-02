@@ -38,12 +38,20 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
     private val webRtcHelper = WebRtcHelper.getInstance()
     private lateinit var currentLocationData :LocationAndSpeed
     lateinit var timer :Timer
-
+    private var showDialogs = false
     private val drowsinessDetector = DrowsinessDetector({
-        createNotification(AppConstants.NotificationSubType.DROWSNISS.toString(), AppConstants.DROWSINESS_MESSAGE, AppConstants.NotificationType.WARNING.ordinal)
-        drowsinessAlertDialog.show()
+        if(showDialogs) {
+            createNotification(
+                AppConstants.NotificationSubType.DROWSNISS.toString(),
+                AppConstants.DROWSINESS_MESSAGE,
+                AppConstants.NotificationType.WARNING.ordinal
+            )
+            drowsinessAlertDialog.show()
+        }
     }, {
-        drowsinessAlertDialog.dismiss()
+        if(showDialogs) {
+            drowsinessAlertDialog.dismiss()
+        }
     })
     private val frameListener = FrameListener {
         it?.let { drowsinessDetector.detectDrowsiness(InputImage.fromBitmap(it,0)) }
@@ -64,6 +72,15 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
         createNotification(AppConstants.NotificationSubType.STREAMING_START.toString(), AppConstants.STEAMING_START_MESSAGE, AppConstants.NotificationType.LOG.ordinal)
     }
 
+    override fun onResume() {
+        super.onResume()
+        showDialogs = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        showDialogs = false
+    }
     private fun initAttendanceManager(){
         if (!EasyPermissions.hasPermissions(requireContext(), *HomeActivity.RequiredPermissions.bluetoothPermissions)) {
             Toast.makeText(requireContext(), "Please provide bluetooth permission to connect with RFID device", Toast.LENGTH_SHORT).show()
