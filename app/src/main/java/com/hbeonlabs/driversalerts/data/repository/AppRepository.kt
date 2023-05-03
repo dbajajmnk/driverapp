@@ -2,8 +2,10 @@ package com.hbeonlabs.driversalerts.data.repository
 
 import android.util.Log
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
+import com.hbeonlabs.driversalerts.data.local.db.AttendanceDao
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.data.local.db.NotificationDao
+import com.hbeonlabs.driversalerts.data.local.db.models.Attendance
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
@@ -25,8 +27,8 @@ class AppRepository @Inject constructor(
     private val locationDao : LocationAndSpeedDao,
     private val notificationDao: NotificationDao,
     private val appApis: AppApis,
-    private val prefManager: PrefManager
-
+    private val prefManager: PrefManager,
+    private val attendanceDao: AttendanceDao
 ) {
 
     suspend fun addLocationData(locationAndSpeed: LocationAndSpeed)
@@ -128,4 +130,11 @@ class AppRepository @Inject constructor(
     fun saveDeviceConfigId(id:String){
         prefManager.saveDeviceConfigId(id)
     }
+
+    suspend fun addAttendanceToDatabase(attendance: Attendance)
+    {
+        attendanceDao.addAttendance(attendance)
+    }
+
+
 }
