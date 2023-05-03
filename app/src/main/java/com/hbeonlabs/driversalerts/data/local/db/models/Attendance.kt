@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 data class Attendance(
     @PrimaryKey(autoGenerate = true)
     val id:Long? = null,
-    val name :String,
-    val className:String,
+    val tagID:String,
     val inTime: String,
     val outTime:String,
-    val day:String
+    val day:String,
+    val dayTime:Int
 )

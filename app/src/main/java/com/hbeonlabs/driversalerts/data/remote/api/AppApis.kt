@@ -47,9 +47,10 @@ interface AppApis {
     suspend fun configureDevice(@Body deviceConfigurationRequest: ConfigureDeviceRequest): NetworkResult<BasicMessageResponse>
 
     @POST(CREATE_ATTENDANCE)
-    suspend fun addAttendance(@Body attendance: List<CreateAttendanceRequest>):NetworkResult<BasicMessageResponse>
+    suspend fun addAttendance(@Body attendance: AttendanceModel):NetworkResult<BasicMessageResponse>
 
-
+ /*   @POST(CREATE_ATTENDANCE)
+    suspend fun addAttendance(@Body attendance: List<CreateAttendanceRequest>):NetworkResult<BasicMessageResponse>*/
 
 
 }

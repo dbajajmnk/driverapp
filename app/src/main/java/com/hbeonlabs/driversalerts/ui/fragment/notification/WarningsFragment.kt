@@ -2,6 +2,9 @@ package com.hbeonlabs.driversalerts.ui.fragment.notification
 
 import android.util.Log
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +15,8 @@ import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.makeToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -74,6 +79,28 @@ class WarningsFragment : BaseFragment<FragmentWarningsBinding>(){
                 }
                 is WarningViewModel.NotificationEvents.NotificationListEvents -> {
                   //  itemAdapter.differ.submitList(it.notifications)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED)
+            {
+                //
+                viewModel.notificationEvent.collectLatest {
+                    when(it)
+                    {
+                        is WarningViewModel.NotificationEvents.ErrorEvent -> {
+
+                        }
+
+                        is WarningViewModel.NotificationEvents.LoadingEvent -> {
+
+                        }
+                        is WarningViewModel.NotificationEvents.NotificationListEvents -> {
+
+                        }
+                    }
                 }
             }
         }

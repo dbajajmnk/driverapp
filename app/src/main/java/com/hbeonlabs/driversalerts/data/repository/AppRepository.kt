@@ -32,9 +32,7 @@ class AppRepository @Inject constructor(
     suspend fun addLocationData(locationAndSpeed: LocationAndSpeed)
     {
         locationDao.addData(locationAndSpeed)
-
     }
-
 
     suspend fun addNotification(warning: Warning)
     {
@@ -53,8 +51,6 @@ class AppRepository @Inject constructor(
                 title = warning.notificationTitle,
                 type = warning.notificationType,
                 longitude = warning.locationLongitude
-
-
             )
             appApis.sendNotificationData(notificationRequest).onSuccess {
                 warning.isSynced = true
@@ -65,8 +61,6 @@ class AppRepository @Inject constructor(
             }
             notificationDao.addNotification(warning)
         }
-
-
     }
 
     fun getNotificationList() = notificationDao.getAllNotifications()

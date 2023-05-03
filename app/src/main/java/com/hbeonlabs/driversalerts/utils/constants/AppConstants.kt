@@ -30,4 +30,8 @@ object AppConstants {
     }
 
 
+    enum class AttendanceTime{
+        MORNING,EVENING
+    }
+
 }
