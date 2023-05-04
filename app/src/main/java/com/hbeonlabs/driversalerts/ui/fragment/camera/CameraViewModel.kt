@@ -59,7 +59,7 @@ class CameraViewModel @Inject constructor(
     fun addAttendance(attendance: AttendanceModel)
     {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.createAttendance(attendance)
+
         }
     }
 

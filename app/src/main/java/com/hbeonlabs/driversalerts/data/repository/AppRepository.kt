@@ -9,8 +9,10 @@ import com.hbeonlabs.driversalerts.data.local.db.models.Attendance
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
+import com.hbeonlabs.driversalerts.data.mappers.toCreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
+import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
@@ -90,10 +92,6 @@ class AppRepository @Inject constructor(
     }
 
 
-    suspend fun createAttendance(attendance: AttendanceModel) {
-        appApis.addAttendance(attendance)
-    }
-
     suspend fun getAttendanceList(date:String): NetworkResult<List<AttendanceListResponseItem>> {
         return appApis.getAllAttendance(date)
     }
@@ -134,6 +132,24 @@ class AppRepository @Inject constructor(
     suspend fun addAttendanceToDatabase(attendance: Attendance)
     {
         attendanceDao.addAttendance(attendance)
+    }
+
+    suspend fun syncAllAttendanceToServer()
+    {
+        val list = attendanceDao.getAllUnSyncedAttendances()
+        val attendanceList = arrayListOf<CreateAttendanceRequest>()
+        list.forEach { attendance: Attendance ->
+            attendanceList.add(attendance.toCreateAttendanceRequest(fetchDeviceConfiguration()?.schoolId?:-1))
+        }
+        appApis.addAttendance(
+            attendanceList
+        ).onSuccess {
+         attendanceDao.updateIsSyncByOutTime(true)
+        }
+    }
+
+    suspend fun saveAttendanceToDatabase(attendanceModel: AttendanceModel){
+
     }
 
 

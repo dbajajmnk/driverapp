@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.hbeonlabs.driversalerts.data.local.db.AppDatabase
+import com.hbeonlabs.driversalerts.data.local.db.AttendanceDao
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.data.local.db.NotificationDao
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
@@ -105,6 +106,12 @@ object AppModule {
     @Singleton
     fun provideNotificationDao(application: Application, database: AppDatabase): NotificationDao {
         return database.getNotificationDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAttendanceDao(application: Application, database: AppDatabase): AttendanceDao {
+        return database.getAttendanceDao()
     }
 
     @Provides

@@ -16,7 +16,7 @@ interface AttendanceDao {
     suspend fun getStudentByDateAndTagIdAndDayTime(date:String,tagId:String, dayTime:Int): Attendance?
 
     @Query("SELECT * FROM attendance WHERE isSync = 0")
-    suspend fun getAllUnSyncedAttendances(): Flow<List<Attendance>>
+    suspend fun getAllUnSyncedAttendances(): List<Attendance>
 
     @Query("UPDATE attendance SET outTime = :newOutTime WHERE tagID = :tagID AND dayTime = :dayTime AND date = :date")
     suspend fun updateOutTimeByTagIDAndDayTime(tagID: String, dayTime: Int, newOutTime: String,date:String)
