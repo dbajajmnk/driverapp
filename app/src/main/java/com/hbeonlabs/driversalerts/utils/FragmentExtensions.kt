@@ -177,7 +177,19 @@ fun Long.timeInMillsToTime():String
     return sdf.format(calendar.time)
 }
 
+fun String.isBeforeNoon(): Boolean {
+    val dateFormat = SimpleDateFormat("hh:mm:ss", Locale.getDefault())
+    val date = dateFormat.parse(this)
 
+    val calendar = Calendar.getInstance()
+    if (date != null) {
+        calendar.time = date
+    }
+
+    val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
+
+    return hourOfDay < 12
+}
 
 
 

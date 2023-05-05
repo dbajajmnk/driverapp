@@ -9,6 +9,7 @@ import com.hbeonlabs.driversalerts.data.local.db.models.Attendance
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
+import com.hbeonlabs.driversalerts.data.mappers.toAttendance
 import com.hbeonlabs.driversalerts.data.mappers.toCreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
@@ -17,12 +18,18 @@ import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
+import com.hbeonlabs.driversalerts.utils.constants.AppConstants
+import com.hbeonlabs.driversalerts.utils.isBeforeNoon
 import com.hbeonlabs.driversalerts.utils.network.NetworkResult
 import com.hbeonlabs.driversalerts.utils.network.onError
 import com.hbeonlabs.driversalerts.utils.network.onException
 import com.hbeonlabs.driversalerts.utils.network.onSuccess
 import com.hbeonlabs.driversalerts.utils.timeInMillsToDate
 import com.hbeonlabs.driversalerts.utils.timeInMillsToTime
+import kotlinx.coroutines.runBlocking
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 class AppRepository @Inject constructor(
@@ -41,7 +48,6 @@ class AppRepository @Inject constructor(
     suspend fun addNotification(warning: Warning)
     {
         val driverData = fetchDeviceConfiguration()
-        Log.d("TAG", "addNotification: "+driverData)
         if (driverData!=null)
         {
             val notificationRequest = CreateNotificationDTO(
@@ -129,9 +135,30 @@ class AppRepository @Inject constructor(
         prefManager.saveDeviceConfigId(id)
     }
 
-    suspend fun addAttendanceToDatabase(attendance: Attendance)
+    suspend fun addAttendanceToDatabase(attendanceModel: AttendanceModel)
     {
-        attendanceDao.addAttendance(attendance)
+        runBlocking {
+            val time = if(attendanceModel.time.isBeforeNoon()) AppConstants.AttendanceTime.MORNING else AppConstants.AttendanceTime.EVENING
+
+            val studentAttendance = getStudentAttendanceByDateAndTagIdAndDayTime(attendanceModel.date,attendanceModel.tagId,time)
+            Log.d("TAG", "addAttendanceToDatabase: $studentAttendance")
+
+            val isStudentEnteringBus = studentAttendance == null
+            if (isStudentEnteringBus)
+            {
+                val  attendance = attendanceModel.toAttendance(
+                    inTime = attendanceModel.time,
+                    outTime = "",
+                    dayTime = time.ordinal
+                )
+                attendanceDao.addAttendance(attendance)
+
+            }
+            else{
+                attendanceDao.updateOutTimeByTagIDAndDayTime(attendanceModel.tagId,time.ordinal,attendanceModel.time,attendanceModel.date)
+                syncAllAttendanceToServer()
+            }
+        }
     }
 
     suspend fun syncAllAttendanceToServer()
@@ -145,12 +172,21 @@ class AppRepository @Inject constructor(
             attendanceList
         ).onSuccess {
          attendanceDao.updateIsSyncByOutTime(true)
+            attendanceDao.deleteSyncedAttendances()
         }
     }
 
-    suspend fun saveAttendanceToDatabase(attendanceModel: AttendanceModel){
 
+
+    suspend fun getStudentAttendanceByDateAndTagIdAndDayTime(date: String, tagId: String, dayTime :AppConstants.AttendanceTime): Attendance? {
+       return attendanceDao.getStudentByDateAndTagIdAndDayTime(
+            date = date,
+            tagId = tagId,
+            dayTime = dayTime.ordinal
+        )
     }
+
+
 
 
 }

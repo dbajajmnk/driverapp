@@ -3,6 +3,7 @@ package com.hbeonlabs.driversalerts.data.local.db
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import com.hbeonlabs.driversalerts.data.local.db.models.Attendance
 import kotlinx.coroutines.flow.Flow
 
@@ -18,6 +19,7 @@ interface AttendanceDao {
     @Query("SELECT * FROM attendance WHERE isSync = 0")
     suspend fun getAllUnSyncedAttendances(): List<Attendance>
 
+
     @Query("UPDATE attendance SET outTime = :newOutTime WHERE tagID = :tagID AND dayTime = :dayTime AND date = :date")
     suspend fun updateOutTimeByTagIDAndDayTime(tagID: String, dayTime: Int, newOutTime: String,date:String)
 
@@ -26,6 +28,7 @@ interface AttendanceDao {
 
     @Query("UPDATE Attendance SET isSync = :synced WHERE outTime != ''")
     suspend fun updateIsSyncByOutTime(synced: Boolean)
+
 
 
 
