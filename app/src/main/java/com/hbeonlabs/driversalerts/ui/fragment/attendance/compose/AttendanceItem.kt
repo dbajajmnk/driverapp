@@ -32,9 +32,6 @@ fun AttendanceItem(isOddItem:Boolean, attendanceModel: AttendanceModel) {
                     Modifier.background(colorResource(id = R.color.white))
                 }
             )
-
-
-
     ) {
         AttendanceText(modifier = Modifier.weight(0.4f), text = attendanceModel.tagId)
         AttendanceText(modifier = Modifier.weight(0.4f),text = "Class")
