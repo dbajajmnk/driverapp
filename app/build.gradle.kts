@@ -57,6 +57,10 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.6"
     }
 }
 
@@ -171,5 +175,16 @@ dependencies {
 
     // Paging 3
     implementation ("androidx.paging:paging-runtime-ktx:3.2.0-alpha04")
+
+
+      val  compose_version = "1.4.2"
+    // Jetpack Compose
+    implementation ("androidx.compose.ui:ui:$compose_version")
+    implementation ("androidx.compose.material:material:$compose_version")
+    implementation ("androidx.compose.ui:ui-tooling-preview:$compose_version")
+    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:$compose_version")
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 
 }

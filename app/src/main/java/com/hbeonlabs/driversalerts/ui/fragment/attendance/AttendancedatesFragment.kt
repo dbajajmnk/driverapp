@@ -20,51 +20,44 @@ import java.util.Calendar
 
 class AttendancedatesFragment : BaseFragment<FragmentAttendancedatesBinding>() {
 
-    private lateinit var recyclerView: RecyclerView
     private lateinit var itemAdapter: HistoryDatesAdapter
     val itemDecoration = RecyclerViewItemDecoration(16,50)
 
     override fun initView() {
         super.initView()
+        binding.apply {
+            binding.toolbar.titleFrag.text = "Attendance"
+            getItems()
+            itemAdapter = HistoryDatesAdapter(getItems(),object : HistoryDatesAdapter.OnItemClickListener{
+                override fun onItemClick(position: Int) {
 
+                    val navController = NavHostFragment.findNavController(requireParentFragment())
+
+                    //       val bundle = Bundle()
+                    /*                val passList: MutableList<String> = ArrayList()
+                                    passList.add(itemAdapter[position].uptext)
+                                    passList.add("item 2")*/
+
+//                bundle.putString("key","value")
+
+                    navController.navigate(R.id.attendanceFragment);
+                }
+            })
+
+            rvAttendanceList.addItemDecoration(itemDecoration)
+
+
+            rvAttendanceList.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = itemAdapter
+            }
+        }
     }
 
     override fun getLayoutResourceId(): Int {
         return R.layout.fragment_attendancedates
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_attendancedates, container, false);
-        val TitleView = view.findViewById<TextView>(R.id.title_frag)
-        TitleView.text = "Attendance"
-
-        recyclerView = view.findViewById(R.id.recyclerview);
-        itemAdapter = HistoryDatesAdapter(getItems(),object : HistoryDatesAdapter.OnItemClickListener{
-            override fun onItemClick(position: Int) {
-
-                val navController = NavHostFragment.findNavController(requireParentFragment())
-
-                //       val bundle = Bundle()
-/*                val passList: MutableList<String> = ArrayList()
-                passList.add(itemAdapter[position].uptext)
-                passList.add("item 2")*/
-
-//                bundle.putString("key","value")
-
-                navController.navigate(R.id.attendanceFragment);
-            }
-        })
-
-        recyclerView.addItemDecoration(itemDecoration)
-
-
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = itemAdapter
-        }
-
-        return view
-    }
 
     private fun getItems(): List<ItemD> {
         val calendar: Calendar = Calendar.getInstance()

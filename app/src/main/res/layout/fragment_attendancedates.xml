@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <include
-            android:id="@+id/include3"
+            android:id="@+id/toolbar"
             layout="@layout/toolbar_frag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/textView9"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include3" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/attendance_list_heading"
