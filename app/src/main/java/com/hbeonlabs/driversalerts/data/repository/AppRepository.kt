@@ -14,6 +14,7 @@ import com.hbeonlabs.driversalerts.data.mappers.toCreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.api.AppApis
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequest
+import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequestList
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
@@ -86,7 +87,6 @@ class AppRepository @Inject constructor(
                 Log.d("TAG", "fetchDeviceConfigurationFromServer:error "+message)
             }.onException {
                 Log.d("TAG", "fetchDeviceConfigurationFromServer: exception"+it.localizedMessage)
-
             }
         }
 
@@ -138,26 +138,34 @@ class AppRepository @Inject constructor(
     suspend fun addAttendanceToDatabase(attendanceModel: AttendanceModel)
     {
         runBlocking {
+
             val time = if(attendanceModel.time.isBeforeNoon()) AppConstants.AttendanceTime.MORNING else AppConstants.AttendanceTime.EVENING
 
             val studentAttendance = getStudentAttendanceByDateAndTagIdAndDayTime(attendanceModel.date,attendanceModel.tagId,time)
-            Log.d("TAG", "addAttendanceToDatabase: $studentAttendance")
 
-            val isStudentEnteringBus = studentAttendance == null
-            if (isStudentEnteringBus)
-            {
-                val  attendance = attendanceModel.toAttendance(
-                    inTime = attendanceModel.time,
-                    outTime = "",
-                    dayTime = time.ordinal
-                )
-                attendanceDao.addAttendance(attendance)
 
-            }
-            else{
-                attendanceDao.updateOutTimeByTagIDAndDayTime(attendanceModel.tagId,time.ordinal,attendanceModel.time,attendanceModel.date)
-                syncAllAttendanceToServer()
-            }
+                if (studentAttendance == null)
+                {
+
+                    val  attendance = attendanceModel.toAttendance(
+                        inTime = attendanceModel.time,
+                        outTime = "",
+                        dayTime = time.ordinal
+                    )
+                    attendanceDao.addAttendance(attendance)
+
+                }
+                else{
+                    val inTimeAndOutTabIsBlank = !(studentAttendance.inTime.isNotBlank() && studentAttendance.outTime.isNotBlank())
+                    if (inTimeAndOutTabIsBlank && !isTimeGapLessThanFiveMinutes(studentAttendance.inTime,attendanceModel.time))
+                    {
+                        attendanceDao.updateOutTimeByTagIDAndDayTime(attendanceModel.tagId,time.ordinal,attendanceModel.time,attendanceModel.date)
+                        syncAllAttendanceToServer()
+                    }
+                }
+
+
+
         }
     }
 
@@ -169,7 +177,7 @@ class AppRepository @Inject constructor(
             attendanceList.add(attendance.toCreateAttendanceRequest(fetchDeviceConfiguration()?.schoolId?:-1))
         }
         appApis.addAttendance(
-            attendanceList
+            CreateAttendanceRequestList(attendanceList)
         ).onSuccess {
          attendanceDao.updateIsSyncByOutTime(true)
             attendanceDao.deleteSyncedAttendances()
@@ -184,6 +192,20 @@ class AppRepository @Inject constructor(
             tagId = tagId,
             dayTime = dayTime.ordinal
         )
+    }
+
+    fun isTimeGapLessThanFiveMinutes(oldTime:String,newTime:String): Boolean {
+        val dateFormat = SimpleDateFormat("hh:mm:ss", Locale.getDefault())
+        val oldTime = dateFormat.parse(oldTime)?.time
+        val newTime = dateFormat.parse(newTime)?.time
+        if (oldTime!=null && newTime!=null)
+        {
+            val timeDiff = newTime-oldTime
+            Log.d("TAG", "isTimeGapLessThanFiveMinutes: $timeDiff")
+            return timeDiff < 5*60*1000
+        }
+
+        return true
     }
 
 

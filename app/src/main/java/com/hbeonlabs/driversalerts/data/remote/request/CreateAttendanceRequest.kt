@@ -22,3 +22,10 @@ data class CreateAttendanceRequest(
 	@field:SerializedName("outTime")
 	val outTime: String? = null
 )
+
+
+data class CreateAttendanceRequestList(
+	@field:SerializedName("attendances")
+	val attendances: List<CreateAttendanceRequest>? = null,
+)
+

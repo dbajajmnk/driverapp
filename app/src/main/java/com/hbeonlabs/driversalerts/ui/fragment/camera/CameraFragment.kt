@@ -70,6 +70,18 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>() {
         initWebRtc()
         initAttendanceManager()
         createNotification(AppConstants.NotificationSubType.STREAMING_START.toString(), AppConstants.STEAMING_START_MESSAGE, AppConstants.NotificationType.LOG.ordinal)
+        binding.addAttendance.setOnClickListener {
+            // DeviceId=12345679,TagId=0011891331,Date=2023‑04‑11,Time=14:19:27
+            // todo Add time limit check for multiple in times of minimum gap of 5 minutes
+            viewModel.addAttendance(
+                AttendanceModel(
+                    deviceId = "121",
+                    tagId = binding.tagId.text.toString(),
+                    date = binding.date.text.toString(),
+                    time = binding.time.text.toString()
+                )
+            )
+        }
     }
 
     override fun onDestroyView() {

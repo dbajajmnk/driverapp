@@ -37,7 +37,6 @@ class AttendanceFragment : BaseFragment<FragmentAttendanceBinding>() {
 
     override fun initView() {
         super.initView()
-
         binding.toolbar.titleFrag.text = "Attendance"
 
         binding.composeAttendanceView.apply {

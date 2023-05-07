@@ -23,6 +23,7 @@ class CameraViewModel @Inject constructor(
 
     init {
         calculateAcceleration()
+
     }
 
     private val speedFlow = MutableSharedFlow<LocationAndSpeed>()

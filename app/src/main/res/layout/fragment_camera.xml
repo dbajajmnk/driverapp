@@ -59,6 +59,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="15dp"
+            android:visibility="invisible"
             app:layout_constraintHeight_percent="0.35"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -75,5 +76,36 @@
             app:layout_constraintStart_toStartOf="@+id/front_surfaceview"
             app:layout_constraintTop_toBottomOf="@+id/front_surfaceview"/>
 
+        <EditText
+            android:id="@+id/tagId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tag Id"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/code"/>
+
+        <EditText
+            android:id="@+id/date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tagId"/>
+
+        <EditText
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/date"/>
+
+        <Button
+            android:id="@+id/add_attendance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Attendance"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/time"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

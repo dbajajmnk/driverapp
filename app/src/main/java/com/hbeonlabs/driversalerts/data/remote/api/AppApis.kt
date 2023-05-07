@@ -3,6 +3,7 @@ package com.hbeonlabs.driversalerts.data.remote.api
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequest
+import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequestList
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
 import com.hbeonlabs.driversalerts.data.remote.request.DeviceConfigurationRequest
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponse
@@ -47,7 +48,7 @@ interface AppApis {
     suspend fun configureDevice(@Body deviceConfigurationRequest: ConfigureDeviceRequest): NetworkResult<BasicMessageResponse>
 
     @POST(CREATE_ATTENDANCE)
-    suspend fun addAttendance(@Body attendance: List<CreateAttendanceRequest>):NetworkResult<BasicMessageResponse>
+    suspend fun addAttendance(@Body attendance: CreateAttendanceRequestList):NetworkResult<BasicMessageResponse>
 
 
 }
