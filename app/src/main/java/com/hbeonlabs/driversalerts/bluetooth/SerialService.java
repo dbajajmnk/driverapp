@@ -21,10 +21,6 @@ import com.hbeonlabs.driversalerts.R;
 import java.io.IOException;
 import java.util.ArrayDeque;
 
-/**
- * create notification and queue serial data while activity is not in the foreground
- * use listener chain: SerialSocket -> SerialService -> UI fragment
- */
 public class SerialService extends Service implements SerialListener {
 
     class SerialBinder extends Binder {

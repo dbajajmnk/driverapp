@@ -12,15 +12,15 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
 class DriverLocationProvider (val fragment : Fragment, onLocationChange:(locationData:LocationAndSpeed)->Unit ) {
-    private lateinit var sensorManager: SensorManager
+
     private lateinit var lastLocation: LocationResult
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var curSpeed = 0f
+
     private var lastSpeed = 0f
     private var acceleration = 0f
 
     private val _speedEvent= MutableSharedFlow<Float>()
-    val speedEvent: SharedFlow<Float> = _speedEvent
+
 
     private val _speedEvent2= MutableSharedFlow<Float>()
     val speedEvent2: SharedFlow<Float> = _speedEvent2

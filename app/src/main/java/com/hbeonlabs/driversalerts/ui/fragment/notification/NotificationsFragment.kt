@@ -1,13 +1,5 @@
 package com.hbeonlabs.driversalerts.ui.fragment.notification
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.fragment.app.Fragment
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentNotificationBinding

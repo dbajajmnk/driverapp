@@ -1,16 +1,12 @@
 package com.hbeonlabs.driversalerts.data.remote.api
 
-import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
-import com.hbeonlabs.driversalerts.data.remote.request.DeviceConfigurationRequest
-import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponse
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import com.hbeonlabs.driversalerts.data.remote.response.NotificationResponse
-import com.hbeonlabs.driversalerts.data.remote.response.NotificationResponseItem
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.CONFIGURE_DEVICE
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.CREATE_ATTENDANCE
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.GET_ALL_ATTENDANCE

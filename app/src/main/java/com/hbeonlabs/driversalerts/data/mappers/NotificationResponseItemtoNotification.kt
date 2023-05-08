@@ -11,9 +11,9 @@ fun NotificationResponseItem.toNotification(): Warning
 {
     val notificationType =  when (this.type)
     {
-         "log" -> AppConstants.NotificationType.LOG.ordinal
-         "warning" -> AppConstants.NotificationType.WARNING.ordinal
-         else -> AppConstants.NotificationType.WARNING.ordinal
+        "log" -> AppConstants.NotificationType.LOG.ordinal
+        "warning" -> AppConstants.NotificationType.WARNING.ordinal
+        else -> AppConstants.NotificationType.WARNING.ordinal
     }
 
     val dateTimeStr = "${this.date} ${this.time}"

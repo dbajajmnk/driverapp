@@ -14,6 +14,5 @@ class AdminActivity : AppCompatActivity(){
         val binding = DataBindingUtil.setContentView<FragmentWatcherBinding>(this, R.layout.fragment_watcher)
         WebRtcHelper.getInstance().init(this)
         WebRtcHelper.getInstance().startReceiverFrontStreaming(binding.frontSurfaceview)
-        //WebRtcHelper.getInstance().start(this, null,binding.surfaceview)
     }
 }

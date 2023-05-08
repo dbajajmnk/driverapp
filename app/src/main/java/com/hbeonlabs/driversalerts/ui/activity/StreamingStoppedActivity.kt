@@ -1,17 +1,10 @@
 package com.hbeonlabs.driversalerts.ui.activity
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.WindowManager
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.hbeonlabs.driversalerts.R
-import com.hbeonlabs.driversalerts.databinding.ActivityMainBinding
 import com.hbeonlabs.driversalerts.databinding.ActivityNoRecordingBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseActivity
 import com.hbeonlabs.driversalerts.workManager.ChargingOnWorkManager

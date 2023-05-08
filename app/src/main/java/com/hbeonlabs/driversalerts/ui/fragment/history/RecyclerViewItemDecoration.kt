@@ -10,6 +10,5 @@ class RecyclerViewItemDecoration(private val space: Int,private val spacele : In
         outRect.bottom = space
         outRect.top = space
         outRect.left = spacele
-        //outRect.right = space
     }
 }

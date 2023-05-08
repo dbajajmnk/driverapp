@@ -1,14 +1,7 @@
 package com.hbeonlabs.driversalerts.ui.fragment.settings
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentSettingsConfigureBinding

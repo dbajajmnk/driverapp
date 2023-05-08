@@ -1,7 +1,6 @@
 package com.hbeonlabs.driversalerts.ui.fragment.camera
 
 import android.app.Dialog
-import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.google.mlkit.vision.common.InputImage
