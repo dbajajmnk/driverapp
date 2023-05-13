@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.fragment.dashboard.DashboardFragment">
+<layout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <include
+    <include
             android:id="@+id/include2"
             layout="@layout/activity_toolbar" />
 
@@ -19,41 +15,90 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="44dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             android:text="Saurabh Singh"
             android:textColor="#000000"
-            android:textSize="20dp"
+            android:textSize="15dp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include2" />
 
         <TextView
+            android:id="@+id/tv_speed_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/name"
+            android:layout_marginEnd="50dp"
+            />
+
+        <TextView
+            android:id="@+id/tv_acceleration_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="5dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_speed_data"
+            android:layout_marginEnd="50dp"
+            />
+
+        <TextView
             android:id="@+id/code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="5dp"
             android:text="DL3DF5678"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
-        <VideoView
-            android:id="@+id/videoView"
-            android:layout_width="345dp"
-            android:layout_height="194dp"
-            android:layout_marginTop="12dp"
+        <io.livekit.android.renderer.SurfaceViewRenderer
+            android:id="@+id/frontRenderer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintHeight_percent="0.35"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/code" />
+            app:layout_constraintTop_toBottomOf="@+id/code"/>
 
-        <VideoView
-            android:id="@+id/videoView2"
-            android:layout_width="345dp"
-            android:layout_height="194dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="@+id/videoView"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/videoView"
-            app:layout_constraintTop_toBottomOf="@+id/videoView" />
+        <TextView
+            android:id="@+id/front_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/bottomsheet_background"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Front"
+            android:textColor="@color/cardview_dark_background"
+            app:layout_constraintStart_toStartOf="@id/frontRenderer"
+            app:layout_constraintTop_toTopOf="@id/frontRenderer" />
+
+        <io.livekit.android.renderer.SurfaceViewRenderer
+            android:id="@+id/backRenderer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.35"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            app:layout_constraintStart_toStartOf="@+id/frontRenderer"
+            app:layout_constraintTop_toBottomOf="@+id/frontRenderer"/>
+
+        <TextView
+            android:id="@+id/back_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/bottomsheet_background"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Back"
+            android:textColor="@color/cardview_dark_background"
+            app:layout_constraintStart_toStartOf="@+id/frontRenderer"
+            app:layout_constraintTop_toTopOf="@id/backRenderer" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+</layout>

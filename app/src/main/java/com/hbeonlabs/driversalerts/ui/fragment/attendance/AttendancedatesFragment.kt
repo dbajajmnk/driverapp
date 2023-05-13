@@ -38,7 +38,7 @@ class AttendancedatesFragment : BaseFragment<FragmentAttendancedatesBinding>() {
         val TitleView = view.findViewById<TextView>(R.id.title_frag)
         TitleView.text = "Attendance"
 
-        recyclerView = view.findViewById(R.id.recyclerview);
+        recyclerView = view.findViewById(R.id.rv_attendance_list);
         itemAdapter = HistoryDatesAdapter(getItems(),object : HistoryDatesAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
 

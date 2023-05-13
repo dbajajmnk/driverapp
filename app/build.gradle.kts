@@ -83,7 +83,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
-    implementation(files("libs/webRtcLib.aar"))
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
 
@@ -132,11 +131,6 @@ dependencies {
     implementation ("androidx.camera:camera-view:1.3.0-alpha06")
     implementation ("androidx.camera:camera-lifecycle:1.3.0-alpha06")
 
-    implementation("io.socket:socket.io-client:2.1.0") {
-        exclude("org.json", "json")
-    }
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
-
     // Architectural Components
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
@@ -157,9 +151,6 @@ dependencies {
     // Activity KTX for viewModels()
     implementation ("androidx.activity:activity-ktx:1.7.1")
 
-    implementation("io.socket:socket.io-client:2.1.0") {
-        exclude("org.json", "json")
-    }
     implementation ("androidx.recyclerview:recyclerview:1.3.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
 
@@ -172,4 +163,7 @@ dependencies {
     // Paging 3
     implementation ("androidx.paging:paging-runtime-ktx:3.2.0-alpha04")
 
+
+    //Live streaming
+    implementation("io.livekit:livekit-android:1.1.10")
 }

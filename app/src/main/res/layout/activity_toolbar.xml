@@ -6,7 +6,6 @@
     android:layout_height="?attr/actionBarSize"
     android:background="@color/white"
     android:id="@+id/custom_toolbar"
-    app:popupTheme="@style/AppTheme"
     >
 
     <ImageView
