@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object Utils {
+    val dateFormat = SimpleDateFormat("hh:mm:ss a", Locale.getDefault())
 
     fun makeOutputMediaFile(): String? {
         val mediaStorageDir = File(
@@ -31,4 +32,7 @@ object Utils {
         else
             return null
     }
+
+    fun getCurrentTimeString() = dateFormat.format(System.currentTimeMillis())
+
 }

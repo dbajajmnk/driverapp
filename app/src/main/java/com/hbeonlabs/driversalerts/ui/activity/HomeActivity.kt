@@ -82,7 +82,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
             }
 
             R.id.btn_admin -> {
-                startActivity(Intent(this, AdminActivity::class.java))
             }
         }
     }

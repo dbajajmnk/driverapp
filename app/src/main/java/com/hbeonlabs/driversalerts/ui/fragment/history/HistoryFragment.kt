@@ -11,7 +11,6 @@ import com.hbeonlabs.driversalerts.databinding.FragmentHistoryBinding
 import com.hbeonlabs.driversalerts.databinding.FragmentWatcherBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.notification.WarningsFragment
-import com.hbeonlabs.driversalerts.webrtc.WebRtcHelper
 
 class HistoryFragment : BaseFragment<FragmentHistoryBinding>(){
 
