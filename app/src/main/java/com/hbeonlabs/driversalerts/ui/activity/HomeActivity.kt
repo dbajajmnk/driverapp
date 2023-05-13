@@ -15,8 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
+import com.hbeonlabs.driversalerts.databinding.ActivityNoRecordingBinding
 import com.hbeonlabs.driversalerts.databinding.FragmentHomeBinding
 import com.hbeonlabs.driversalerts.receivers.DailyAlarmReceiver
 import com.hbeonlabs.driversalerts.receivers.EndAlarmReceiver
@@ -27,6 +32,7 @@ import com.hbeonlabs.driversalerts.utils.constants.AppConstants.END_HOUR
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.END_MINUTES
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.START_HOUR
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants.START_MINUTES
+import com.hbeonlabs.driversalerts.workManager.ChargingOnWorkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -53,7 +59,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
     @Inject
     lateinit var speedDao: LocationAndSpeedDao
 
-    lateinit var binding: FragmentHomeBinding
+    lateinit var binding: ActivityNoRecordingBinding
     lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,9 +67,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
         dialog = dialogDrowsinessAlert(headerText = "Alert!", "You have crossed the Speed Limit")
         //askLocationPermission()
 
-        binding = DataBindingUtil.setContentView(this, R.layout.fragment_home)
-        binding.btnDriver.setOnClickListener(this)
-        binding.btnAdmin.setOnClickListener(this)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_no_recording)
+        binding.buttonMoveToDashboard.setOnClickListener(this)
         lifecycleScope.launchWhenStarted {
             while (true) {
                 delay(3000)
@@ -71,18 +76,16 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
             }
         }
 
-        setADailyStartAndStopAlarm()
+        beginWorkManager()
         askForPermissions()
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.btn_driver -> {
+            R.id.button_move_to_dashboard -> {
                 startActivity(Intent(this, MainActivity::class.java).putExtra("from" , "HomePage"))
             }
 
-            R.id.btn_admin -> {
-            }
         }
     }
 
@@ -244,6 +247,24 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
         Log.d("TAG", "onRequestPermissionsResult: "+permissions)
 
         EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults)
+    }
+
+    ///////////////Charging code////////////////////
+
+    private val worker = OneTimeWorkRequestBuilder<ChargingOnWorkManager>().setConstraints(
+        Constraints.Builder()
+            .setRequiresCharging(true)
+            .build()
+    ).build()
+
+    private val workManager = WorkManager.getInstance(this)
+
+    fun beginWorkManager() {
+        workManager.beginUniqueWork(
+            "test",
+            ExistingWorkPolicy.REPLACE,
+            worker
+        ).enqueue()
     }
 
 }
