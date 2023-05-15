@@ -22,7 +22,6 @@ import androidx.work.WorkManager
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
 import com.hbeonlabs.driversalerts.databinding.ActivityNoRecordingBinding
-import com.hbeonlabs.driversalerts.databinding.FragmentHomeBinding
 import com.hbeonlabs.driversalerts.receivers.DailyAlarmReceiver
 import com.hbeonlabs.driversalerts.receivers.EndAlarmReceiver
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
@@ -35,7 +34,6 @@ import com.hbeonlabs.driversalerts.utils.constants.AppConstants.START_MINUTES
 import com.hbeonlabs.driversalerts.workManager.ChargingOnWorkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import javax.inject.Inject

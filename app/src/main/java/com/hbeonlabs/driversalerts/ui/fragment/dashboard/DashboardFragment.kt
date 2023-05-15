@@ -25,6 +25,7 @@ import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.makeToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.webrtc.EglRenderer
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.Timer
@@ -145,8 +146,15 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
 
     private fun updateTimeTexts() {
         requireActivity().runOnUiThread {
-            binding.frontText.text = "Front\n${Utils.getCurrentTimeString()}"
-            binding.backText.text = "Back\n${Utils.getCurrentTimeString()}"
+            if(streamingHelper.getFrontStreamingStatus().equals("Started"))
+                binding.frontText.text = "Front\n${Utils.getCurrentTimeString()}"
+            else
+                binding.frontText.text = streamingHelper.getFrontStreamingStatus()
+            if(streamingHelper.getBackStreamingStatus().equals("Started"))
+                binding.backText.text = "Back\n${Utils.getCurrentTimeString()}"
+            else
+                binding.backText.text = streamingHelper.getBackStreamingStatus()
+
         }
     }
 
@@ -183,6 +191,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
         } else {
             locationProvider = DriverLocationProvider(this) { locationAndSpeedData ->
                 currentLocationData = locationAndSpeedData
+                lifecycleScope.launch {streamingHelper.sendLocation(currentLocationData)}
                 val speedInKmph = "%.2f".format(locationAndSpeedData.speed.toDouble() * 3.6)
                 binding.tvSpeedData.text = "Speed =  $speedInKmph"
                 viewModel.addLocationData(locationAndSpeedData)

@@ -1,6 +1,7 @@
 package com.hbeonlabs.driversalerts.utils.streaming
 
 import android.app.Activity
+import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import io.livekit.android.LiveKit
 import io.livekit.android.LiveKitOverrides
 import io.livekit.android.RoomOptions
@@ -11,6 +12,7 @@ import io.livekit.android.room.participant.AudioTrackPublishDefaults
 import io.livekit.android.room.participant.LocalParticipant
 import io.livekit.android.room.participant.VideoTrackPublishDefaults
 import io.livekit.android.room.track.CameraPosition
+import io.livekit.android.room.track.DataPublishReliability
 import io.livekit.android.room.track.LocalAudioTrackOptions
 import io.livekit.android.room.track.LocalVideoTrackOptions
 import io.livekit.android.room.track.Track
@@ -26,7 +28,8 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
     private var frontVideoTrack: VideoTrack? = null
     private lateinit var frontRoom: Room
     private lateinit var backRoom: Room
-
+    private var frontStreamingStatus = "Connecting..."
+    private var backStreamingStatus = "Connecting..."
     init {
         initFrontRoom()
         initBackRoom()
@@ -66,36 +69,42 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
 
     private suspend fun connectToRoomForFront() {
         try {
+            frontStreamingStatus = "Connecting..."
             frontRoom.connect(
                 url = "wss://flexigigs.co",
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkZyb250Q2FtZXJhIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjgzODkzNzk4LCJuYmYiOjE2ODM4OTM3OTgsImV4cCI6MTc0Njk2NTc5OCwiaXNzIjoiQVBJcEU1cTlnekFEVHZRIiwic3ViIjoiRnJvbnRTZW5kZXIiLCJqdGkiOiJGcm9udFNlbmRlciJ9.r8wQREhJBs6E8cOYDaI-2hcvVClBqPbC0ImzyV3govw",
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkZyb250Q2FtZXJhIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjgzOTc0ODQ4LCJuYmYiOjE2ODM5NzQ4NDgsImV4cCI6MTc0NzA0Njg0OCwiaXNzIjoiQVBJWDllTG5HZmllS1k4Iiwic3ViIjoiRnJvbnRTZW5kZXIiLCJqdGkiOiJGcm9udFNlbmRlciJ9.8sXG7QANLNsh8rmwkWf5m7Z73qi3eaYvHZRRl0_Pgb0",
             )
-
+            frontStreamingStatus = "Connected"
             // Create and publish audio/video tracks
             val localParticipant = frontRoom.localParticipant
             localParticipant.setMicrophoneEnabled(true)
             localParticipant.setCameraEnabled(true)
 
             showFrontCameraView(localParticipant)
+            frontStreamingStatus = "Started"
         } catch (e: Throwable) {
+            frontStreamingStatus = e.message ?: "Error"
             e.printStackTrace()
         }
     }
 
     private suspend fun connectToRoomForBack() {
         try {
+            backStreamingStatus = "Connecting..."
             backRoom.connect(
                 url = "wss://flexigigs.co",
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkJhY2tDYW1lcmEiLCJjYW5QdWJsaXNoIjp0cnVlLCJjYW5TdWJzY3JpYmUiOnRydWV9LCJpYXQiOjE2ODM4OTM5MzIsIm5iZiI6MTY4Mzg5MzkzMiwiZXhwIjoxNzQ2OTY1OTMyLCJpc3MiOiJBUElwRTVxOWd6QURUdlEiLCJzdWIiOiJCYWNrU2VuZGVyIiwianRpIjoiQmFja1NlbmRlciJ9.2Zdoyem5mcoFbTbc-9nbGFsqoGfLSa2MDMcZFQ5zEuo",
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkJhY2tDYW1lcmEiLCJjYW5QdWJsaXNoIjp0cnVlLCJjYW5TdWJzY3JpYmUiOnRydWV9LCJpYXQiOjE2ODM5NzU4NTcsIm5iZiI6MTY4Mzk3NTg1NywiZXhwIjoxNzQ3MDQ3ODU3LCJpc3MiOiJBUElYOWVMbkdmaWVLWTgiLCJzdWIiOiJCYWNrU2VuZGVyIiwianRpIjoiQmFja1NlbmRlciJ9.MxvRdaqJCPJzOxq03MJTSfWCMABU9MJzdgLsWYIsoC8",
             )
-
+            backStreamingStatus = "Connected"
             // Create and publish audio/video tracks
             val localParticipant = backRoom.localParticipant
             localParticipant.setMicrophoneEnabled(true)
             localParticipant.setCameraEnabled(true)
 
             showBackCameraView(localParticipant)
+            backStreamingStatus = "Started"
         } catch (e: Throwable) {
+            backStreamingStatus = e.message ?: "Error"
             e.printStackTrace()
         }
     }
@@ -170,4 +179,11 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
         )
     }
 
+    fun getFrontStreamingStatus() = frontStreamingStatus
+    fun getBackStreamingStatus() = backStreamingStatus
+
+    suspend fun sendLocation(locationData: LocationAndSpeed){
+        val data = "${locationData.locationLatitude}//${locationData.locationLongitude}//${locationData.speed}"
+        frontRoom.localParticipant.publishData(data.toByteArray(), DataPublishReliability.LOSSY)
+    }
 }
