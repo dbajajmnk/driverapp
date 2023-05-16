@@ -183,7 +183,11 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
     fun getBackStreamingStatus() = backStreamingStatus
 
     suspend fun sendLocation(locationData: LocationAndSpeed){
-        val data = "${locationData.locationLatitude}//${locationData.locationLongitude}//${locationData.speed}"
-        frontRoom.localParticipant.publishData(data.toByteArray(), DataPublishReliability.LOSSY)
+        try {
+            val data = "${locationData.locationLatitude}//${locationData.locationLongitude}//${locationData.speed}"
+            frontRoom.localParticipant.publishData(data.toByteArray(), DataPublishReliability.RELIABLE)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 }
