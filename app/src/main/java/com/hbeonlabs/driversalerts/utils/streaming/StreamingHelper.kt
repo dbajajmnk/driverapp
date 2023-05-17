@@ -72,14 +72,14 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
             frontStreamingStatus = "Connecting..."
             frontRoom.connect(
                 url = "wss://flexigigs.co",
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkZyb250Q2FtZXJhIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjgzOTc0ODQ4LCJuYmYiOjE2ODM5NzQ4NDgsImV4cCI6MTc0NzA0Njg0OCwiaXNzIjoiQVBJWDllTG5HZmllS1k4Iiwic3ViIjoiRnJvbnRTZW5kZXIiLCJqdGkiOiJGcm9udFNlbmRlciJ9.8sXG7QANLNsh8rmwkWf5m7Z73qi3eaYvHZRRl0_Pgb0",
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IlJvb20xIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjg0Mjg1NTA2LCJuYmYiOjE2ODQyODU1MDYsImV4cCI6MTc0NzM1NzUwNiwiaXNzIjoiQVBJNWpjUm5ZeVJXUEZjIiwic3ViIjoiU2VuZGVyMSIsImp0aSI6IlNlbmRlcjEifQ.JIyZSKu2APjSou5R5-GVKSn5JeESASfdMTiEHrKtDhs",
             )
             frontStreamingStatus = "Connected"
             // Create and publish audio/video tracks
             val localParticipant = frontRoom.localParticipant
             localParticipant.setMicrophoneEnabled(true)
             localParticipant.setCameraEnabled(true)
-
+            localParticipant.name = "FrontSender"
             showFrontCameraView(localParticipant)
             frontStreamingStatus = "Started"
         } catch (e: Throwable) {
@@ -93,14 +93,14 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
             backStreamingStatus = "Connecting..."
             backRoom.connect(
                 url = "wss://flexigigs.co",
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkJhY2tDYW1lcmEiLCJjYW5QdWJsaXNoIjp0cnVlLCJjYW5TdWJzY3JpYmUiOnRydWV9LCJpYXQiOjE2ODM5NzU4NTcsIm5iZiI6MTY4Mzk3NTg1NywiZXhwIjoxNzQ3MDQ3ODU3LCJpc3MiOiJBUElYOWVMbkdmaWVLWTgiLCJzdWIiOiJCYWNrU2VuZGVyIiwianRpIjoiQmFja1NlbmRlciJ9.MxvRdaqJCPJzOxq03MJTSfWCMABU9MJzdgLsWYIsoC8",
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IlJvb20yIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjg0Mjg1NjczLCJuYmYiOjE2ODQyODU2NzMsImV4cCI6MTc0NzM1NzY3MywiaXNzIjoiQVBJNWpjUm5ZeVJXUEZjIiwic3ViIjoiU2VuZGVyMiIsImp0aSI6IlNlbmRlcjIifQ.sKKeh0hrVP1xfc843YSleHWX283AKRDD9KLSxo-CgNc",
             )
             backStreamingStatus = "Connected"
             // Create and publish audio/video tracks
             val localParticipant = backRoom.localParticipant
             localParticipant.setMicrophoneEnabled(true)
             localParticipant.setCameraEnabled(true)
-
+            localParticipant.name = "BackSender"
             showBackCameraView(localParticipant)
             backStreamingStatus = "Started"
         } catch (e: Throwable) {
@@ -185,9 +185,11 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
     suspend fun sendLocation(locationData: LocationAndSpeed){
         try {
             val data = "${locationData.locationLatitude}//${locationData.locationLongitude}//${locationData.speed}"
-            frontRoom.localParticipant.publishData(data.toByteArray(), DataPublishReliability.RELIABLE)
+            frontRoom.localParticipant.publishData(data.toByteArray(), DataPublishReliability.LOSSY)
+            println("Sending location = $locationData")
         }catch (e:Exception){
             e.printStackTrace()
+            println("Error in sending location = ${e.message}")
         }
     }
 }
