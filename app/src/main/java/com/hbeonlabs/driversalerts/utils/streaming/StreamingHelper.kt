@@ -72,7 +72,7 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
             frontStreamingStatus = "Connecting..."
             frontRoom.connect(
                 url = "wss://flexigigs.co",
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IlJvb20xIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjg0Mjg1NTA2LCJuYmYiOjE2ODQyODU1MDYsImV4cCI6MTc0NzM1NzUwNiwiaXNzIjoiQVBJNWpjUm5ZeVJXUEZjIiwic3ViIjoiU2VuZGVyMSIsImp0aSI6IlNlbmRlcjEifQ.JIyZSKu2APjSou5R5-GVKSn5JeESASfdMTiEHrKtDhs",
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkZST05UX0NBTUVSQSIsImNhblB1Ymxpc2giOnRydWUsImNhblN1YnNjcmliZSI6dHJ1ZX0sImlhdCI6MTY4NDU5MTMyMSwibmJmIjoxNjg0NTkxMzIxLCJleHAiOjE3NDc2NjMzMjEsImlzcyI6IkFQSVRxU1Z5MlhWNXBzbyIsInN1YiI6IkZyb250U2VuZGVyIiwianRpIjoiRnJvbnRTZW5kZXIifQ.YSjUltwsJI9r8CB2VGRApPUK5ep23Tr8d2cr_xYCDG8",
             )
             frontStreamingStatus = "Connected"
             // Create and publish audio/video tracks
@@ -93,7 +93,7 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
             backStreamingStatus = "Connecting..."
             backRoom.connect(
                 url = "wss://flexigigs.co",
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IlJvb20yIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjg0Mjg1NjczLCJuYmYiOjE2ODQyODU2NzMsImV4cCI6MTc0NzM1NzY3MywiaXNzIjoiQVBJNWpjUm5ZeVJXUEZjIiwic3ViIjoiU2VuZGVyMiIsImp0aSI6IlNlbmRlcjIifQ.sKKeh0hrVP1xfc843YSleHWX283AKRDD9KLSxo-CgNc",
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkJBQ0tfQ0FNRVJBIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjg0NTkxNDQwLCJuYmYiOjE2ODQ1OTE0NDAsImV4cCI6MTc0NzY2MzQ0MCwiaXNzIjoiQVBJVHFTVnkyWFY1cHNvIiwic3ViIjoiQmFja1NlbmRlciIsImp0aSI6IkJhY2tTZW5kZXIifQ.JncogU8n1EAg0he2hx3imaN_YfMZTH2mTcHIrfud39o",
             )
             backStreamingStatus = "Connected"
             // Create and publish audio/video tracks
