@@ -1,12 +1,18 @@
 package com.hbeonlabs.driversalerts.ui.fragment.dashboard
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
+import com.hbeonlabs.driversalerts.data.remote.request.CreateTokenRequestModel
+import com.hbeonlabs.driversalerts.data.remote.response.RoomCreationResponseModel
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
+import com.hbeonlabs.driversalerts.utils.network.onError
+import com.hbeonlabs.driversalerts.utils.network.onException
+import com.hbeonlabs.driversalerts.utils.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -17,10 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    val repository: AppRepository
-
+    private val repository: AppRepository
 ) : ViewModel() {
-
+    val roomCreationLiveData = MutableLiveData<RoomCreationResponseModel?>(null)
     init {
         calculateAcceleration()
     }
@@ -72,5 +77,28 @@ class DashboardViewModel @Inject constructor(
     }
 
 
+    fun createRoom(roomName : String){
+        viewModelScope.launch {
+            repository.createRoom(roomName).onSuccess {
+                roomCreationLiveData.postValue(it)
+            }.onError { code, message ->
+                roomCreationLiveData.postValue(RoomCreationResponseModel(null, "Error:$code $message"))
+            }.onException {
+                roomCreationLiveData.postValue(RoomCreationResponseModel(null, "Error:${it.message}"))
+            }
+        }
+    }
 
+    fun createToken(roomName : String, participantName : String){
+        viewModelScope.launch {
+            val createTokenRequestModel = CreateTokenRequestModel(participantName, roomName)
+            repository.createRoom(roomName).onSuccess {
+                roomCreationLiveData.postValue(it)
+            }.onError { code, message ->
+                roomCreationLiveData.postValue(RoomCreationResponseModel(null, "Error:$code $message"))
+            }.onException {
+                roomCreationLiveData.postValue(RoomCreationResponseModel(null, "Error:${it.message}"))
+            }
+        }
+    }
 }

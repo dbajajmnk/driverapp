@@ -4,13 +4,17 @@ import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
+import com.hbeonlabs.driversalerts.data.remote.request.CreateRoomRequestModel
+import com.hbeonlabs.driversalerts.data.remote.request.CreateTokenRequestModel
 import com.hbeonlabs.driversalerts.data.remote.request.DeviceConfigurationRequest
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponse
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
+import com.hbeonlabs.driversalerts.data.remote.response.CreateTokenResponseModel
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import com.hbeonlabs.driversalerts.data.remote.response.NotificationResponse
 import com.hbeonlabs.driversalerts.data.remote.response.NotificationResponseItem
+import com.hbeonlabs.driversalerts.data.remote.response.RoomCreationResponseModel
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.CONFIGURE_DEVICE
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.CREATE_ATTENDANCE
 import com.hbeonlabs.driversalerts.utils.constants.EndPoints.GET_ALL_ATTENDANCE
@@ -24,6 +28,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface AppApis {
 
@@ -49,5 +54,10 @@ interface AppApis {
     @POST(CREATE_ATTENDANCE)
     suspend fun addAttendance(@Body attendance: List<CreateAttendanceRequest>):NetworkResult<BasicMessageResponse>
 
+    @POST()
+    suspend fun createRoom(@Url url : String,@Body attendance: CreateRoomRequestModel):NetworkResult<RoomCreationResponseModel>
+
+    @POST()
+    suspend fun createToken(@Url url : String,@Body attendance: CreateTokenRequestModel):NetworkResult<CreateTokenResponseModel>
 
 }

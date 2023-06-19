@@ -1,7 +1,10 @@
 package com.hbeonlabs.driversalerts.utils.streaming
 
 import android.app.Activity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
+import com.hbeonlabs.driversalerts.ui.fragment.dashboard.DashboardViewModel
 import io.livekit.android.LiveKit
 import io.livekit.android.LiveKitOverrides
 import io.livekit.android.RoomOptions
@@ -21,7 +24,7 @@ import io.livekit.android.room.track.VideoTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class StreamingHelper(private val context : Activity, private val frontRenderer : SurfaceViewRenderer,private val backRenderer : SurfaceViewRenderer) {
+class StreamingHelper(private val context : Activity, private val viewModel: DashboardViewModel, private val frontRenderer : SurfaceViewRenderer,private val backRenderer : SurfaceViewRenderer) {
 
 
     private var backVideoTrack: VideoTrack? = null
@@ -38,11 +41,31 @@ class StreamingHelper(private val context : Activity, private val frontRenderer 
         frontRenderer.setMirror(true)
     }
 
-    fun startStreaming(lifecycleScope: CoroutineScope){
-        lifecycleScope.launch {
+    fun startStreaming(lifecycleScope: CoroutineScope, lifecycleOwner: LifecycleOwner){
+        viewModel.createRoom("FrontRoom")
+        viewModel.createRoom("BackRoom")
+        viewModel.roomCreationLiveData.observe(lifecycleOwner) {
+            if(it?.data != null) {
+                if(it.data.name?.startsWith("FrontRoom") == true){
+                    frontStreamingStatus = it.data.name
+                    /*lifecycleScope.launch {
+                        connectToRoomForFront()
+                    }*/
+                }else if(it.data.name?.startsWith("BackRoom") == true){
+                    backStreamingStatus = it.data.name
+                    /*lifecycleScope.launch {
+                        connectToRoomForBack()
+                    }*/
+                }
+            }else{
+                frontStreamingStatus = it?.message ?: "Error"
+                backStreamingStatus = it?.message ?: "Error"
+            }
+        }
+        /*lifecycleScope.launch {
             connectToRoomForFront()
             connectToRoomForBack()
-        }
+        }*/
     }
 
     private fun initFrontRoom() {

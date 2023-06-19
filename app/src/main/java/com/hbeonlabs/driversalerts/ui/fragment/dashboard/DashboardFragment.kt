@@ -94,11 +94,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
                 *HomeActivity.RequiredPermissions.bluetoothPermissions
             )
         ) {
-            Toast.makeText(
-                requireContext(),
-                "Please provide bluetooth permission to connect with RFID device",
-                Toast.LENGTH_SHORT
-            ).show()
+            makeToast("Please provide bluetooth permission to connect with RFID device")
         } else {
             val callback = object : AttendanceCallback {
                 override fun onAttendance(attendanceModel: AttendanceModel) {
@@ -128,14 +124,10 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
                 *HomeActivity.RequiredPermissions.cameraPermissions
             )
         ) {
-            Toast.makeText(
-                requireContext(),
-                "Please provide camera permission for live streaming",
-                Toast.LENGTH_SHORT
-            ).show()
+            makeToast("Please provide camera permission for live streaming")
         } else {
-            streamingHelper = StreamingHelper(requireActivity(), binding.frontRenderer, binding.backRenderer)
-            streamingHelper.startStreaming(lifecycleScope)
+            streamingHelper = StreamingHelper(requireActivity(), viewModel, binding.frontRenderer, binding.backRenderer)
+            streamingHelper.startStreaming(lifecycleScope,viewLifecycleOwner)
             timer = Timer()
             timer.schedule(100, 100) {
                 binding.frontRenderer.addFrameListener(frameListener,1.0f)
@@ -183,11 +175,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
                 *HomeActivity.RequiredPermissions.locationPermissions
             )
         ) {
-            Toast.makeText(
-                requireContext(),
-                "Please provide location permissions to get vehicle location.",
-                Toast.LENGTH_SHORT
-            ).show()
+            makeToast("Please provide location permissions to get vehicle location.")
         } else {
             locationProvider = DriverLocationProvider(this) { locationAndSpeedData ->
                 currentLocationData = locationAndSpeedData

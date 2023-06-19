@@ -14,9 +14,13 @@ import com.hbeonlabs.driversalerts.data.remote.api.AppApis
 import com.hbeonlabs.driversalerts.data.remote.request.ConfigureDeviceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
+import com.hbeonlabs.driversalerts.data.remote.request.CreateRoomRequestModel
+import com.hbeonlabs.driversalerts.data.remote.request.CreateTokenRequestModel
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
+import com.hbeonlabs.driversalerts.data.remote.response.CreateTokenResponseModel
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
+import com.hbeonlabs.driversalerts.data.remote.response.RoomCreationResponseModel
 import com.hbeonlabs.driversalerts.utils.network.NetworkResult
 import com.hbeonlabs.driversalerts.utils.network.onError
 import com.hbeonlabs.driversalerts.utils.network.onException
@@ -152,5 +156,14 @@ class AppRepository @Inject constructor(
 
     }
 
+    suspend fun createRoom(roomName: String) : NetworkResult<RoomCreationResponseModel> {
+        //val roomName = roomName +"_"+ prefManager.getDeviceConfigurationDetails()?.vehicleId
+        val roomName = roomName +"_vehicleId"
+        val createRoomRequestModel = CreateRoomRequestModel(roomName)
+         return appApis.createRoom("https://68.178.160.179:8080/createRoom",createRoomRequestModel)
+    }
 
+    suspend fun createToken(createTokenRequestModel: CreateTokenRequestModel) : NetworkResult<CreateTokenResponseModel> {
+        return appApis.createToken("https://68.178.160.179:8080/token",createTokenRequestModel)
+    }
 }
