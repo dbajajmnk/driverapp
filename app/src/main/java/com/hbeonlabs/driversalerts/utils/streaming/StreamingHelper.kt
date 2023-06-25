@@ -42,30 +42,32 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
     }
 
     fun startStreaming(lifecycleScope: CoroutineScope, lifecycleOwner: LifecycleOwner){
-        viewModel.createRoom("FrontRoom")
+        /*viewModel.createRoom("FrontRoom")
         viewModel.createRoom("BackRoom")
         viewModel.roomCreationLiveData.observe(lifecycleOwner) {
             if(it?.data != null) {
                 if(it.data.name?.startsWith("FrontRoom") == true){
                     frontStreamingStatus = it.data.name
-                    /*lifecycleScope.launch {
+                    lifecycleScope.launch {
                         connectToRoomForFront()
-                    }*/
+                    }
                 }else if(it.data.name?.startsWith("BackRoom") == true){
                     backStreamingStatus = it.data.name
-                    /*lifecycleScope.launch {
+                    lifecycleScope.launch {
                         connectToRoomForBack()
-                    }*/
+                    }
                 }
             }else{
                 frontStreamingStatus = it?.message ?: "Error"
                 backStreamingStatus = it?.message ?: "Error"
             }
-        }
-        /*lifecycleScope.launch {
-            connectToRoomForFront()
-            connectToRoomForBack()
         }*/
+        lifecycleScope.launch {
+            connectToRoomForFront()
+        }
+        lifecycleScope.launch {
+            connectToRoomForBack()
+        }
     }
 
     private fun initFrontRoom() {
@@ -92,7 +94,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
 
     private suspend fun connectToRoomForFront() {
         try {
-            frontStreamingStatus = "Connecting..."
+            frontStreamingStatus = "Connecting to front room..."
             frontRoom.connect(
                 url = "wss://flexigigs.co",
                 token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkZST05UX0NBTUVSQSIsImNhblB1Ymxpc2giOnRydWUsImNhblN1YnNjcmliZSI6dHJ1ZX0sImlhdCI6MTY4NDU5MTMyMSwibmJmIjoxNjg0NTkxMzIxLCJleHAiOjE3NDc2NjMzMjEsImlzcyI6IkFQSVRxU1Z5MlhWNXBzbyIsInN1YiI6IkZyb250U2VuZGVyIiwianRpIjoiRnJvbnRTZW5kZXIifQ.YSjUltwsJI9r8CB2VGRApPUK5ep23Tr8d2cr_xYCDG8",
@@ -113,7 +115,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
 
     private suspend fun connectToRoomForBack() {
         try {
-            backStreamingStatus = "Connecting..."
+            backStreamingStatus = "Connecting to back room..."
             backRoom.connect(
                 url = "wss://flexigigs.co",
                 token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkJBQ0tfQ0FNRVJBIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjg0NTkxNDQwLCJuYmYiOjE2ODQ1OTE0NDAsImV4cCI6MTc0NzY2MzQ0MCwiaXNzIjoiQVBJVHFTVnkyWFY1cHNvIiwic3ViIjoiQmFja1NlbmRlciIsImp0aSI6IkJhY2tTZW5kZXIifQ.JncogU8n1EAg0he2hx3imaN_YfMZTH2mTcHIrfud39o",

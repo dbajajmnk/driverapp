@@ -67,9 +67,9 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
 
         viewModel.getDeviceConfiguration()
         initDialogs()
-        initLocationProvider()
+        //initLocationProvider()
         initStreamingHelper()
-        initAttendanceManager()
+        //initAttendanceManager()
         createNotification(
             AppConstants.NotificationSubType.STREAMING_START.toString(),
             AppConstants.STEAMING_START_MESSAGE,
@@ -226,7 +226,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
     }
 
     private fun createNotification(title: String, msg: String, notificationType: Int) {
-        viewModel.createNotification(
+        /*viewModel.createNotification(
             Warning(
                 timeInMills = "" + System.currentTimeMillis(),
                 locationLatitude = getLat(),
@@ -236,6 +236,6 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
                 notificationType = notificationType,
                 isSynced = false
             )
-        )
+        )*/
     }
 }
