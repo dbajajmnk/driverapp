@@ -8,5 +8,7 @@ data class CreateTokenResponseModel(
 	val data: String? = null,
 
 	@field:SerializedName("message")
-	val message: String? = null
+	val message: String? = null,
+
+	var roomName: String? = null
 )

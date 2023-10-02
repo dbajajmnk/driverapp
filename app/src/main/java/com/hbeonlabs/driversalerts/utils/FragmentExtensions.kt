@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -26,11 +27,12 @@ import java.util.Locale
 
 
 fun Fragment.makeToast(text: String) {
-    Snackbar.make(
+    Log.v("makeToast",text)
+    /*Snackbar.make(
         requireView(),
         text,
         Snackbar.LENGTH_SHORT
-    ).show()
+    ).show()*/
 }
 
 

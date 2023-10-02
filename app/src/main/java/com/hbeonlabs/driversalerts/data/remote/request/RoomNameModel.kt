@@ -2,7 +2,8 @@ package com.hbeonlabs.driversalerts.data.remote.request
 
 import com.google.gson.annotations.SerializedName
 
-data class CreateRoomRequestModel(
+data class RoomNameModel(
 
-	val list: List<RoomNameModel>
+	@field:SerializedName("roomName")
+	val roomName: String? = null
 )

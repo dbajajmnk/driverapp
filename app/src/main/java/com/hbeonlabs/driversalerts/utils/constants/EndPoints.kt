@@ -9,6 +9,6 @@ object EndPoints {
     const val CONFIGURE_DEVICE = "driver/device/create"
     const val POST_NOTIFICATION = "driver/notification/create"
     const val CREATE_ATTENDANCE = "driver/attendance/create"
-
+    const val CREATE_ROOM = "driver/room/create"
 
 }

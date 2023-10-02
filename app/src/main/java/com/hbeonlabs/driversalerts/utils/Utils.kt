@@ -8,6 +8,7 @@ import java.util.*
 
 object Utils {
     val dateFormat = SimpleDateFormat("hh:mm:ss a", Locale.getDefault())
+    val formatWithDate = SimpleDateFormat("dd-MM-yyyy hh:mm:ss a", Locale.getDefault())
 
     fun makeOutputMediaFile(): String? {
         val mediaStorageDir = File(
@@ -34,5 +35,5 @@ object Utils {
     }
 
     fun getCurrentTimeString() = dateFormat.format(System.currentTimeMillis())
-
+    fun getCurrentDateTimeString() = formatWithDate.format(System.currentTimeMillis())
 }

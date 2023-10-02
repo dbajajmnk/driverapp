@@ -8,6 +8,7 @@ import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.data.remote.request.CreateTokenRequestModel
+import com.hbeonlabs.driversalerts.data.remote.response.CreateTokenResponseModel
 import com.hbeonlabs.driversalerts.data.remote.response.RoomCreationResponseModel
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
 import com.hbeonlabs.driversalerts.utils.network.onError
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val repository: AppRepository
 ) : ViewModel() {
-    val roomCreationLiveData = MutableLiveData<RoomCreationResponseModel?>(null)
+    val createRoomLiveData = MutableLiveData<RoomCreationResponseModel?>(null)
+    val createTokenLiveData = MutableLiveData<CreateTokenResponseModel?>(null)
     init {
         calculateAcceleration()
     }
@@ -79,25 +81,25 @@ class DashboardViewModel @Inject constructor(
 
     fun createRoom(roomName : String){
         viewModelScope.launch {
-            repository.createRoom(roomName).onSuccess {
-                roomCreationLiveData.postValue(it)
+            repository.createRoom().onSuccess {
+                createRoomLiveData.postValue(it)
             }.onError { code, message ->
-                roomCreationLiveData.postValue(RoomCreationResponseModel(null, "Error:$code $message"))
+                createRoomLiveData.postValue(RoomCreationResponseModel(null, "Error:$code $message"))
             }.onException {
-                roomCreationLiveData.postValue(RoomCreationResponseModel(null, "Error:${it.message}"))
+                createRoomLiveData.postValue(RoomCreationResponseModel(null, "Error:${it.message}"))
             }
         }
     }
 
     fun createToken(roomName : String, participantName : String){
         viewModelScope.launch {
-            val createTokenRequestModel = CreateTokenRequestModel(participantName, roomName)
-            repository.createRoom(roomName).onSuccess {
-                roomCreationLiveData.postValue(it)
+            val createTokenRequestModel = CreateTokenRequestModel(participantName, roomName, "Driver")
+            repository.createToken(createTokenRequestModel).onSuccess {
+                createTokenLiveData.postValue(it.apply { it.roomName = roomName })
             }.onError { code, message ->
-                roomCreationLiveData.postValue(RoomCreationResponseModel(null, "Error:$code $message"))
+                createTokenLiveData.postValue(CreateTokenResponseModel("Error:$code $message",null, roomName))
             }.onException {
-                roomCreationLiveData.postValue(RoomCreationResponseModel(null, "Error:${it.message}"))
+                createTokenLiveData.postValue(CreateTokenResponseModel("Error:${it.message}",null,  roomName))
             }
         }
     }

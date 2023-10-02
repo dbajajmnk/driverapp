@@ -2,7 +2,6 @@ package com.hbeonlabs.driversalerts.utils.streaming
 
 import android.app.Activity
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.ui.fragment.dashboard.DashboardViewModel
 import io.livekit.android.LiveKit
@@ -24,7 +23,11 @@ import io.livekit.android.room.track.VideoTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class StreamingHelper(private val context : Activity, private val viewModel: DashboardViewModel, private val frontRenderer : SurfaceViewRenderer,private val backRenderer : SurfaceViewRenderer) {
+private const val FRONT_ROOM = "FrontRoom"
+
+private const val BACK_ROOM = "BackRoom"
+
+class StreamingHelper(private val context : Activity, private val viewModel: DashboardViewModel, private val frontRenderer : SurfaceViewRenderer, private val backRenderer : SurfaceViewRenderer) {
 
 
     private var backVideoTrack: VideoTrack? = null
@@ -41,32 +44,39 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
         frontRenderer.setMirror(true)
     }
 
+    /**
+     * Create room and generate token and start streaming after that
+     */
     fun startStreaming(lifecycleScope: CoroutineScope, lifecycleOwner: LifecycleOwner){
-        /*viewModel.createRoom("FrontRoom")
-        viewModel.createRoom("BackRoom")
-        viewModel.roomCreationLiveData.observe(lifecycleOwner) {
-            if(it?.data != null) {
-                if(it.data.name?.startsWith("FrontRoom") == true){
-                    frontStreamingStatus = it.data.name
-                    lifecycleScope.launch {
-                        connectToRoomForFront()
-                    }
-                }else if(it.data.name?.startsWith("BackRoom") == true){
-                    backStreamingStatus = it.data.name
-                    lifecycleScope.launch {
-                        connectToRoomForBack()
+        val useApisToCreateRoomAndToken = false
+        if(useApisToCreateRoomAndToken) {
+            viewModel.createRoom(FRONT_ROOM)
+            viewModel.createRoomLiveData.observe(lifecycleOwner) {
+                if (it?.message != null) {
+                    viewModel.createToken(FRONT_ROOM, "FrontSender")
+                    viewModel.createToken(BACK_ROOM, "BackSender")
+                } else {
+                    frontStreamingStatus = it?.message ?: "Room creation error"
+                    backStreamingStatus = it?.message ?: "Room creation error"
+                }
+            }
+            viewModel.createTokenLiveData.observe(lifecycleOwner) {
+                it?.let {
+                    if (it.message != null) {
+                        if (it.roomName?.startsWith(FRONT_ROOM) == true) {
+                            startFrontRoom(lifecycleScope, it.message)
+                        } else if (it.roomName?.startsWith(BACK_ROOM) == true) {
+                            startBackRoom(lifecycleScope, it.message)
+                        }
+                    }else {
+                        frontStreamingStatus = "Token error ${it.data}"
+                        backStreamingStatus = "Token error ${it.data}"
                     }
                 }
-            }else{
-                frontStreamingStatus = it?.message ?: "Error"
-                backStreamingStatus = it?.message ?: "Error"
             }
-        }*/
-        lifecycleScope.launch {
-            connectToRoomForFront()
-        }
-        lifecycleScope.launch {
-            connectToRoomForBack()
+        } else {
+            startFrontRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tQ3JlYXRlIjp0cnVlLCJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InJvb20xIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJyb29tUmVjb3JkIjp0cnVlfSwiaWF0IjoxNjk2MTQ2MjM5LCJuYmYiOjE2OTYxNDYyMzksImV4cCI6MTY5NjE2NzgzOSwiaXNzIjoiQVBJa1hkZWV2S1JiTHVaIiwic3ViIjoiVXNlcjUiLCJqdGkiOiJVc2VyNSJ9.53l64Sz2wnZZy5AIhEAYirRCHpcnunG3_c3aW3LfUzU")
+            startBackRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tQ3JlYXRlIjp0cnVlLCJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InJvb20yIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJyb29tUmVjb3JkIjp0cnVlfSwiaWF0IjoxNjk2MTQ2Mjc1LCJuYmYiOjE2OTYxNDYyNzUsImV4cCI6MTY5NjE2Nzg3NSwiaXNzIjoiQVBJa1hkZWV2S1JiTHVaIiwic3ViIjoiVXNlcjYiLCJqdGkiOiJVc2VyNiJ9.71NXo4iApz4n7GC7J7FiFG4NgGpQ_K5C8Y7rtb2I4og")
         }
     }
 
@@ -74,7 +84,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
         val audioHandler = AudioSwitchHandler(context)
         frontRoom = LiveKit.create(
             appContext = context.applicationContext,
-            options = getRoomOptions(CameraPosition.FRONT),
+            options = getRoomOptions(CameraPosition.FRONT, FRONT_ROOM),
             overrides = LiveKitOverrides(
                 audioHandler = audioHandler
             )
@@ -85,19 +95,31 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
         val audioHandler = AudioSwitchHandler(context)
         backRoom = LiveKit.create(
             appContext = context.applicationContext,
-            options = getRoomOptions(CameraPosition.BACK),
+            options = getRoomOptions(CameraPosition.BACK, BACK_ROOM),
             overrides = LiveKitOverrides(
                 audioHandler = audioHandler
             )
         )
     }
 
-    private suspend fun connectToRoomForFront() {
+    private fun startFrontRoom(lifecycleScope: CoroutineScope, token : String){
+        frontStreamingStatus = "FrontStreamingStarted"
+        lifecycleScope.launch {
+            connectToRoomForFront(token)
+        }
+    }
+    private fun startBackRoom(lifecycleScope: CoroutineScope, token : String){
+        backStreamingStatus = "BackStreamingStarted"
+        lifecycleScope.launch {
+            connectToRoomForBack(token)
+        }
+    }
+    private suspend fun connectToRoomForFront(token : String) {
         try {
             frontStreamingStatus = "Connecting to front room..."
             frontRoom.connect(
-                url = "wss://flexigigs.co",
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkZST05UX0NBTUVSQSIsImNhblB1Ymxpc2giOnRydWUsImNhblN1YnNjcmliZSI6dHJ1ZX0sImlhdCI6MTY4NDU5MTMyMSwibmJmIjoxNjg0NTkxMzIxLCJleHAiOjE3NDc2NjMzMjEsImlzcyI6IkFQSVRxU1Z5MlhWNXBzbyIsInN1YiI6IkZyb250U2VuZGVyIiwianRpIjoiRnJvbnRTZW5kZXIifQ.YSjUltwsJI9r8CB2VGRApPUK5ep23Tr8d2cr_xYCDG8",
+                url = "wss://webrtc.myschoolbus.in/",
+                token = token
             )
             frontStreamingStatus = "Connected"
             // Create and publish audio/video tracks
@@ -113,12 +135,12 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
         }
     }
 
-    private suspend fun connectToRoomForBack() {
+    private suspend fun connectToRoomForBack(token : String) {
         try {
             backStreamingStatus = "Connecting to back room..."
             backRoom.connect(
-                url = "wss://flexigigs.co",
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkJBQ0tfQ0FNRVJBIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlfSwiaWF0IjoxNjg0NTkxNDQwLCJuYmYiOjE2ODQ1OTE0NDAsImV4cCI6MTc0NzY2MzQ0MCwiaXNzIjoiQVBJVHFTVnkyWFY1cHNvIiwic3ViIjoiQmFja1NlbmRlciIsImp0aSI6IkJhY2tTZW5kZXIifQ.JncogU8n1EAg0he2hx3imaN_YfMZTH2mTcHIrfud39o",
+                url = "wss://webrtc.myschoolbus.in/",
+                token = token
             )
             backStreamingStatus = "Connected"
             // Create and publish audio/video tracks
@@ -179,7 +201,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
         removeRenderers()
     }
 
-    private fun getRoomOptions(cameraPosition: CameraPosition): RoomOptions {
+    private fun getRoomOptions(cameraPosition: CameraPosition, deviceId : String): RoomOptions {
         return RoomOptions(
             audioTrackCaptureDefaults = LocalAudioTrackOptions(
                 noiseSuppression = true,
@@ -189,7 +211,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
                 typingNoiseDetection = true,
             ),
             videoTrackCaptureDefaults = LocalVideoTrackOptions(
-                deviceId = "",
+                deviceId = deviceId,
                 position = cameraPosition,
                 captureParams = VideoPreset169.HD.capture,
             ),

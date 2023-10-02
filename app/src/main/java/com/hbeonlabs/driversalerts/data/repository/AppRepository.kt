@@ -16,11 +16,13 @@ import com.hbeonlabs.driversalerts.data.remote.request.CreateAttendanceRequest
 import com.hbeonlabs.driversalerts.data.remote.request.CreateNotificationDTO
 import com.hbeonlabs.driversalerts.data.remote.request.CreateRoomRequestModel
 import com.hbeonlabs.driversalerts.data.remote.request.CreateTokenRequestModel
+import com.hbeonlabs.driversalerts.data.remote.request.RoomNameModel
 import com.hbeonlabs.driversalerts.data.remote.response.AttendanceListResponseItem
 import com.hbeonlabs.driversalerts.data.remote.response.BasicMessageResponse
 import com.hbeonlabs.driversalerts.data.remote.response.CreateTokenResponseModel
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import com.hbeonlabs.driversalerts.data.remote.response.RoomCreationResponseModel
+import com.hbeonlabs.driversalerts.utils.Utils
 import com.hbeonlabs.driversalerts.utils.network.NetworkResult
 import com.hbeonlabs.driversalerts.utils.network.onError
 import com.hbeonlabs.driversalerts.utils.network.onException
@@ -156,14 +158,14 @@ class AppRepository @Inject constructor(
 
     }
 
-    suspend fun createRoom(roomName: String) : NetworkResult<RoomCreationResponseModel> {
-        //val roomName = roomName +"_"+ prefManager.getDeviceConfigurationDetails()?.vehicleId
-        val roomName = roomName +"_vehicleId"
-        val createRoomRequestModel = CreateRoomRequestModel(roomName)
-         return appApis.createRoom("https://68.178.160.179:8080/createRoom",createRoomRequestModel)
+    suspend fun createRoom() : NetworkResult<RoomCreationResponseModel> {
+        val roomName1 = "${prefManager.getDeviceConfigurationDetails()?.schoolId}/${prefManager.getDeviceConfigurationDetails()?.vehicleId}/FRONT/${Utils.getCurrentDateTimeString()}}"
+        val roomName2 = "${prefManager.getDeviceConfigurationDetails()?.schoolId}/${prefManager.getDeviceConfigurationDetails()?.vehicleId}/BACK/${Utils.getCurrentDateTimeString()}}"
+        val createRoomRequestModel = CreateRoomRequestModel(listOf(RoomNameModel(roomName1),RoomNameModel(roomName2)))
+         return appApis.createRoom(createRoomRequestModel)
     }
 
     suspend fun createToken(createTokenRequestModel: CreateTokenRequestModel) : NetworkResult<CreateTokenResponseModel> {
-        return appApis.createToken("https://68.178.160.179:8080/token",createTokenRequestModel)
+        return appApis.createToken("http://192.168.1.4:8081/auth/gettoken",createTokenRequestModel)
     }
 }

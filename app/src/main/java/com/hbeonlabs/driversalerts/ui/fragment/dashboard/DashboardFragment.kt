@@ -67,9 +67,9 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
 
         viewModel.getDeviceConfiguration()
         initDialogs()
-        //initLocationProvider()
+        initLocationProvider()
         initStreamingHelper()
-        //initAttendanceManager()
+        initAttendanceManager()
         createNotification(
             AppConstants.NotificationSubType.STREAMING_START.toString(),
             AppConstants.STEAMING_START_MESSAGE,
