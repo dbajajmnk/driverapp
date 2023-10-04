@@ -22,26 +22,21 @@ class SettingsViewModel @Inject constructor(
     fun addDeviceConfiguration(
         licenseKey: String,
         deviceId: String,
-        vehicleId: String,
         bluetoothId: String
     ) {
         showProgressBarLiveData.value = true
         viewModelScope.launch {
             repository.configureDevice(
                 deviceType = 9413,
-                expiryDate = "04-12-2025",
                 licenseKey = licenseKey,
-                schoolId = 4402,
-                vehicleId = vehicleId,
                 modelNo = "noluisse",
                 deviceId = deviceId,
-                startDate = "finibus",
                 serialNo = "nascetur",
                 bluetoothId = bluetoothId
             ).onSuccess {
                 showProgressBarLiveData.value = false
                 repository.saveDeviceConfigId(deviceId)
-            }.onError { code, message ->
+            }.onError { _, message ->
                 showProgressBarLiveData.value = false
             }.onException {
                 showProgressBarLiveData.value = false

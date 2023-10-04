@@ -64,7 +64,7 @@ class AppRepository @Inject constructor(
             )
             appApis.sendNotificationData(notificationRequest).onSuccess {
                 warning.isSynced = true
-            }.onError { code, message ->
+            }.onError { _, message ->
                 warning.isSynced = false
             }.onException {
                 warning.isSynced = false
@@ -106,28 +106,20 @@ class AppRepository @Inject constructor(
 
     suspend fun configureDevice(
         deviceType: Int,
-        expiryDate: String,
         licenseKey: String,
-        schoolId: Int,
-        vehicleId: String,
         modelNo: String,
         deviceId: String,
-        startDate: String,
         serialNo: String,
         bluetoothId: String
     ): NetworkResult<BasicMessageResponse> {
 
         return appApis.configureDevice(ConfigureDeviceRequest(
             deviceType = deviceType,
-            expiryDate = expiryDate,
             licenseKey = licenseKey,
-            schoolId = schoolId,
-            vehicleId = vehicleId,
             modelNo = modelNo,
             deviceId = deviceId,
-            startDate = startDate,
             serialNo = serialNo,
-            bluetoothId = bluetoothId
+            bluetoothDeviceId = bluetoothId
         ))
     }
 
