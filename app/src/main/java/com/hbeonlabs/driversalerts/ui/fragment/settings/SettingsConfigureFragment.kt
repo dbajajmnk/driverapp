@@ -14,7 +14,7 @@ class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>
     private val viewModel: SettingsViewModel by viewModels()
     private var hasSubmittedConfigure = false
     override fun getLayoutResourceId(): Int {
-        return R.layout.fragment_settings_configure;
+        return R.layout.fragment_settings_configure
     }
 
     override fun initView() {
