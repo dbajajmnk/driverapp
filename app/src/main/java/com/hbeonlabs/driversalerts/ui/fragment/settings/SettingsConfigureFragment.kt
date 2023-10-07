@@ -1,19 +1,11 @@
 package com.hbeonlabs.driversalerts.ui.fragment.settings
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.FragmentSettingsConfigureBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
-import com.hbeonlabs.driversalerts.ui.fragment.notification.WarningViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,7 +14,7 @@ class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>
     private val viewModel: SettingsViewModel by viewModels()
     private var hasSubmittedConfigure = false
     override fun getLayoutResourceId(): Int {
-        return R.layout.fragment_settings_configure;
+        return R.layout.fragment_settings_configure
     }
 
     override fun initView() {
@@ -32,7 +24,6 @@ class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>
             viewModel.addDeviceConfiguration(
                 binding.licenseKey.text.toString(),
                 binding.deviceId.text.toString(),
-                binding.vehicleId.text.toString(),
                 binding.bluetoothId.text.toString()
             )
         }

@@ -3,6 +3,7 @@ package com.hbeonlabs.driversalerts.ui.fragment.settings
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
 import com.hbeonlabs.driversalerts.utils.network.onError
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val repository: AppRepository
+    private val repository: AppRepository,
+    private val pref: PrefManager,
 ) : ViewModel() {
 
      val showProgressBarLiveData = MutableLiveData(false)
@@ -22,26 +24,22 @@ class SettingsViewModel @Inject constructor(
     fun addDeviceConfiguration(
         licenseKey: String,
         deviceId: String,
-        vehicleId: String,
-        bluetoothId: String
+        bluetoothId: String,
     ) {
+      val configDetails = pref.getDeviceConfigurationDetails()
         showProgressBarLiveData.value = true
         viewModelScope.launch {
             repository.configureDevice(
-                deviceType = 9413,
-                expiryDate = "04-12-2025",
+                deviceType = configDetails?.deviceType ?: 1,
                 licenseKey = licenseKey,
-                schoolId = 4402,
-                vehicleId = vehicleId,
-                modelNo = "noluisse",
+                modelNo = configDetails?.modelNo ?: "",
                 deviceId = deviceId,
-                startDate = "finibus",
-                serialNo = "nascetur",
-                bluetoothId = bluetoothId
+                serialNo = configDetails?.serialNo ?: "",
+                bluetoothId = bluetoothId,
             ).onSuccess {
                 showProgressBarLiveData.value = false
                 repository.saveDeviceConfigId(deviceId)
-            }.onError { code, message ->
+            }.onError { _, message ->
                 showProgressBarLiveData.value = false
             }.onException {
                 showProgressBarLiveData.value = false
