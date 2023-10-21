@@ -166,4 +166,5 @@ dependencies {
 
     //Live streaming
     implementation("io.livekit:livekit-android:1.1.10")
+    implementation("com.squareup.leakcanary:leakcanary-android:2.12")
 }

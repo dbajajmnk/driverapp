@@ -8,7 +8,7 @@ import java.util.*
 
 object Utils {
     val dateFormat = SimpleDateFormat("hh:mm:ss a", Locale.getDefault())
-    val formatWithDate = SimpleDateFormat("dd-MM-yyyy hh:mm:ss a", Locale.getDefault())
+    val formatWithDate = SimpleDateFormat("dd-MM-yyyy_hh:mm:ss_a", Locale.getDefault())
 
     fun makeOutputMediaFile(): String? {
         val mediaStorageDir = File(

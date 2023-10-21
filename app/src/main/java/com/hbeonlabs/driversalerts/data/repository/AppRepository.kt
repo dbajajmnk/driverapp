@@ -158,6 +158,6 @@ class AppRepository @Inject constructor(
     }
 
     suspend fun createToken(createTokenRequestModel: CreateTokenRequestModel) : NetworkResult<CreateTokenResponseModel> {
-        return appApis.createToken("http://192.168.1.4:8081/auth/gettoken",createTokenRequestModel)
+        return appApis.createToken("http://68.183.86.248:8081/auth/gettoken",createTokenRequestModel)
     }
 }

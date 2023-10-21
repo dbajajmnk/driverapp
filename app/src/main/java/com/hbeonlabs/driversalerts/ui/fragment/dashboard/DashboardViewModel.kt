@@ -79,7 +79,7 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-    fun createRoom(roomName : String){
+    fun createRoom(){
         viewModelScope.launch {
             repository.createRoom().onSuccess {
                 createRoomLiveData.postValue(it)
@@ -97,9 +97,9 @@ class DashboardViewModel @Inject constructor(
             repository.createToken(createTokenRequestModel).onSuccess {
                 createTokenLiveData.postValue(it.apply { it.roomName = roomName })
             }.onError { code, message ->
-                createTokenLiveData.postValue(CreateTokenResponseModel("Error:$code $message",null, roomName))
+                createTokenLiveData.postValue(CreateTokenResponseModel(null,null,"Error:$code $message", roomName))
             }.onException {
-                createTokenLiveData.postValue(CreateTokenResponseModel("Error:${it.message}",null,  roomName))
+                createTokenLiveData.postValue(CreateTokenResponseModel(null,null,"Error:${it.message}",  roomName))
             }
         }
     }

@@ -22,6 +22,7 @@ import com.hbeonlabs.driversalerts.utils.constants.EndPoints.POST_NOTIFICATION
 import com.hbeonlabs.driversalerts.utils.network.NetworkResult
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -54,6 +55,7 @@ interface AppApis {
     @POST(CREATE_ROOM)
     suspend fun createRoom(@Body createRoomRequestModel: CreateRoomRequestModel):NetworkResult<RoomCreationResponseModel>
 
+    @Headers("Authorization:Bearer <dummy_JWT>")
     @POST()
     suspend fun createToken(@Url url : String,@Body createTokenRequestModel: CreateTokenRequestModel):NetworkResult<CreateTokenResponseModel>
 

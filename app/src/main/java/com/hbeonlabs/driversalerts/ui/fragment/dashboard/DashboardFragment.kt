@@ -2,6 +2,7 @@ package com.hbeonlabs.driversalerts.ui.fragment.dashboard
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -162,11 +163,10 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
     }
 
     override fun onDestroy() {
+        if (this@DashboardFragment::streamingHelper.isInitialized) streamingHelper.disconnect()
+        if (this@DashboardFragment::locationProvider.isInitialized) locationProvider.onDestroy()
+        if (this@DashboardFragment::timer.isInitialized) timer.cancel()
         super.onDestroy()
-        streamingHelper.disconnect()
-        locationProvider.onDestroy()
-        if (this@DashboardFragment::timer.isInitialized)
-            timer.cancel()
     }
 
     private fun initLocationProvider() {

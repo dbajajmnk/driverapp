@@ -1,6 +1,7 @@
 package com.hbeonlabs.driversalerts.utils.streaming
 
 import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.ui.fragment.dashboard.DashboardViewModel
@@ -36,6 +37,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
     private lateinit var backRoom: Room
     private var frontStreamingStatus = "Connecting..."
     private var backStreamingStatus = "Connecting..."
+    val errorTag = "StreamingHelperError"
     init {
         initFrontRoom()
         initBackRoom()
@@ -48,36 +50,40 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
      * Create room and generate token and start streaming after that
      */
     fun startStreaming(lifecycleScope: CoroutineScope, lifecycleOwner: LifecycleOwner){
-        val useApisToCreateRoomAndToken = false
+        val useApisToCreateRoomAndToken = true
         if(useApisToCreateRoomAndToken) {
-            viewModel.createRoom(FRONT_ROOM)
+            viewModel.createRoom()
             viewModel.createRoomLiveData.observe(lifecycleOwner) {
-                if (it?.message != null) {
-                    viewModel.createToken(FRONT_ROOM, "FrontSender")
-                    viewModel.createToken(BACK_ROOM, "BackSender")
+                if (it?.message?.startsWith("Error") == true) {
+                    showError("Room error ${it.message}")
                 } else {
-                    frontStreamingStatus = it?.message ?: "Room creation error"
-                    backStreamingStatus = it?.message ?: "Room creation error"
+                    viewModel.createToken(FRONT_ROOM, "FrontSender2")
+                    viewModel.createToken(BACK_ROOM, "BackSender2")
                 }
             }
             viewModel.createTokenLiveData.observe(lifecycleOwner) {
                 it?.let {
-                    if (it.message != null) {
+                    if (it.data?.token != null) {
                         if (it.roomName?.startsWith(FRONT_ROOM) == true) {
-                            startFrontRoom(lifecycleScope, it.message)
+                            startFrontRoom(lifecycleScope, it.data.token)
                         } else if (it.roomName?.startsWith(BACK_ROOM) == true) {
-                            startBackRoom(lifecycleScope, it.message)
+                            startBackRoom(lifecycleScope, it.data.token)
                         }
                     }else {
-                        frontStreamingStatus = "Token error ${it.data}"
-                        backStreamingStatus = "Token error ${it.data}"
+                        showError("Token error ${it.message}")
                     }
                 }
             }
         } else {
-            startFrontRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tQ3JlYXRlIjp0cnVlLCJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InJvb20xIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJyb29tUmVjb3JkIjp0cnVlfSwiaWF0IjoxNjk2MTQ2MjM5LCJuYmYiOjE2OTYxNDYyMzksImV4cCI6MTY5NjE2NzgzOSwiaXNzIjoiQVBJa1hkZWV2S1JiTHVaIiwic3ViIjoiVXNlcjUiLCJqdGkiOiJVc2VyNSJ9.53l64Sz2wnZZy5AIhEAYirRCHpcnunG3_c3aW3LfUzU")
-            startBackRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tQ3JlYXRlIjp0cnVlLCJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InJvb20yIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJyb29tUmVjb3JkIjp0cnVlfSwiaWF0IjoxNjk2MTQ2Mjc1LCJuYmYiOjE2OTYxNDYyNzUsImV4cCI6MTY5NjE2Nzg3NSwiaXNzIjoiQVBJa1hkZWV2S1JiTHVaIiwic3ViIjoiVXNlcjYiLCJqdGkiOiJVc2VyNiJ9.71NXo4iApz4n7GC7J7FiFG4NgGpQ_K5C8Y7rtb2I4og")
+            startFrontRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaGEyNTYiOiIiLCJtZXRhZGF0YSI6ImRyaXZlciIsInZpZGVvIjp7InJvb21DcmVhdGUiOnRydWUsInJvb21Kb2luIjp0cnVlLCJyb29tIjoiRnJvbnRSb29tMSIsImNhblB1Ymxpc2giOnRydWUsImNhblN1YnNjcmliZSI6dHJ1ZSwicm9vbVJlY29yZCI6dHJ1ZSwiY2FuUHVibGlzaFNvdXJjZXMiOlsiY2FtZXJhIiwibWljcm9waG9uZSJdfSwiaWF0IjoxNjk2OTk4Nzg0LCJuYmYiOjE2OTY5OTg3ODQsImV4cCI6MTY5NzM0NDM4NCwiaXNzIjoiQVBJa1hkZWV2S1JiTHVaIiwic3ViIjoiRnJvbnRTZW5kZXIxIiwianRpIjoiRnJvbnRTZW5kZXIxIn0.aDfpbfV1dMpdlri0_Yxfl97VAWNRBCUfva_7DUUqa0k")
+            startBackRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaGEyNTYiOiIiLCJtZXRhZGF0YSI6ImRyaXZlciIsInZpZGVvIjp7InJvb21DcmVhdGUiOnRydWUsInJvb21Kb2luIjp0cnVlLCJyb29tIjoiQmFja1Jvb20xIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJyb29tUmVjb3JkIjp0cnVlLCJjYW5QdWJsaXNoU291cmNlcyI6WyJjYW1lcmEiLCJtaWNyb3Bob25lIl19LCJpYXQiOjE2OTY5OTg3NjAsIm5iZiI6MTY5Njk5ODc2MCwiZXhwIjoxNjk3MzQ0MzYwLCJpc3MiOiJBUElrWGRlZXZLUmJMdVoiLCJzdWIiOiJCYWNrU2VuZGVyMSIsImp0aSI6IkJhY2tTZW5kZXIxIn0.BdJ7t--RaLR73-wRW42-vH5tng-nbHR55ZKSuTlMq2k")
         }
+    }
+
+    private fun showError(error:String){
+        Log.v(errorTag,error)
+        frontStreamingStatus = error
+        backStreamingStatus = error
     }
 
     private fun initFrontRoom() {
@@ -130,6 +136,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
             showFrontCameraView(localParticipant)
             frontStreamingStatus = "Started"
         } catch (e: Throwable) {
+            Log.v(errorTag,"connectToRoomForFront error ${e.message}")
             frontStreamingStatus = e.message ?: "Error"
             e.printStackTrace()
         }
@@ -151,6 +158,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
             showBackCameraView(localParticipant)
             backStreamingStatus = "Started"
         } catch (e: Throwable) {
+            Log.v(errorTag,"connectToRoomForBack error ${e.message}")
             backStreamingStatus = e.message ?: "Error"
             e.printStackTrace()
         }
