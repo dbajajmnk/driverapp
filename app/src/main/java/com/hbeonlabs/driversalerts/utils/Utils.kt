@@ -2,6 +2,7 @@ package com.hbeonlabs.driversalerts.utils
 
 import android.os.Environment
 import android.util.Log
+import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,4 +37,10 @@ object Utils {
 
     fun getCurrentTimeString() = dateFormat.format(System.currentTimeMillis())
     fun getCurrentDateTimeString() = formatWithDate.format(System.currentTimeMillis())
+
+    fun getRoomName(deviceConfigs: DeviceConfigurationResponse?, isFront: Boolean): String {
+        val deviceName = if (isFront) "FRONT" else "BACK"
+        return "${deviceConfigs?.schoolId}_${deviceConfigs?.vehicleId}_${deviceName}"
+    }
+
 }

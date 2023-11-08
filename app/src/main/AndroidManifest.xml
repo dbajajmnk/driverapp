@@ -43,7 +43,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.MainActivity" />
+        <activity android:name=".ui.activity.MainActivity"
+            android:keepScreenOn="true"/>
         <service android:name=".bluetooth.SerialService"/>
 
         <meta-data

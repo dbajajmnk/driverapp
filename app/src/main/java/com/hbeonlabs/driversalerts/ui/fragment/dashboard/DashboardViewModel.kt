@@ -95,7 +95,9 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             val createTokenRequestModel = CreateTokenRequestModel(participantName, roomName, "Driver")
             repository.createToken(createTokenRequestModel).onSuccess {
-                createTokenLiveData.postValue(it.apply { it.roomName = roomName })
+                val responseModel = it.apply { it.roomName = roomName }
+                createTokenLiveData.value = responseModel
+                Log.v("createToken","createToken Room ${responseModel.roomName} token ${responseModel.data?.token}")
             }.onError { code, message ->
                 createTokenLiveData.postValue(CreateTokenResponseModel(null,null,"Error:$code $message", roomName))
             }.onException {

@@ -22,6 +22,7 @@ import com.hbeonlabs.driversalerts.utils.streaming.StreamingHelper
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.DrowsinessDetector
 import com.hbeonlabs.driversalerts.utils.Utils
+import com.hbeonlabs.driversalerts.utils.batteryChargingStatusChecker
 import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.makeToast
@@ -131,8 +132,9 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
             streamingHelper.startStreaming(lifecycleScope,viewLifecycleOwner)
             timer = Timer()
             timer.schedule(100, 100) {
-                binding.frontRenderer.addFrameListener(frameListener,1.0f)
+                //binding.frontRenderer.addFrameListener(frameListener,1.0f)
                 updateTimeTexts()
+                //checkChargingStatus()
             }
         }
     }
@@ -148,6 +150,13 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
             else
                 binding.backText.text = streamingHelper.getBackStreamingStatus()
 
+        }
+    }
+
+    private fun checkChargingStatus(){
+        val charging = activity?.batteryChargingStatusChecker()
+        if(charging == false){
+            activity?.finish()
         }
     }
 
@@ -179,7 +188,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
         } else {
             locationProvider = DriverLocationProvider(this) { locationAndSpeedData ->
                 currentLocationData = locationAndSpeedData
-                lifecycleScope.launch {streamingHelper.sendLocation(currentLocationData)}
+                //lifecycleScope.launch {streamingHelper.sendLocation(currentLocationData)}  TODO enable it
                 val speedInKmph = "%.2f".format(locationAndSpeedData.speed.toDouble() * 3.6)
                 binding.tvSpeedData.text = "Speed =  $speedInKmph"
                 viewModel.addLocationData(locationAndSpeedData)

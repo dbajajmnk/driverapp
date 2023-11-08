@@ -1,7 +1,7 @@
 package com.hbeonlabs.driversalerts.utils.constants
 
 object EndPoints {
-   const val BASE_URL = "http://68.178.160.179:3030/api/"
+   const val BASE_URL = "https://myschoolbus.in/api/"
     const val GET_DEVICE_CONFIGURATION = "driver/device/read"
     const val GET_NOTIFICATIONS = "driver/notification/read"
     const val GET_ALL_ATTENDANCE = "driver/attendance/read"

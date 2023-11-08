@@ -53,6 +53,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
+        val wakeLockPermissions = arrayOf(Manifest.permission.WAKE_LOCK)
     }
     @Inject
     lateinit var speedDao: LocationAndSpeedDao
@@ -68,13 +69,18 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
         binding = DataBindingUtil.setContentView(this, R.layout.activity_no_recording)
         binding.buttonMoveToDashboard.setOnClickListener(this)
         lifecycleScope.launchWhenStarted {
-            while (true) {
+            var checkingBatteryChargingStatus = true
+            while (checkingBatteryChargingStatus) {
                 delay(3000)
-                Log.d("TAG", "initView: " + batteryChargingStatusChecker())
+                val status = batteryChargingStatusChecker()
+                if(status){
+                    checkingBatteryChargingStatus = false
+                    startActivity(Intent(this@HomeActivity, MainActivity::class.java).putExtra("from" , "HomePage"))
+                }
             }
         }
 
-        beginWorkManager()
+        //beginWorkManager()
         askForPermissions()
     }
 
@@ -146,6 +152,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
         askCameraPermission()
         askBluetoothPermission()
         askLocationPermission()
+        askWakeLockPermission()
     }
 
     private fun askCameraPermission(){
@@ -157,7 +164,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
                 this,
                 "Please provide Camera permission.",
                 AppConstants.CAMERA_PERMISSION_REQ_CODE,
-                *RequiredPermissions.cameraPermissions
+                *RequiredPermissions.cameraPermissions,
+                *RequiredPermissions.bluetoothPermissions,
+                *RequiredPermissions.locationPermissions,
+                *RequiredPermissions.wakeLockPermissions
             )
         }
     }
@@ -189,21 +199,22 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
             )
         }
     }
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        when(requestCode)
-        {
-            AppConstants.CAMERA_PERMISSION_REQ_CODE ->{
-                askCameraPermission()
-            }
 
-            AppConstants.LOCATION_PERMISSION_REQ_CODE ->{
-                askLocationPermission()
-            }
-
-            AppConstants.BLUETOOTH_PERMISSION_REQ_CODE ->{
-                askBluetoothPermission()
-            }
+    private fun askWakeLockPermission(){
+        if (EasyPermissions.hasPermissions(this, *RequiredPermissions.wakeLockPermissions)) {
+            Log.v("EasyPermissions", "Bluetooth permissions granted.")
+        } else {
+            Log.v("EasyPermissions", "Bluetooth permissions not granted.")
+            EasyPermissions.requestPermissions(
+                this,
+                "Please provide Bluetooth permission.",
+                AppConstants.WAKE_LOCK_PERMISSION_REQ_CODE,
+                *RequiredPermissions.wakeLockPermissions
+            )
         }
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
@@ -230,6 +241,14 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, EasyPermissions.
                     AppSettingsDialog.Builder(this).build().show()
                 } else {
                     askBluetoothPermission()
+                }
+            }
+
+            AppConstants.WAKE_LOCK_PERMISSION_REQ_CODE ->{
+                if (EasyPermissions.somePermissionDenied(this, perms.first())) {
+                    AppSettingsDialog.Builder(this).build().show()
+                } else {
+                    askWakeLockPermission()
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.hbeonlabs.driversalerts.ui.activity
 
+import android.content.Context
+import android.os.PowerManager
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
@@ -17,7 +19,7 @@ import kotlinx.coroutines.delay
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var navController: NavController
-
+    private lateinit var wakeLock: PowerManager.WakeLock
     override fun getLayoutResourceId(): Int {
 
         return R.layout.activity_main
@@ -63,6 +65,25 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
 
         }
+        aquireWakeLock()
+    }
 
+    private fun aquireWakeLock(){
+        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "DriverApp:VideoStreaming").apply {
+                    acquire()
+                }
+            }
+    }
+
+    private fun releaseWakeLock(){
+        if(this::wakeLock.isInitialized) {
+            wakeLock.release()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseWakeLock()
     }
 }

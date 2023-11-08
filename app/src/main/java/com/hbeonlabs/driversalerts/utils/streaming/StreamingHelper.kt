@@ -4,7 +4,9 @@ import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
+import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.ui.fragment.dashboard.DashboardViewModel
+import com.hbeonlabs.driversalerts.utils.Utils
 import io.livekit.android.LiveKit
 import io.livekit.android.LiveKitOverrides
 import io.livekit.android.RoomOptions
@@ -24,13 +26,11 @@ import io.livekit.android.room.track.VideoTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-private const val FRONT_ROOM = "FrontRoom"
-
-private const val BACK_ROOM = "BackRoom"
 
 class StreamingHelper(private val context : Activity, private val viewModel: DashboardViewModel, private val frontRenderer : SurfaceViewRenderer, private val backRenderer : SurfaceViewRenderer) {
 
-
+    private val FRONT_ROOM :String
+    private val BACK_ROOM :String
     private var backVideoTrack: VideoTrack? = null
     private var frontVideoTrack: VideoTrack? = null
     private lateinit var frontRoom: Room
@@ -38,12 +38,18 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
     private var frontStreamingStatus = "Connecting..."
     private var backStreamingStatus = "Connecting..."
     val errorTag = "StreamingHelperError"
+    private var prefManager : PrefManager
+    private var isFrontCameraStarted = false
+    private var isBackCameraStarted = false
     init {
         initFrontRoom()
         initBackRoom()
         frontRoom.initVideoRenderer(frontRenderer)
         backRoom.initVideoRenderer(backRenderer)
         frontRenderer.setMirror(true)
+        prefManager = PrefManager(context)
+        FRONT_ROOM = Utils.getRoomName(prefManager.getDeviceConfigurationDetails(),true)
+        BACK_ROOM = Utils.getRoomName(prefManager.getDeviceConfigurationDetails(),false)
     }
 
     /**
@@ -52,21 +58,17 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
     fun startStreaming(lifecycleScope: CoroutineScope, lifecycleOwner: LifecycleOwner){
         val useApisToCreateRoomAndToken = true
         if(useApisToCreateRoomAndToken) {
-            viewModel.createRoom()
-            viewModel.createRoomLiveData.observe(lifecycleOwner) {
-                if (it?.message?.startsWith("Error") == true) {
-                    showError("Room error ${it.message}")
-                } else {
-                    viewModel.createToken(FRONT_ROOM, "FrontSender2")
-                    viewModel.createToken(BACK_ROOM, "BackSender2")
-                }
-            }
+            viewModel.createToken(FRONT_ROOM, "FrontSender2")
+            viewModel.createToken(BACK_ROOM, "BackSender2")
             viewModel.createTokenLiveData.observe(lifecycleOwner) {
                 it?.let {
                     if (it.data?.token != null) {
-                        if (it.roomName?.startsWith(FRONT_ROOM) == true) {
+                        Log.v(errorTag,"Room ${it.roomName} token ${it.data?.token}")
+                        if (it.roomName?.startsWith(FRONT_ROOM) == true && !isFrontCameraStarted) {
+                            isFrontCameraStarted = true
                             startFrontRoom(lifecycleScope, it.data.token)
-                        } else if (it.roomName?.startsWith(BACK_ROOM) == true) {
+                        } else if (it.roomName?.startsWith(BACK_ROOM) == true && !isBackCameraStarted) {
+                            isBackCameraStarted = true
                             startBackRoom(lifecycleScope, it.data.token)
                         }
                     }else {
@@ -75,8 +77,8 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
                 }
             }
         } else {
-            startFrontRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaGEyNTYiOiIiLCJtZXRhZGF0YSI6ImRyaXZlciIsInZpZGVvIjp7InJvb21DcmVhdGUiOnRydWUsInJvb21Kb2luIjp0cnVlLCJyb29tIjoiRnJvbnRSb29tMSIsImNhblB1Ymxpc2giOnRydWUsImNhblN1YnNjcmliZSI6dHJ1ZSwicm9vbVJlY29yZCI6dHJ1ZSwiY2FuUHVibGlzaFNvdXJjZXMiOlsiY2FtZXJhIiwibWljcm9waG9uZSJdfSwiaWF0IjoxNjk2OTk4Nzg0LCJuYmYiOjE2OTY5OTg3ODQsImV4cCI6MTY5NzM0NDM4NCwiaXNzIjoiQVBJa1hkZWV2S1JiTHVaIiwic3ViIjoiRnJvbnRTZW5kZXIxIiwianRpIjoiRnJvbnRTZW5kZXIxIn0.aDfpbfV1dMpdlri0_Yxfl97VAWNRBCUfva_7DUUqa0k")
-            startBackRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaGEyNTYiOiIiLCJtZXRhZGF0YSI6ImRyaXZlciIsInZpZGVvIjp7InJvb21DcmVhdGUiOnRydWUsInJvb21Kb2luIjp0cnVlLCJyb29tIjoiQmFja1Jvb20xIiwiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJyb29tUmVjb3JkIjp0cnVlLCJjYW5QdWJsaXNoU291cmNlcyI6WyJjYW1lcmEiLCJtaWNyb3Bob25lIl19LCJpYXQiOjE2OTY5OTg3NjAsIm5iZiI6MTY5Njk5ODc2MCwiZXhwIjoxNjk3MzQ0MzYwLCJpc3MiOiJBUElrWGRlZXZLUmJMdVoiLCJzdWIiOiJCYWNrU2VuZGVyMSIsImp0aSI6IkJhY2tTZW5kZXIxIn0.BdJ7t--RaLR73-wRW42-vH5tng-nbHR55ZKSuTlMq2k")
+            startFrontRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaGEyNTYiOiJUcjB1YjRkb3ImM1hxdTFzMXQzbHlNeXN0M3Ixb3VzSzN5Q3IzQHQxMG4hIiwibWV0YWRhdGEiOiJkcml2ZXIiLCJ2aWRlbyI6eyJyb29tQ3JlYXRlIjp0cnVlLCJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkZyb250Um9vbTIiLCJjYW5QdWJsaXNoIjp0cnVlLCJjYW5TdWJzY3JpYmUiOnRydWUsInJvb21SZWNvcmQiOnRydWUsImNhblB1Ymxpc2hTb3VyY2VzIjpbImNhbWVyYSIsIm1pY3JvcGhvbmUiXX0sImlhdCI6MTY5ODE0ODkzOSwibmJmIjoxNjk4MTQ4OTM5LCJleHAiOjE2OTgxNzA1MzksImlzcyI6IkFQSWtYZGVldktSYkx1WiIsInN1YiI6IlBhcnRpY2lwYW50TmFtZTUiLCJqdGkiOiJQYXJ0aWNpcGFudE5hbWU1In0.YAIxioPl-ly87zoMggD21vzCLFUz-IvIkjv8Re64uTA")
+            startBackRoom(lifecycleScope,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaGEyNTYiOiJUcjB1YjRkb3ImM1hxdTFzMXQzbHlNeXN0M3Ixb3VzSzN5Q3IzQHQxMG4hIiwibWV0YWRhdGEiOiJkcml2ZXIiLCJ2aWRlbyI6eyJyb29tQ3JlYXRlIjp0cnVlLCJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IkJhY2tSb29tMiIsImNhblB1Ymxpc2giOnRydWUsImNhblN1YnNjcmliZSI6dHJ1ZSwicm9vbVJlY29yZCI6dHJ1ZSwiY2FuUHVibGlzaFNvdXJjZXMiOlsiY2FtZXJhIiwibWljcm9waG9uZSJdfSwiaWF0IjoxNjk4MTQ4OTYyLCJuYmYiOjE2OTgxNDg5NjIsImV4cCI6MTY5ODE3MDU2MiwiaXNzIjoiQVBJa1hkZWV2S1JiTHVaIiwic3ViIjoiUGFydGljaXBhbnROYW1lNiIsImp0aSI6IlBhcnRpY2lwYW50TmFtZTYifQ.PoQ8g7RQe96_05WkUg33gPcD5BzrVHFl_mp8T43JD08")
         }
     }
 
@@ -90,7 +92,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
         val audioHandler = AudioSwitchHandler(context)
         frontRoom = LiveKit.create(
             appContext = context.applicationContext,
-            options = getRoomOptions(CameraPosition.FRONT, FRONT_ROOM),
+            options = getRoomOptions(CameraPosition.FRONT, "FRONT"),
             overrides = LiveKitOverrides(
                 audioHandler = audioHandler
             )
@@ -101,7 +103,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
         val audioHandler = AudioSwitchHandler(context)
         backRoom = LiveKit.create(
             appContext = context.applicationContext,
-            options = getRoomOptions(CameraPosition.BACK, BACK_ROOM),
+            options = getRoomOptions(CameraPosition.BACK, "BACK"),
             overrides = LiveKitOverrides(
                 audioHandler = audioHandler
             )
@@ -109,13 +111,16 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
     }
 
     private fun startFrontRoom(lifecycleScope: CoroutineScope, token : String){
+        Log.v(errorTag,"startFrontRoom")
         frontStreamingStatus = "FrontStreamingStarted"
         lifecycleScope.launch {
             connectToRoomForFront(token)
         }
     }
+
     private fun startBackRoom(lifecycleScope: CoroutineScope, token : String){
         backStreamingStatus = "BackStreamingStarted"
+        Log.v(errorTag,"startBackRoom")
         lifecycleScope.launch {
             connectToRoomForBack(token)
         }
@@ -207,6 +212,8 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
 
     fun disconnect() {
         removeRenderers()
+        frontRoom.disconnect()
+        backRoom.disconnect()
     }
 
     private fun getRoomOptions(cameraPosition: CameraPosition, deviceId : String): RoomOptions {

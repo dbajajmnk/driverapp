@@ -153,11 +153,14 @@ class AppRepository @Inject constructor(
     suspend fun createRoom() : NetworkResult<RoomCreationResponseModel> {
         val roomName1 = "${prefManager.getDeviceConfigurationDetails()?.schoolId}/${prefManager.getDeviceConfigurationDetails()?.vehicleId}/FRONT/${Utils.getCurrentDateTimeString()}}"
         val roomName2 = "${prefManager.getDeviceConfigurationDetails()?.schoolId}/${prefManager.getDeviceConfigurationDetails()?.vehicleId}/BACK/${Utils.getCurrentDateTimeString()}}"
+        prefManager.saveLiveKitFrontRoom(roomName1)
+        prefManager.saveLiveKitBackRoom(roomName2)
         val createRoomRequestModel = CreateRoomRequestModel(listOf(RoomNameModel(roomName1),RoomNameModel(roomName2)))
          return appApis.createRoom(createRoomRequestModel)
     }
 
     suspend fun createToken(createTokenRequestModel: CreateTokenRequestModel) : NetworkResult<CreateTokenResponseModel> {
-        return appApis.createToken("http://68.183.86.248:8081/auth/gettoken",createTokenRequestModel)
+        //return appApis.createToken("http://68.183.86.248:8081/auth/gettoken",createTokenRequestModel)
+        return appApis.createToken("https://livestream.myschoolbus.in/auth/gettoken",createTokenRequestModel)
     }
 }

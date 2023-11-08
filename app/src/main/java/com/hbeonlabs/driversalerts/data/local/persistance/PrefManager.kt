@@ -3,6 +3,7 @@ package com.hbeonlabs.driversalerts.data.local.persistance
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
 import javax.inject.Inject
@@ -18,7 +19,8 @@ class PrefManager @Inject constructor(context: Context) {
     private val locationFequencyKey = "locationFequencyKey"
     private val deviceConfigurationKey = "deviceConfigurationKey"
     private val deviceConfigIdKey = "deviceConfigIdKey"
-
+    private val FRONT_ROOM = "FrontRoom"
+    private val BACK_ROOM = "BackRoom"
     fun saveAudioUri(uri: Uri?) {
         val value = uri?.toString() ?: ""
         sharedPreferences.edit().putString(audioUriKey, value).apply()
@@ -93,4 +95,22 @@ class PrefManager @Inject constructor(context: Context) {
     fun getDeviceConfigId(): String? {
         return sharedPreferences.getString(deviceConfigIdKey, "")
     }
+
+
+    fun getLiveKitFrontRoom(): String = sharedPreferences.getString(FRONT_ROOM, "FrontRoom2").toString()
+
+    fun saveLiveKitFrontRoom(roomName: String) {
+        sharedPreferences.edit {
+            putString(FRONT_ROOM, roomName)
+        }
+    }
+
+    fun getLiveKitBackRoom(): String = sharedPreferences.getString(BACK_ROOM, "BackRoom2").toString()
+
+    fun saveLiveKitBackRoom(roomName: String) {
+        sharedPreferences.edit {
+            putString(BACK_ROOM,roomName)
+        }
+    }
+
 }
