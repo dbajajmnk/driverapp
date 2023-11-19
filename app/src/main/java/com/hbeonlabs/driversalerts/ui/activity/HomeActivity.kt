@@ -67,7 +67,8 @@ class HomeActivity :
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_no_recording)
         binding.buttonMoveToDashboard.setOnClickListener(this)
-        lifecycleScope.launchWhenStarted {
+        //TODO commented just for development time, uncomment once dev done
+        /*lifecycleScope.launchWhenStarted {
             var checkingBatteryChargingStatus = true
             while (checkingBatteryChargingStatus) {
                 delay(3000)
@@ -77,7 +78,7 @@ class HomeActivity :
                     startActivity(Intent(this@HomeActivity, MainActivity::class.java).putExtra("from" , "HomePage"))
                 }
             }
-        }
+        }*/
         managePermissions = ManagePermissions(
             this,
             RequiredPermissions.cameraPermissions.toList(),

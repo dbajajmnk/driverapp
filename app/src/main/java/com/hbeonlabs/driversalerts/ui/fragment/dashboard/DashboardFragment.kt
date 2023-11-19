@@ -1,5 +1,6 @@
 package com.hbeonlabs.driversalerts.ui.fragment.dashboard
 
+import android.Manifest
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
@@ -93,7 +94,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
     private fun initAttendanceManager() {
         if (!EasyPermissions.hasPermissions(
                 requireContext(),
-                *HomeActivity.RequiredPermissions.bluetoothPermissions
+                *arrayOf(Manifest.permission.BLUETOOTH_CONNECT)
             )
         ) {
             makeToast("Please provide bluetooth permission to connect with RFID device")
@@ -123,7 +124,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
     private fun initStreamingHelper() {
         if (!EasyPermissions.hasPermissions(
                 requireContext(),
-                *HomeActivity.RequiredPermissions.cameraPermissions
+                *arrayOf(Manifest.permission.CAMERA)
             )
         ) {
             makeToast("Please provide camera permission for live streaming")
@@ -181,7 +182,9 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
     private fun initLocationProvider() {
         if (!EasyPermissions.hasPermissions(
                 requireContext(),
-                *HomeActivity.RequiredPermissions.locationPermissions
+                *arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,)
             )
         ) {
             makeToast("Please provide location permissions to get vehicle location.")

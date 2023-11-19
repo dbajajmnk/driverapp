@@ -127,6 +127,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
     }
     private suspend fun connectToRoomForFront(token : String) {
         try {
+            Log.v(errorTag,"Connecting to front room...  $token")
             frontStreamingStatus = "Connecting to front room..."
             frontRoom.connect(
                 url = "wss://webrtc.myschoolbus.in/",
@@ -137,7 +138,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
             val localParticipant = frontRoom.localParticipant
             localParticipant.setMicrophoneEnabled(true)
             localParticipant.setCameraEnabled(true)
-            localParticipant.name = "FrontSender"
+            localParticipant.name = "FrontSender2"
             showFrontCameraView(localParticipant)
             frontStreamingStatus = "Started"
         } catch (e: Throwable) {
@@ -149,6 +150,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
 
     private suspend fun connectToRoomForBack(token : String) {
         try {
+            Log.v(errorTag,"Connecting to back room...  $token")
             backStreamingStatus = "Connecting to back room..."
             backRoom.connect(
                 url = "wss://webrtc.myschoolbus.in/",
@@ -159,7 +161,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
             val localParticipant = backRoom.localParticipant
             localParticipant.setMicrophoneEnabled(true)
             localParticipant.setCameraEnabled(true)
-            localParticipant.name = "BackSender"
+            localParticipant.name = "BackSender2"
             showBackCameraView(localParticipant)
             backStreamingStatus = "Started"
         } catch (e: Throwable) {
