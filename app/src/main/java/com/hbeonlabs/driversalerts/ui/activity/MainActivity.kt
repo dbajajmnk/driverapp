@@ -2,39 +2,29 @@ package com.hbeonlabs.driversalerts.ui.activity
 
 import android.content.Context
 import android.os.PowerManager
-import android.util.Log
-import android.widget.FrameLayout
-import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.lifecycleScope
+import android.view.WindowManager
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.databinding.ActivityMainBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseActivity
-import com.hbeonlabs.driversalerts.utils.batteryChargingStatusChecker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var navController: NavController
     private lateinit var wakeLock: PowerManager.WakeLock
     override fun getLayoutResourceId(): Int {
-
         return R.layout.activity_main
     }
 
     override fun initView() {
         super.initView()
-
-
-
+        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val navHostFrag = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFrag.navController
 
         binding.bottomNav.setOnItemSelectedListener {
-
             when (it.itemId) {
                 R.id.camera_menu -> {
                     navController.navigate(R.id.dashboardFragment)
@@ -50,7 +40,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     true
                 }
 
-                R.id.attendance_menu ->{
+                R.id.attendance_menu -> {
                     navController.navigate(R.id.attendancedatesFragment)
                     true
                 }
@@ -63,12 +53,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     false
                 }
             }
-
         }
         aquireWakeLock()
     }
 
-    private fun aquireWakeLock(){
+    private fun aquireWakeLock() {
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "DriverApp:VideoStreaming").apply {
                     acquire()
@@ -76,8 +65,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
     }
 
-    private fun releaseWakeLock(){
-        if(this::wakeLock.isInitialized) {
+    private fun releaseWakeLock() {
+        if (this::wakeLock.isInitialized) {
             wakeLock.release()
         }
     }

@@ -9,7 +9,9 @@ import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
@@ -46,9 +48,11 @@ class HomeActivity :
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WAKE_LOCK,
             )
-        val wakeLockPermissions = arrayOf(Manifest.permission.WAKE_LOCK)
     }
+
 
     @Inject
     lateinit var speedDao: LocationAndSpeedDao
@@ -58,12 +62,13 @@ class HomeActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         dialog = dialogDrowsinessAlert(headerText = "Alert!", "You have crossed the Speed Limit")
         // askLocationPermission()
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_no_recording)
         binding.buttonMoveToDashboard.setOnClickListener(this)
-        //TODO commented just for development time, uncomment once dev done
+        // TODO commented just for development time, uncomment once dev done
         /*lifecycleScope.launchWhenStarted {
             var checkingBatteryChargingStatus = true
             while (checkingBatteryChargingStatus) {
@@ -80,7 +85,7 @@ class HomeActivity :
             RequiredPermissions.cameraPermissions.toList(),
             PermissionsRequestCode,
         )
-        //beginWorkManager()
+        // beginWorkManager()
         managePermissions.checkPermissions()
     }
 
@@ -166,4 +171,5 @@ class HomeActivity :
             worker,
         ).enqueue()
     }
+
 }
