@@ -22,9 +22,10 @@ class SettingsConfigureFragment : BaseFragment<FragmentSettingsConfigureBinding>
         binding.include4.titleFrag.text = "Settings"
         binding.button.setOnClickListener {
             viewModel.addDeviceConfiguration(
-                binding.licenseKey.text.toString(),
-                binding.deviceId.text.toString(),
-                binding.bluetoothId.text.toString()
+                licenseKey = binding.licenseKey.text.toString(),
+                deviceId = binding.deviceId.text.toString(),
+                bluetoothId = binding.bluetoothId.text.toString(),
+                vehicleId = binding.vehicleId.text.toString()
             )
         }
 
