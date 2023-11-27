@@ -78,6 +78,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
             AppConstants.STEAMING_START_MESSAGE,
             AppConstants.NotificationType.LOG.ordinal
         )
+
         observe()
     }
 
@@ -191,7 +192,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
         } else {
             locationProvider = DriverLocationProvider(this) { locationAndSpeedData ->
                 currentLocationData = locationAndSpeedData
-                //lifecycleScope.launch {streamingHelper.sendLocation(currentLocationData)}  TODO enable it
+                lifecycleScope.launch {streamingHelper.sendLocation(currentLocationData)}
                 val speedInKmph = "%.2f".format(locationAndSpeedData.speed.toDouble() * 3.6)
                 binding.tvSpeedData.text = "Speed =  $speedInKmph"
                 viewModel.addLocationData(locationAndSpeedData)
@@ -238,7 +239,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
     }
 
     private fun createNotification(title: String, msg: String, notificationType: Int) {
-        /*viewModel.createNotification(
+        viewModel.createNotification(
             Warning(
                 timeInMills = "" + System.currentTimeMillis(),
                 locationLatitude = getLat(),
@@ -248,6 +249,6 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
                 notificationType = notificationType,
                 isSynced = false
             )
-        )*/
+        )
     }
 }

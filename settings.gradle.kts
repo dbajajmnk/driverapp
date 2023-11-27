@@ -16,5 +16,5 @@ dependencyResolutionManagement {
 
     }
 }
-rootProject.name = "Smart Guard"
-include (":app", ":webrtcLib")
+rootProject.name = "Driver Alerts"
+include (":app")

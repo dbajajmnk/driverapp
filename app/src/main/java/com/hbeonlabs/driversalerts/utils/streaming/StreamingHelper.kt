@@ -141,6 +141,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
             localParticipant.name = "FrontSender2"
             showFrontCameraView(localParticipant)
             frontStreamingStatus = "Started"
+            Log.v(errorTag,"frontStreamingStatus Started ${frontRoom.name}")
         } catch (e: Throwable) {
             Log.v(errorTag,"connectToRoomForFront error ${e.message}")
             frontStreamingStatus = e.message ?: "Error"
@@ -164,6 +165,7 @@ class StreamingHelper(private val context : Activity, private val viewModel: Das
             localParticipant.name = "BackSender2"
             showBackCameraView(localParticipant)
             backStreamingStatus = "Started"
+            Log.v(errorTag,"backStreamingStatus Started ${backRoom.name}")
         } catch (e: Throwable) {
             Log.v(errorTag,"connectToRoomForBack error ${e.message}")
             backStreamingStatus = e.message ?: "Error"
