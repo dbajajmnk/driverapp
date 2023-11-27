@@ -3,9 +3,7 @@ package com.hbeonlabs.driversalerts.ui.fragment.dashboard
 import android.Manifest
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.mlkit.vision.common.InputImage
@@ -14,12 +12,9 @@ import com.hbeonlabs.driversalerts.bluetooth.AttendanceCallback
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceManager
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
-import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.databinding.FragmentDashboardBinding
-import com.hbeonlabs.driversalerts.ui.activity.HomeActivity
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
-import com.hbeonlabs.driversalerts.utils.streaming.StreamingHelper
 import com.hbeonlabs.driversalerts.utils.DriverLocationProvider
 import com.hbeonlabs.driversalerts.utils.DrowsinessDetector
 import com.hbeonlabs.driversalerts.utils.Utils
@@ -27,8 +22,8 @@ import com.hbeonlabs.driversalerts.utils.batteryChargingStatusChecker
 import com.hbeonlabs.driversalerts.utils.collectLatestLifeCycleFlow
 import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.makeToast
+import com.hbeonlabs.driversalerts.utils.streaming.StreamingHelper
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import org.webrtc.EglRenderer
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.Timer
@@ -134,7 +129,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
             streamingHelper.startStreaming(lifecycleScope,viewLifecycleOwner)
             timer = Timer()
             timer.schedule(100, 100) {
-                //binding.frontRenderer.addFrameListener(frameListener,1.0f)
+                binding.frontRenderer.addFrameListener(frameListener,1.0f)
                 updateTimeTexts()
                 //checkChargingStatus()
             }
