@@ -25,16 +25,21 @@ class SettingsViewModel @Inject constructor(
         licenseKey: String,
         deviceId: String,
         bluetoothId: String,
+        // Todo dont have any use
+        vehicleId: String,
     ) {
-      val configDetails = pref.getDeviceConfigurationDetails()
+    //  val configDetails = pref.getDeviceConfigurationDetails()
         showProgressBarLiveData.value = true
         viewModelScope.launch {
             repository.configureDevice(
-                deviceType = configDetails?.deviceType ?: 1,
+                // todo Dont know
+                deviceType = 1,
                 licenseKey = licenseKey,
-                modelNo = configDetails?.modelNo ?: "",
+                // todo Dont know
+                modelNo = "",
                 deviceId = deviceId,
-                serialNo = configDetails?.serialNo ?: "",
+                // todo Dont know
+                serialNo = "",
                 bluetoothId = bluetoothId,
             ).onSuccess {
                 showProgressBarLiveData.value = false
