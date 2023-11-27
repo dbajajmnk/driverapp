@@ -21,6 +21,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.hbeonlabs.driversalerts.R
 import com.hbeonlabs.driversalerts.data.local.db.LocationAndSpeedDao
+import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.databinding.ActivityNoRecordingBinding
 import com.hbeonlabs.driversalerts.receivers.DailyAlarmReceiver
 import com.hbeonlabs.driversalerts.receivers.EndAlarmReceiver
@@ -60,12 +61,15 @@ class HomeActivity :
 
     lateinit var binding: ActivityNoRecordingBinding
     lateinit var dialog: Dialog
-
+    @Inject
+    lateinit var prefManager: PrefManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dialog = dialogDrowsinessAlert(headerText = "Alert!", "You have crossed the Speed Limit")
         // askLocationPermission()
 
+        prefManager.saveFrontRoomToken(null)
+        prefManager.saveBackRoomToken(null)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_no_recording)
         binding.buttonMoveToDashboard.setOnClickListener(this)
         //TODO commented just for development time, uncomment once dev done

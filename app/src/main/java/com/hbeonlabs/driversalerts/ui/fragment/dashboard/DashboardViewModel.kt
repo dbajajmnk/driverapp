@@ -7,10 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
 import com.hbeonlabs.driversalerts.data.local.db.models.Warning
+import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.data.remote.request.CreateTokenRequestModel
 import com.hbeonlabs.driversalerts.data.remote.response.CreateTokenResponseModel
 import com.hbeonlabs.driversalerts.data.remote.response.RoomCreationResponseModel
+import com.hbeonlabs.driversalerts.data.remote.response.TokenData
 import com.hbeonlabs.driversalerts.data.repository.AppRepository
+import com.hbeonlabs.driversalerts.utils.Utils
 import com.hbeonlabs.driversalerts.utils.network.onError
 import com.hbeonlabs.driversalerts.utils.network.onException
 import com.hbeonlabs.driversalerts.utils.network.onSuccess
@@ -24,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val repository: AppRepository
+    private val repository: AppRepository,
+    private val prefManager: PrefManager
 ) : ViewModel() {
     val createRoomLiveData = MutableLiveData<RoomCreationResponseModel?>(null)
     val createTokenLiveData = MutableLiveData<CreateTokenResponseModel?>(null)
@@ -91,18 +95,32 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun createToken(roomName : String, participantName : String){
-        viewModelScope.launch {
-            val createTokenRequestModel = CreateTokenRequestModel(participantName, roomName, "Driver")
-            repository.createToken(createTokenRequestModel).onSuccess {
-                val responseModel = it.apply { it.roomName = roomName }
-                createTokenLiveData.value = responseModel
-                Log.v("createToken","createToken Room ${responseModel.roomName} token ${responseModel.data?.token}")
-            }.onError { code, message ->
-                createTokenLiveData.postValue(CreateTokenResponseModel(null,null,"Error:$code $message", roomName))
-            }.onException {
-                createTokenLiveData.postValue(CreateTokenResponseModel(null,null,"Error:${it.message}",  roomName))
+    fun createToken(roomName : String, participantName : String) {
+        val token = if(isFrontRoom(roomName))prefManager.getFrontRoomToken() else prefManager.getBackRoomToken()
+            viewModelScope.launch {
+                //if (token == null) {
+                    val createTokenRequestModel = CreateTokenRequestModel(participantName, roomName, "Driver")
+                repository.createToken(createTokenRequestModel).onSuccess {
+                    /*it.data?.token?.let { it1 ->
+                        if(isFrontRoom(roomName))
+                            prefManager.saveFrontRoomToken(it1)
+                        else
+                            prefManager.saveBackRoomToken(it1)
+                    }*/
+                    val responseModel = it.apply { it.roomName = roomName }
+                    createTokenLiveData.value = responseModel
+                    Log.v("createToken", "createToken Room ${responseModel.roomName} token ${responseModel.data?.token}")
+                }.onError { code, message ->
+                    createTokenLiveData.postValue(CreateTokenResponseModel(null, null, "Error:$code $message", roomName))
+                }.onException {
+                    createTokenLiveData.postValue(CreateTokenResponseModel(null, null, "Error:${it.message}", roomName))
+                }
+            /*}else{
+                val token = if(isFrontRoom(roomName))prefManager.getFrontRoomToken() else prefManager.getBackRoomToken()
+                createTokenLiveData.value = CreateTokenResponseModel(TokenData(token),null,null,roomName)
+            }*/
             }
-        }
+
     }
+    private fun isFrontRoom(roomName :String) = roomName == Utils.getRoomName(prefManager.getDeviceConfigurationDetails(),true)
 }

@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.hbeonlabs.driversalerts.data.remote.response.DeviceConfigurationResponse
+import com.hbeonlabs.driversalerts.utils.Utils
 import javax.inject.Inject
 
 class PrefManager @Inject constructor(context: Context) {
@@ -21,6 +22,8 @@ class PrefManager @Inject constructor(context: Context) {
     private val deviceConfigIdKey = "deviceConfigIdKey"
     private val FRONT_ROOM = "FrontRoom"
     private val BACK_ROOM = "BackRoom"
+    private val FRONT_ROOM_TOKEN = "FrontRoomToken"
+    private val BACK_ROOM_TOKEN = "BackRoomToken"
     fun saveAudioUri(uri: Uri?) {
         val value = uri?.toString() ?: ""
         sharedPreferences.edit().putString(audioUriKey, value).apply()
@@ -96,21 +99,17 @@ class PrefManager @Inject constructor(context: Context) {
         return sharedPreferences.getString(deviceConfigIdKey, "")
     }
 
-
-    fun getLiveKitFrontRoom(): String = sharedPreferences.getString(FRONT_ROOM, "FrontRoom2").toString()
-
-    fun saveLiveKitFrontRoom(roomName: String) {
+    fun saveFrontRoomToken(token: String?) {
         sharedPreferences.edit {
-            putString(FRONT_ROOM, roomName)
+            putString(FRONT_ROOM_TOKEN, token)
+        }
+    }
+    fun saveBackRoomToken(token: String?) {
+        sharedPreferences.edit {
+            putString(BACK_ROOM_TOKEN,token)
         }
     }
 
-    fun getLiveKitBackRoom(): String = sharedPreferences.getString(BACK_ROOM, "BackRoom2").toString()
-
-    fun saveLiveKitBackRoom(roomName: String) {
-        sharedPreferences.edit {
-            putString(BACK_ROOM,roomName)
-        }
-    }
-
+    fun getFrontRoomToken() = sharedPreferences.getString(FRONT_ROOM_TOKEN, null)
+    fun getBackRoomToken() = sharedPreferences.getString(BACK_ROOM_TOKEN, null)
 }

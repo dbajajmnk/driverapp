@@ -9,17 +9,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.hbeonlabs.driversalerts.R
+import com.hbeonlabs.driversalerts.data.local.persistance.PrefManager
 import com.hbeonlabs.driversalerts.databinding.ActivityMainBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseActivity
 import com.hbeonlabs.driversalerts.utils.batteryChargingStatusChecker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var navController: NavController
     private lateinit var wakeLock: PowerManager.WakeLock
+
     override fun getLayoutResourceId(): Int {
 
         return R.layout.activity_main
