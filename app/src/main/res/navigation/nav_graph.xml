@@ -65,7 +65,11 @@
         android:id="@+id/historyTimeFragment"
         android:name="com.hbeonlabs.driversalerts.ui.fragment.history.HistoryTimeFragment"
         android:label="NotificationDisplay"
-        />
+        >
+        <action
+            android:id="@+id/action_historyTimeFragment_to_historyVideoPlayerFragment"
+            app:destination="@id/historyVideoPlayerFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/attendanceFragment"
@@ -80,5 +84,9 @@
             android:id="@+id/action_warningsFragment_to_notificationDisplay"
             app:destination="@id/notificationDisplay" />
     </fragment>
+    <fragment
+        android:id="@+id/historyVideoPlayerFragment"
+        android:name="com.hbeonlabs.driversalerts.ui.fragment.history.HistoryVideoPlayerFragment"
+        android:label="HistoryVideoPlayerFragment" />
 
 </navigation>
