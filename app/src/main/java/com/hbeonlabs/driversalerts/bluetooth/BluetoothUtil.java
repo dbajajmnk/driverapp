@@ -12,16 +12,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
+import androidx.multidex.BuildConfig;
 
-import com.hbeonlabs.driversalerts.BuildConfig;
-
-import java.util.ArrayList;
 import java.util.Set;
 
 public class BluetoothUtil {

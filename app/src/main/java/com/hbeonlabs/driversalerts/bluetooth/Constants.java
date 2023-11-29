@@ -1,6 +1,7 @@
 package com.hbeonlabs.driversalerts.bluetooth;
 
-import com.hbeonlabs.driversalerts.BuildConfig;
+
+import androidx.multidex.BuildConfig;
 
 class Constants {
 
