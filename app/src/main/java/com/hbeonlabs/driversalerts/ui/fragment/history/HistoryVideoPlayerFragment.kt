@@ -18,8 +18,8 @@ import com.hbeonlabs.driversalerts.ui.fragment.notification.WarningsFragment
 
 class HistoryVideoPlayerFragment : BaseFragment<FragmentHistoryVideoPlayerBinding>() {
 
-    lateinit var frontExoplayer: ExoPlayer
-    lateinit var backExoplayer: ExoPlayer
+    private lateinit var frontExoplayer: ExoPlayer
+    private lateinit var backExoplayer: ExoPlayer
 
     override fun initView() {
         super.initView()
