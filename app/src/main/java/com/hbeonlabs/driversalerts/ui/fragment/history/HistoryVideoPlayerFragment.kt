@@ -45,7 +45,7 @@ class HistoryVideoPlayerFragment : BaseFragment<FragmentHistoryVideoPlayerBindin
         return R.layout.fragment_history_video_player
     }
 
-    fun releaseExoplayer() {
+    private fun releaseExoplayer() {
         frontExoplayer.pause()
         backExoplayer.pause()
 
