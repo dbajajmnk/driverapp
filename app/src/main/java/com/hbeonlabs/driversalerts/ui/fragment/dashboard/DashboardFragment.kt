@@ -12,6 +12,7 @@ import com.hbeonlabs.driversalerts.bluetooth.AttendanceCallback
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceManager
 import com.hbeonlabs.driversalerts.bluetooth.AttendanceModel
 import com.hbeonlabs.driversalerts.data.local.db.models.LocationAndSpeed
+import com.hbeonlabs.driversalerts.data.local.db.models.Warning
 import com.hbeonlabs.driversalerts.databinding.FragmentDashboardBinding
 import com.hbeonlabs.driversalerts.ui.base.BaseFragment
 import com.hbeonlabs.driversalerts.ui.fragment.dialogs.dialogDrowsinessAlert
@@ -24,6 +25,7 @@ import com.hbeonlabs.driversalerts.utils.constants.AppConstants
 import com.hbeonlabs.driversalerts.utils.makeToast
 import com.hbeonlabs.driversalerts.utils.streaming.StreamingHelper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.webrtc.EglRenderer
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.Timer
